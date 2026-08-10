@@ -1,0 +1,15 @@
+node_modules
+dist
+coverage
+test
+.git
+.gitignore
+*.md
+.env
+.env.*
+environments/local.env
+environments/prod.env
+.husky
+.idea
+.vscode
+*.log

@@ -52,10 +52,11 @@ pids
 *.seed
 *.pid.lock
 
-backend/package-lock.json
 backend/ts-node
 db-data/
 s3-data/
+client/
+.env
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json

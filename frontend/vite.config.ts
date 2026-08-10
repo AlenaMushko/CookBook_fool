@@ -26,15 +26,15 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: process.env.VITE_BUILD_PATH || "../client",
+    outDir: process.env.VITE_BUILD_PATH || "dist",
   },
   server: {
     port: 5173,
     proxy: {
       "/api": {
-        target: "http://app:3000",
+        target: process.env.VITE_PROXY_TARGET || "http://localhost:3000",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, "/api"),
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

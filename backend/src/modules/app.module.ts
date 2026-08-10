@@ -14,7 +14,10 @@ import { UserModule } from './user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: './environments/local.env',
+      envFilePath: [
+        './environments/local.env',
+        './environments/prod.env',
+      ],
       load: [configuration],
       isGlobal: true,
     }),

@@ -1,9 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 
-@Controller()
+import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
+
+@SkipAuth()
+@Controller('health')
 export class HealthController {
   @Get()
-  hello(): string {
-    return 'health check';
+  check(): { status: string } {
+    return { status: 'ok' };
   }
 }

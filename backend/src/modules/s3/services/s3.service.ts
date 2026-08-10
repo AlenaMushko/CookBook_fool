@@ -74,6 +74,7 @@ export class S3Service {
         secretAccessKey: this.awsConfig.secretAccessKey,
       },
       endpoint: this.awsConfig.endpoint,
+      forcePathStyle: true,
     });
   }
 }
