@@ -21,7 +21,9 @@ const UniversalSwitcher: React.FC<UniversalSwitcherProps> = ({
         <Switcher
           checked={checked}
           onChange={onChange}
-          inputProps={{ "aria-label": "universal switch" }}
+          slotProps={{
+            input: { "aria-label": "universal switch" },
+          }}
         />
       }
       label={

@@ -65,7 +65,9 @@ const Header: React.FC = () => {
           t: 0,
           l: 0,
           width: "100vw",
-          backgroundColor: theme.palette.secondary.main,
+          backgroundColor: theme.palette.colors.card,
+          color: theme.palette.text.primary,
+          borderBottom: `1px solid ${theme.palette.colors.border}`,
           px: "16px",
         }}
       >
@@ -173,9 +175,20 @@ const Header: React.FC = () => {
                     key={page.label}
                     onClick={() => handleNavigate(page.route)}
                     sx={{
+                      color: isActive(page.route)
+                        ? theme.palette.common.white
+                        : theme.palette.text.secondary,
                       backgroundColor: isActive(page.route)
-                        ? theme.palette.primary.dark
+                        ? theme.palette.colors.sage
                         : "transparent",
+                      "&:hover": {
+                        backgroundColor: isActive(page.route)
+                          ? theme.palette.colors.sageHover
+                          : theme.palette.colors.surface,
+                        color: isActive(page.route)
+                          ? theme.palette.common.white
+                          : theme.palette.text.primary,
+                      },
                     }}
                   >
                     {page.label}

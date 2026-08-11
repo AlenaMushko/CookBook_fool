@@ -17,6 +17,8 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
+import theme from "../../../theme";
+
 interface DishItemProps {
   dish: IDish;
 }
@@ -67,17 +69,17 @@ const DishItem: React.FC<DishItemProps> = ({ dish }) => {
           zIndex: 10,
           padding: 1,
           borderRadius: "50%",
-          backgroundColor: "#F57C0090",
-          transition: "background-color 0.3s linear",
+          backgroundColor: theme.palette.colors.clay,
+          transition: "background-color 0.12s ease",
           "&:hover": {
-            backgroundColor: "#F57C00",
+            backgroundColor: theme.palette.colors.clayDark,
           },
         }}
         onClick={(e) => handleDeleteDish(e)}
       >
         <DeleteForeverIcon
           sx={{
-            color: "#2E3B55",
+            color: theme.palette.primary.contrastText,
           }}
         />
       </CardActions>

@@ -34,5 +34,5 @@
       "@messages/*": ["./src/messages/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "theme.ts", "theme"]
 }

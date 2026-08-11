@@ -1,5 +1,4 @@
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -25,15 +24,14 @@ const LanguageSwitcher = () => {
         <Switcher
           checked={language === "UK"}
           onChange={handleChange}
-          data-lang={language}
-          inputProps={{ "aria-label": "language switch" }}
+          data-lang={language === "UK" ? "УКР" : "EN"}
+          slotProps={{
+            input: { "aria-label": "Language switch EN / УКР" },
+          }}
         />
       }
-      label={
-        <Typography variant='body2' sx={{ fontWeight: "bold" }}>
-          {language}
-        </Typography>
-      }
+      label=''
+      sx={{ m: 0 }}
     />
   );
 };

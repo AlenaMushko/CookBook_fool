@@ -11,7 +11,7 @@ const HomePage = () => {
       sx={{
         minWidth: "100%",
         minHeight: "100vh",
-        background: theme.palette.gradients?.orange,
+        backgroundColor: theme.palette.colors.bg,
         backgroundImage: `url(${home})`,
         backgroundSize: "cover",
         backgroundPosition: "center",

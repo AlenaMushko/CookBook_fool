@@ -8,6 +8,7 @@ import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
 
 import theme from "../theme";
+
 import App from "./App";
 import i18n from "./i18n";
 

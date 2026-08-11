@@ -88,7 +88,6 @@ const UserForm: React.FC<UserFormProps> = ({
     >
       <Grid container>
         <Grid
-          item
           sx={{
             margin: "0 0 20px 0",
           }}
@@ -147,7 +146,6 @@ const UserForm: React.FC<UserFormProps> = ({
         </Grid>
 
         <Grid
-          item
           sx={{
             margin: { xs: "auto", md: "0 0 0 40px" },
             marginBottom: { xs: "20px", md: "0 " },

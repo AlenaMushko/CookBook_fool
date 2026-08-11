@@ -74,7 +74,7 @@ const SignIn = () => {
           sx={{
             textAlign: "center",
             mb: 3,
-            color: theme.palette.secondary.contrastText,
+            color: theme.palette.text.primary,
             fontSize: { xs: "2rem", md: "2.5rem" },
           }}
         >
@@ -135,7 +135,7 @@ const SignIn = () => {
             display: "block",
             textAlign: "right",
             mb: 4,
-            color: theme.palette.secondary.contrastText,
+            color: theme.palette.text.primary,
           }}
         >
           {t("forgot_password")}

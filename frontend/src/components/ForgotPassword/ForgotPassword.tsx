@@ -65,7 +65,7 @@ const ForgotPassword = () => {
           sx={{
             textAlign: "center",
             mb: 3,
-            color: theme.palette.secondary.contrastText,
+            color: theme.palette.text.primary,
             fontSize: { xs: "2rem", md: "2.5rem" },
           }}
         >

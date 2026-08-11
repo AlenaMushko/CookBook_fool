@@ -50,7 +50,7 @@ const User: React.FC<UserProps> = ({ userData, refetchUser }) => {
           <Typography
             variant='h5'
             component='h5'
-            sx={{ color: theme.palette.secondary.contrastText }}
+            sx={{ color: theme.palette.text.primary }}
           >
             {userData?.lastName} {userData?.firstName}
           </Typography>
@@ -66,7 +66,7 @@ const User: React.FC<UserProps> = ({ userData, refetchUser }) => {
               variant='h6'
               component='h5'
               sx={{
-                color: theme.palette.secondary.contrastText,
+                color: theme.palette.text.primary,
                 fontSize: "1.2em",
               }}
             >
@@ -76,7 +76,7 @@ const User: React.FC<UserProps> = ({ userData, refetchUser }) => {
               variant='body1'
               component='h5'
               sx={{
-                color: theme.palette.secondary.contrastText,
+                color: theme.palette.text.primary,
                 fontSize: "1.2em",
               }}
             >
@@ -97,7 +97,7 @@ const User: React.FC<UserProps> = ({ userData, refetchUser }) => {
                 variant='h6'
                 component='h5'
                 sx={{
-                  color: theme.palette.secondary.contrastText,
+                  color: theme.palette.text.primary,
                   fontSize: "1.2em",
                 }}
               >
@@ -107,7 +107,7 @@ const User: React.FC<UserProps> = ({ userData, refetchUser }) => {
                 variant='body1'
                 component='h5'
                 sx={{
-                  color: theme.palette.secondary.contrastText,
+                  color: theme.palette.text.primary,
                   fontSize: "1.2em",
                 }}
               >

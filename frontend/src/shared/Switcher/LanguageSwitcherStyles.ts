@@ -1,44 +1,60 @@
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 
-export const Switcher = styled(Switch)(({ theme }) => ({
-  width: 52,
-  height: 34,
-  padding: 7,
+import { colors, fonts } from "../../../theme";
+
+/** Language switcher styled to Cookbook UI Kit segmented control. */
+export const Switcher = styled(Switch)(() => ({
+  width: 72,
+  height: 30,
+  padding: 0,
+  borderRadius: 7,
+  border: `1px solid ${colors.border}`,
+  overflow: "hidden",
+  backgroundColor: colors.surface,
   "& .MuiSwitch-switchBase": {
-    margin: 1,
+    margin: 0,
     padding: 0,
-    top: "50%",
-    transform: "translate(6px, -50%)",
-    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "50%",
+    height: "100%",
+    borderRadius: 0,
+    transform: "none",
+    transition: "background-color 0.12s ease",
     "&.Mui-checked": {
-      color: theme.palette.primary.contrastText,
-      transform: "translate(22px, -50%)",
+      transform: "translateX(100%)",
+      color: colors.white,
       "& + .MuiSwitch-track": {
-        backgroundColor: theme.palette.secondary.light,
+        backgroundColor: colors.surface,
         opacity: 1,
+      },
+      "& .MuiSwitch-thumb": {
+        backgroundColor: colors.sage,
+        color: colors.white,
       },
     },
   },
   "& .MuiSwitch-thumb": {
-    backgroundColor: theme.palette.primary.dark,
-    width: 24,
-    height: 24,
+    backgroundColor: "transparent",
+    color: colors.muted,
+    width: "100%",
+    height: "100%",
+    borderRadius: 0,
+    boxShadow: "none",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    fontFamily: fonts.sans,
     fontSize: 12,
-    fontWeight: "bold",
-    color: theme.palette.primary.contrastText,
-    position: "relative",
+    fontWeight: 600,
     "&::before": {
       content: "attr(data-lang)",
     },
   },
   "& .MuiSwitch-track": {
-    borderRadius: 20 / 2,
-    backgroundColor: theme.palette.primary.light,
+    borderRadius: 0,
+    backgroundColor: colors.surface,
     opacity: 1,
-    position: "relative",
   },
 }));

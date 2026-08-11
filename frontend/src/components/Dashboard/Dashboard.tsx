@@ -61,9 +61,10 @@ const Dashboard = () => {
         style={{
           width: isCollapsed ? "60px" : "250px",
           transition: "width 0.3s ease",
-          background: theme.palette.gradients?.green,
+          background: theme.palette.colors.surface,
           padding: isCollapsed ? " 20px 10px 10px 10px " : "20px",
-          boxShadow: theme.palette.shadow?.green,
+          boxShadow: "none",
+          borderRight: `1px solid ${theme.palette.colors.border}`,
           overflow: "hidden",
           position: "relative",
         }}
@@ -77,10 +78,11 @@ const Dashboard = () => {
             height: "40px",
             borderRadius: isCollapsed ? "50%" : "8px",
             marginBottom: "12px",
-            backgroundColor: theme.palette.secondary.main,
-            transition: "all 0.3s ease",
+            backgroundColor: theme.palette.colors.sage,
+            color: theme.palette.common.white,
+            transition: "all 0.12s ease",
             "&:hover": {
-              backgroundColor: theme.palette.secondary.dark,
+              backgroundColor: theme.palette.colors.sageHover,
             },
           }}
         >
@@ -137,24 +139,24 @@ const Dashboard = () => {
                   id={`${mainCategory}-header`}
                   sx={{
                     justifyContent: "flex-start",
-                    backgroundColor: theme.palette.colors?.greenBtnBg,
+                    backgroundColor: theme.palette.colors.surface,
                     marginBottom: 0,
-                    borderRadius: "8px",
-                    transition: "all 0.3s ease",
-                    fontFamily: "Montserrat, Arial, sans-serif",
-                    fontWeight: "700",
-                    fontSize: "18px",
-                    color: theme.palette.colors?.greyText,
+                    borderRadius: "7px",
+                    transition: "all 0.12s ease",
+                    fontFamily: "'Manrope', sans-serif",
+                    fontWeight: 600,
+                    fontSize: "14px",
+                    color: theme.palette.text.primary,
                     textTransform: "none",
                     "&.Mui-expanded": {
-                      backgroundColor: theme.palette.secondary.main,
-                      borderRadius: "4px 4px 0 0",
-                      color: theme.palette.primary.contrastText,
-                      fontWeight: "700",
+                      backgroundColor: theme.palette.colors.sage,
+                      borderRadius: "7px 7px 0 0",
+                      color: theme.palette.common.white,
+                      fontWeight: 600,
                     },
                     "&:hover": {
-                      backgroundColor: theme.palette.colors?.greenBtnHoverBg,
-                      color: theme.palette.colors?.greyText,
+                      backgroundColor: theme.palette.colors.surfaceAlt,
+                      color: theme.palette.text.primary,
                     },
                   }}
                 >
@@ -163,7 +165,7 @@ const Dashboard = () => {
                 <AccordionDetails
                   sx={{
                     padding: "8px 16px",
-                    background: theme.palette.gradients?.green,
+                    background: theme.palette.colors.surface,
                   }}
                 >
                   {subCategories.map((subcategory) => (
