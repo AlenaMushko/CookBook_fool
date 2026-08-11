@@ -71,7 +71,6 @@ const theme = createTheme({
       disabled: colors.disabledText,
       disabledBackground: colors.disabledBg,
     },
-    // Custom colors for sx styles — use theme.palette.colors.*
     colors: {
       bg: colors.bg,
       card: colors.card,

@@ -3,7 +3,6 @@ import Switch from "@mui/material/Switch";
 
 import { colors, fonts } from "../../../theme";
 
-/** Language switcher styled to Cookbook UI Kit segmented control. */
 export const Switcher = styled(Switch)(() => ({
   width: 72,
   height: 30,

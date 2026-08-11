@@ -1,7 +1,3 @@
-/**
- * Cookbook design tokens — source of truth from UI Kit.
- * Prefer these tokens (or CSS variables) over hardcoded values.
- */
 
 export const colors = {
   bg: "#FBF4EA",

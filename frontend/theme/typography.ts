@@ -3,11 +3,6 @@ import type { TypographyVariantsOptions } from "@mui/material/styles";
 
 import { colors, fonts } from "./tokens";
 
-/**
- * Typography scale from Cookbook UI Kit.
- * Serif (Source Serif 4): Display, H1–H3
- * Sans (Manrope): H4, Subtitle, Body*, Caption, Label, Button
- */
 export const typography: TypographyVariantsOptions = {
   fontFamily: fonts.sans,
   htmlFontSize: 16,
