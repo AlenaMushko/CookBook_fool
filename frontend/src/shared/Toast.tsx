@@ -1,32 +1,19 @@
-import { Alert, AlertColor, Snackbar } from "@mui/material";
-import { useAppStore } from "@stores/zustandStore";
-import React from "react";
+import { toast } from "sonner";
 
-export const Toast: React.FC = () => {
-  const { toast, setToast } = useAppStore();
+export type ToastType = "success" | "info" | "warning" | "error";
 
-  const handleClose = () => {
-    setToast({ open: false, message: "", type: "info" });
-  };
-
-  return (
-    <Snackbar
-      open={toast.open}
-      autoHideDuration={2000}
-      onClose={handleClose}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-    >
-      <Alert onClose={handleClose} severity={toast.type} sx={{ width: "100%" }}>
-        {toast.message}
-      </Alert>
-    </Snackbar>
-  );
-};
-
-export const showToast = (message: string, type: AlertColor) => {
-  useAppStore.getState().setToast({
-    open: true,
-    message,
-    type,
-  });
+export const showToast = (message: string, type: ToastType = "info") => {
+  switch (type) {
+    case "success":
+      toast.success(message);
+      break;
+    case "warning":
+      toast.warning(message);
+      break;
+    case "error":
+      toast.error(message);
+      break;
+    default:
+      toast.info(message);
+  }
 };

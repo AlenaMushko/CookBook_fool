@@ -1,4 +1,7 @@
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
 import React from "react";
 
 interface NoFoundDataProps {
@@ -7,32 +10,14 @@ interface NoFoundDataProps {
 
 const NoFoundData: React.FC<NoFoundDataProps> = ({ text }) => {
   return (
-    <Box
-      sx={{
-        marginTop: "5vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Card
-        sx={{
-          minWidth: 200,
-          maxWidth: 520,
-        }}
-      >
+    <div className='mt-[5vh] flex items-center justify-center'>
+      <Card className='min-w-[200px] max-w-[520px] border-border bg-card shadow-none'>
         <CardContent>
-          <Typography
-            variant='h2'
-            component='h2'
-            sx={{ color: "text.secondary" }}
-          >
-            {text}
-            {/*{t("dish.noDishes")}*/}
-          </Typography>
+          <h2 className='font-serif text-2xl text-muted-foreground'>{text}</h2>
         </CardContent>
       </Card>
-    </Box>
+    </div>
   );
 };
+
 export default NoFoundData;

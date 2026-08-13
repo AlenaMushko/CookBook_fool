@@ -1,10 +1,8 @@
 import { useDeleteFileMutation } from "@apis/fileAPI";
-import { Box, Button, Card, CardMedia, Paper } from "@mui/material";
+import { Button } from "@/components/ui/button";
 import ImgWithDeleteBtn from "@shared/ImageUpload/ImgWithDeleteBtn";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-
-import theme from "../../../theme";
 
 interface ImageUploadProps {
   userAvatar: string | null;
@@ -23,7 +21,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 }) => {
   const { t } = useTranslation();
   const [deleteImage] = useDeleteFileMutation();
-
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleFileChange = async (
@@ -51,17 +48,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   return (
-    <Card
-      sx={{
-        width: { xs: "250px", md: "200px" },
-        height: 200,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        border: "1px dashed gray",
-      }}
-    >
+    <div className='flex h-[200px] w-[250px] flex-col items-center justify-center overflow-hidden rounded-lg border border-dashed border-border md:w-[200px]'>
       {userAvatar ? (
         <ImgWithDeleteBtn
           handleRemoveImage={handleRemoveImage}
@@ -70,54 +57,35 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       ) : (
         <>
           {selectedImage ? (
-            <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
-              <CardMedia
-                component='img'
-                image={selectedImage}
-                alt='Uploaded Image'
-                sx={{
-                  width: "100%",
-                  height: "170px",
-                  objectFit: "cover",
-                }}
+            <div className='relative h-full w-full'>
+              <img
+                src={selectedImage}
+                alt='Uploaded'
+                className='h-[170px] w-full object-cover'
               />
-            </Box>
+            </div>
           ) : (
-            <Paper
-              variant='elevation'
-              sx={{
-                backgroundColor: theme.palette.colors.infoBg,
-                width: { xs: "250px", md: "200px" },
-                height: 170,
-              }}
-            />
+            <div className='h-[170px] w-full bg-info-bg' />
           )}
           <Button
-            variant='outlined'
-            component='label'
-            fullWidth
-            sx={{
-              height: "40px",
-              fontSize: "16px",
-              padding: "0",
-              lineHeight: "1.2",
-              backgroundColor: theme.palette.colors.border,
-              "&:hover": {
-                backgroundColor: theme.palette.info.main,
-              },
-            }}
+            type='button'
+            variant='outline'
+            className='h-10 w-full rounded-none border-0 bg-border text-base hover:bg-info hover:text-info-foreground'
+            asChild
           >
-            {t("user.enterImage")}
-            <input
-              type='file'
-              hidden
-              accept='image/*'
-              onChange={handleFileChange}
-            />
+            <label className='cursor-pointer'>
+              {t("user.enterImage")}
+              <input
+                type='file'
+                hidden
+                accept='image/*'
+                onChange={handleFileChange}
+              />
+            </label>
           </Button>
         </>
       )}
-    </Card>
+    </div>
   );
 };
 

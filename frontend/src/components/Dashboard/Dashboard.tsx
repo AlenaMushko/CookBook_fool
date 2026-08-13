@@ -1,20 +1,20 @@
 import { useGetDishCategoriesQuery } from "@apis/dishAPI";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
-import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import {
   Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Button,
-} from "@mui/material";
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useAppStore } from "@stores/zustandStore";
 import { groupCategories } from "@utils/groupCategories";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router-dom";
 
-import theme from "../../../theme";
+const sidebarButtonClass =
+  "mb-2 h-auto w-full justify-start overflow-hidden truncate rounded-md bg-transparent px-3 py-2 font-sans text-sm font-semibold text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -24,13 +24,8 @@ const Dashboard = () => {
   const dishCategoriesData = dishCategories?.data || [];
   const groupedCategories = groupCategories(dishCategoriesData);
 
-  const [expanded, setExpanded] = useState<string | false>(false);
+  const [expanded, setExpanded] = useState<string>("");
   const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const handleChange =
-    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(isExpanded ? panel : false);
-    };
 
   const handleSubCategoryClick = (subcategory: {
     id: string;
@@ -49,48 +44,22 @@ const Dashboard = () => {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100vh",
-        position: "relative",
-        paddingTop: " 55px ",
-      }}
-    >
+    <div className='relative flex h-screen pt-[55px]'>
       <aside
-        style={{
-          width: isCollapsed ? "60px" : "250px",
-          transition: "width 0.3s ease",
-          background: theme.palette.colors.surface,
-          padding: isCollapsed ? " 20px 10px 10px 10px " : "20px",
-          boxShadow: "none",
-          borderRight: `1px solid ${theme.palette.colors.border}`,
-          overflow: "hidden",
-          position: "relative",
-        }}
+        className={cn(
+          "relative overflow-hidden border-r border-sidebar-border bg-sidebar transition-[width] duration-300 ease-in-out",
+          isCollapsed ? "w-[60px] p-2.5 pt-5" : "w-[250px] p-5"
+        )}
       >
         <Button
+          type='button'
           onClick={() => setIsCollapsed((prev) => !prev)}
-          sx={{
-            zIndex: 1300,
-            minWidth: "auto",
-            width: isCollapsed ? "40px" : "100%",
-            height: "40px",
-            borderRadius: isCollapsed ? "50%" : "8px",
-            marginBottom: "12px",
-            backgroundColor: theme.palette.colors.action,
-            color: theme.palette.common.white,
-            transition: "all 0.12s ease",
-            "&:hover": {
-              backgroundColor: theme.palette.colors.actionHover,
-            },
-          }}
-        >
-          {isCollapsed ? (
-            <UnfoldMoreIcon sx={{ transform: "rotate(90deg)" }} />
-          ) : (
-            <UnfoldLessIcon sx={{ transform: "rotate(90deg)" }} />
+          className={cn(
+            "z-[1300] mb-3 h-10 bg-primary text-primary-foreground transition-all duration-[120ms] ease-in-out hover:bg-primary-hover",
+            isCollapsed ? "w-10 rounded-full px-0" : "w-full rounded-lg"
           )}
+        >
+          !!!
         </Button>
 
         {!isCollapsed &&
@@ -102,19 +71,15 @@ const Dashboard = () => {
               return (
                 <Button
                   key={mainCategory}
-                  fullWidth
+                  type='button'
+                  variant='ghost'
                   onClick={() =>
                     handleCategoryClick({
                       id,
                       name: mainCategory,
                     })
                   }
-                  variant='sidebar'
-                  sx={{
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                  }}
+                  className={sidebarButtonClass}
                 >
                   {t(`categories.${mainCategory}`, mainCategory)}
                 </Button>
@@ -124,77 +89,50 @@ const Dashboard = () => {
             return (
               <Accordion
                 key={mainCategory}
-                expanded={expanded === mainCategory}
-                onChange={handleChange(mainCategory)}
-                sx={{
-                  marginBottom: "12px",
-                  borderRadius: "8px",
-                  transition: "all 0.3s ease",
-                  overflow: "hidden",
-                }}
+                type='single'
+                collapsible
+                value={expanded === mainCategory ? mainCategory : ""}
+                onValueChange={(value) => setExpanded(value)}
+                className='mb-3 overflow-hidden rounded-lg'
               >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls={`${mainCategory}-content`}
-                  id={`${mainCategory}-header`}
-                  sx={{
-                    justifyContent: "flex-start",
-                    backgroundColor: theme.palette.colors.surface,
-                    marginBottom: 0,
-                    borderRadius: "7px",
-                    transition: "all 0.12s ease",
-                    fontFamily: "'Manrope', sans-serif",
-                    fontWeight: 600,
-                    fontSize: "14px",
-                    color: theme.palette.text.primary,
-                    textTransform: "none",
-                    "&.Mui-expanded": {
-                      backgroundColor: theme.palette.colors.action,
-                      borderRadius: "7px 7px 0 0",
-                      color: theme.palette.common.white,
-                      fontWeight: 600,
-                    },
-                    "&:hover": {
-                      backgroundColor: theme.palette.colors.surfaceHover,
-                      color: theme.palette.text.primary,
-                    },
-                  }}
-                >
-                  {t(`categories.${mainCategory}`, mainCategory)}
-                </AccordionSummary>
-                <AccordionDetails
-                  sx={{
-                    padding: "8px 16px",
-                    background: theme.palette.colors.surface,
-                  }}
-                >
-                  {subCategories.map((subcategory) => (
-                    <Button
-                      key={subcategory.id}
-                      fullWidth
-                      onClick={() =>
-                        handleSubCategoryClick({
-                          id: subcategory.id,
-                          name: t(
-                            `categories.${mainCategory}-${subcategory.name}`,
-                            subcategory.name
-                          ),
-                        })
-                      }
-                      variant='sidebar'
-                    >
-                      {t(
-                        `categories.${mainCategory}-${subcategory.name}`,
-                        subcategory.name
-                      )}
-                    </Button>
-                  ))}
-                </AccordionDetails>
+                <AccordionItem value={mainCategory} className='border-none'>
+                  <AccordionTrigger
+                    className={cn(
+                      "rounded-md bg-sidebar px-3 py-2.5 font-sans text-sm font-semibold text-sidebar-foreground hover:bg-sidebar-accent hover:no-underline data-[state=open]:rounded-b-none data-[state=open]:bg-sidebar-primary data-[state=open]:text-sidebar-primary-foreground data-[state=open]:hover:bg-sidebar-primary"
+                    )}
+                  >
+                    {t(`categories.${mainCategory}`, mainCategory)}
+                  </AccordionTrigger>
+                  <AccordionContent className='bg-sidebar px-4 py-2 pb-2'>
+                    {subCategories.map((subcategory) => (
+                      <Button
+                        key={subcategory.id}
+                        type='button'
+                        variant='ghost'
+                        onClick={() =>
+                          handleSubCategoryClick({
+                            id: subcategory.id,
+                            name: t(
+                              `categories.${mainCategory}-${subcategory.name}`,
+                              subcategory.name
+                            ),
+                          })
+                        }
+                        className={sidebarButtonClass}
+                      >
+                        {t(
+                          `categories.${mainCategory}-${subcategory.name}`,
+                          subcategory.name
+                        )}
+                      </Button>
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
               </Accordion>
             );
           })}
       </aside>
-      <main style={{ flex: 1, padding: "1rem", overflowY: "auto" }}>
+      <main className='flex-1 overflow-y-auto p-4'>
         <Outlet />
       </main>
     </div>

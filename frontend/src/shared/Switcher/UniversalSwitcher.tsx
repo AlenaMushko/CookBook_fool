@@ -1,8 +1,6 @@
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Typography from "@mui/material/Typography";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import React from "react";
-
-import { Switcher } from "./LanguageSwitcherStyles";
 
 interface UniversalSwitcherProps {
   checked: boolean;
@@ -16,22 +14,18 @@ const UniversalSwitcher: React.FC<UniversalSwitcherProps> = ({
   label,
 }) => {
   return (
-    <FormControlLabel
-      control={
-        <Switcher
-          checked={checked}
-          onChange={onChange}
-          slotProps={{
-            input: { "aria-label": "universal switch" },
-          }}
-        />
-      }
-      label={
-        <Typography variant='body2' sx={{ fontWeight: "bold" }}>
-          {label}
-        </Typography>
-      }
-    />
+    <div className='flex items-center gap-2'>
+      <Switch
+        checked={checked}
+        onCheckedChange={(next) => {
+          onChange({
+            target: { checked: next },
+          } as React.ChangeEvent<HTMLInputElement>);
+        }}
+        aria-label='universal switch'
+      />
+      <Label className='text-sm font-bold'>{label}</Label>
+    </div>
   );
 };
 

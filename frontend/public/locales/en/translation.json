@@ -60,6 +60,9 @@
   "profile": "Profile",
   "logout": "Logout",
   "forgot_password": "Forgot password?",
+  "brand": {
+    "tagline": "Culinary book"
+  },
   "home": "Home",
   "dashboard": "Dashboard",
   "update": "Update",

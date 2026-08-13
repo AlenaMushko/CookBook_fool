@@ -1,5 +1,5 @@
 import { useGetDishByIdQuery } from "@apis/dishAPI";
-import { DishContent } from "@components/index";
+// import { DishContent } from "@components/index";
 import { AnimationWrap, NoFoundData } from "@shared/index";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -28,11 +28,12 @@ const DishPage = () => {
 
   return (
     <AnimationWrap>
-      {error ? (
+      <h1>DishPage</h1>
+      {/* {error ? (
         <NoFoundData text={getErrorMessage()} />
       ) : data ? (
         <DishContent selectedDish={data} />
-      ) : null}
+      ) : null} */}
     </AnimationWrap>
   );
 };

@@ -1,12 +1,23 @@
 import { useLogoutMutation } from "@api/apis";
 import { useGetUserByIdQuery } from "@apis/userAPI";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import CONFIG from "@config/config";
-import { Avatar, IconButton } from "@mui/material";
-import Box from "@mui/material/Box";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
 import { AppRoutes } from "@routing/appRoutes";
 import CustomModal from "@shared/CustomModal";
 import { useAppStore } from "@stores/zustandStore";
@@ -15,7 +26,6 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import theme from "../../../theme";
 import User from "../ModalContent/User/User";
 
 const AvatarMenu = () => {
@@ -28,26 +38,17 @@ const AvatarMenu = () => {
 
   const [logout] = useLogoutMutation();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
-
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   const handleLogout = async () => {
     await logout().unwrap();
     navigate(AppRoutes.HOME);
-    handleCloseUserMenu();
+    setMenuOpen(false);
   };
 
   const handleUserInfo = () => {
     setIsModalOpen(true);
-    handleCloseUserMenu();
+    setMenuOpen(false);
   };
 
   const settings = [
@@ -59,49 +60,50 @@ const AvatarMenu = () => {
     ? `${CONFIG.AWS_S3_ENDPOINT}/${CONFIG.AWS_S3_BUCKET_NAME}/${userData?.image}`
     : undefined;
 
+  const initials = `${userData?.lastName?.charAt(0) ?? ""} ${userData?.firstName?.charAt(0) ?? ""}`.trim();
+
   return (
     <>
-      <Box sx={{ flexGrow: 0, ml: "auto" }}>
-        <Tooltip title='Open settings'>
-          <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-            <Avatar
-              sx={{
-                bgcolor: theme.palette.secondary.light,
-              }}
-              alt={`${userData?.lastName?.charAt(0)} ${userData?.firstName?.charAt(0)}`}
-              src={avatar}
-            >
-              {userData?.image
-                ? null
-                : `${userData?.lastName?.charAt(0)} ${userData?.firstName?.charAt(0)}`}
-            </Avatar>
-          </IconButton>
-        </Tooltip>
-        <Menu
-          sx={{ mt: "50px" }}
-          id='menu-appbar'
-          anchorEl={anchorElUser}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          open={Boolean(anchorElUser)}
-          onClose={handleCloseUserMenu}
-        >
-          {settings.map((setting) => (
-            <MenuItem key={setting.label} onClick={setting.action}>
-              <Typography sx={{ textAlign: "center" }}>
+      <div className='ml-auto flex-none'>
+        <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='icon'
+                  className='rounded-full p-0'
+                  aria-label='Open settings'
+                >
+                  <Avatar>
+                    {avatar ? (
+                      <AvatarImage src={avatar} alt={initials} />
+                    ) : null}
+                    <AvatarFallback className='bg-secondary text-foreground'>
+                      {userData?.image ? null : initials}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+            </TooltipTrigger>
+            <TooltipContent side='bottom'>Open settings</TooltipContent>
+          </Tooltip>
+          <DropdownMenuContent align='end' className='min-w-36'>
+            {settings.map((setting) => (
+              <DropdownMenuItem
+                key={setting.label}
+                className='justify-center'
+                onSelect={() => {
+                  void setting.action();
+                }}
+              >
                 {setting.label}
-              </Typography>
-            </MenuItem>
-          ))}
-        </Menu>
-      </Box>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       {userData ? (
         <CustomModal
           open={isModalOpen}

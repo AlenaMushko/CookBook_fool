@@ -1,38 +1,46 @@
-import FormControlLabel from "@mui/material/FormControlLabel";
+import { cn } from "@/lib/utils";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 
-import { Switcher } from "./LanguageSwitcherStyles";
-
 const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
+  const isUk = i18n.language === "uk";
 
-  const [language, setLanguage] = React.useState<"EN" | "UK">(
-    i18n.language === "uk" ? "UK" : "EN"
-  );
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newLanguage = event.target.checked ? "UK" : "EN";
-    setLanguage(newLanguage);
-
-    i18n.changeLanguage(newLanguage === "UK" ? "uk" : "en");
+  const setLang = (next: "en" | "uk") => {
+    i18n.changeLanguage(next);
   };
 
   return (
-    <FormControlLabel
-      control={
-        <Switcher
-          checked={language === "UK"}
-          onChange={handleChange}
-          data-lang={language === "UK" ? "УКР" : "EN"}
-          slotProps={{
-            input: { "aria-label": "Language switch EN / УКР" },
-          }}
-        />
-      }
-      label=''
-      sx={{ m: 0 }}
-    />
+    <div
+      role='group'
+      aria-label='Language switch EN / УКР'
+      className='inline-flex h-[30px] w-[72px] overflow-hidden rounded-md border border-border bg-secondary'
+    >
+      <button
+        type='button'
+        onClick={() => setLang("en")}
+        className={cn(
+          "flex h-full w-1/2 items-center justify-center text-xs font-semibold transition-colors",
+          !isUk
+            ? "bg-primary text-primary-foreground"
+            : "bg-transparent text-muted-foreground hover:text-foreground"
+        )}
+      >
+        EN
+      </button>
+      <button
+        type='button'
+        onClick={() => setLang("uk")}
+        className={cn(
+          "flex h-full w-1/2 items-center justify-center text-xs font-semibold transition-colors",
+          isUk
+            ? "bg-primary text-primary-foreground"
+            : "bg-transparent text-muted-foreground hover:text-foreground"
+        )}
+      >
+        УКР
+      </button>
+    </div>
   );
 };
 

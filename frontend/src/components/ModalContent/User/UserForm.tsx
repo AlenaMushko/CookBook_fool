@@ -7,8 +7,7 @@ import {
 } from "@components/ModalContent/User/config";
 import { FIELDS_NAME_USER } from "@components/ModalContent/User/types";
 import { FIELDS_NAME_SIGN_UP } from "@components/SignUp/types";
-import { Button, FormControl, Grid } from "@mui/material";
-import Box from "@mui/material/Box";
+import { Button } from "@/components/ui/button";
 import CustomInput from "@shared/CustomInput";
 import ImageUpload from "@shared/ImageUpload/ImageUpload";
 import CustomPhoneInput from "@shared/PhoneInput";
@@ -16,8 +15,6 @@ import { getDeviceId } from "@utils/device";
 import { useFormik } from "formik";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-
-import theme from "../../../../theme";
 
 interface UserFormProps {
   userData: IUser;
@@ -75,23 +72,12 @@ const UserForm: React.FC<UserFormProps> = ({
   });
 
   return (
-    <FormControl
-      component='form'
+    <form
       onSubmit={formik.handleSubmit}
-      sx={{
-        width: { xs: "100%" },
-        p: { xs: 2, sm: 4 },
-        backgroundColor: theme.palette.primary.contrastText,
-        borderRadius: 2,
-        boxShadow: 3,
-      }}
+      className='w-full rounded-lg bg-card p-4 shadow-md sm:p-8'
     >
-      <Grid container>
-        <Grid
-          sx={{
-            margin: "0 0 20px 0",
-          }}
-        >
+      <div className='flex flex-col md:flex-row'>
+        <div className='mb-5'>
           <CustomInput
             formik={formik}
             isInvalid={
@@ -143,14 +129,9 @@ const UserForm: React.FC<UserFormProps> = ({
             formikErrors={formik.errors}
             setFieldValue={formik.setFieldValue}
           />
-        </Grid>
+        </div>
 
-        <Grid
-          sx={{
-            margin: { xs: "auto", md: "0 0 0 40px" },
-            marginBottom: { xs: "20px", md: "0 " },
-          }}
-        >
+        <div className='mx-auto mb-5 md:mx-0 md:mb-0 md:ml-10'>
           <ImageUpload
             userAvatar={userData.image}
             setSelectedFile={setSelectedFile}
@@ -158,43 +139,29 @@ const UserForm: React.FC<UserFormProps> = ({
             setFieldValue={formik.setFieldValue}
             refetchUser={refetchUser}
           />
-        </Grid>
-      </Grid>
+        </div>
+      </div>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <div className='flex justify-between'>
+        <div className='flex justify-end'>
           <Button
             onClick={() => setIsFormOpen(false)}
             type='button'
-            variant='contained'
-            color='primary'
-            sx={{
-              backgroundColor: theme.palette.secondary.light,
-              "&:hover": {
-                backgroundColor: theme.palette.secondary.main,
-              },
-            }}
+            className='bg-brand-soft text-foreground hover:bg-brand hover:text-brand-foreground'
           >
             {t("goToProfile")}
           </Button>
-        </Box>
-        <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+        </div>
+        <div className='flex justify-start'>
           <Button
             type='submit'
-            variant='contained'
-            color='primary'
-            sx={{
-              backgroundColor: theme.palette.primary.dark,
-              "&:hover": {
-                backgroundColor: theme.palette.colors.actionHover,
-              },
-            }}
+            className='bg-primary text-primary-foreground hover:bg-primary-hover'
           >
             {t("update")}
           </Button>
-        </Box>
-      </Box>
-    </FormControl>
+        </div>
+      </div>
+    </form>
   );
 };
 

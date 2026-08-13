@@ -1,16 +1,9 @@
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import {
-  FormControl,
-  FormHelperText,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-} from "@mui/material";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import { FormikProps } from "formik";
 import React from "react";
-
-import theme from "../../theme";
 
 export interface CustomInputProps {
   formik: FormikProps<any>;
@@ -48,14 +41,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
   placeholder = "",
   isRequired,
   h,
-  fontWeight = 700,
-  fontSize = "1rem",
   maxLength = 60,
   onHandleChange,
   onHandleBlur,
   value,
   pattern,
-  background = "inherit",
   currencyIcon,
   password = false,
   setShow,
@@ -83,105 +73,73 @@ const CustomInput: React.FC<CustomInputProps> = ({
     }
   };
 
+  const inputValue = value !== undefined ? value : formik.values[name];
+  const errorText = isInvalid ? (formik.errors[name] as string) : helpText;
+
   return (
-    <FormControl
-      fullWidth
-      variant='outlined'
-      error={isInvalid}
-      required={isRequired}
-      sx={{
-        position: "relative",
-        background,
-        mb: `${mb}px`,
-        "& .MuiOutlinedInput-root": {
-          "& fieldset": {
-            borderWidth: "1px",
-            borderColor: isInvalid ? "red" : theme.palette.secondary.dark,
-          },
-          "&.Mui-focused fieldset": {
-            borderColor: theme.palette.secondary.light,
-          },
-          "&:hover fieldset": {
-            borderColor: isInvalid ? "red" : theme.palette.secondary.light,
-          },
-        },
-      }}
-    >
+    <div className='relative w-full' style={{ marginBottom: mb }}>
       {label && (
-        <InputLabel
+        <Label
           htmlFor={name}
-          sx={{
-            fontWeight,
-            fontSize,
-            "&.Mui-focused": {
-              color: theme.palette.secondary.light,
-            },
-            "& .MuiFormLabel-asterisk": {
-              color: "red",
-            },
-            transform: "translate(14px, 14px) scale(1)",
-            "&.MuiInputLabel-shrink": {
-              transform: "translate(14px, -6px) scale(0.75)",
-              backgroundColor: theme.palette.primary.contrastText,
-              padding: "0 4px",
-            },
-          }}
+          className='mb-1.5 text-xs font-semibold text-foreground'
         >
           {label}
-        </InputLabel>
+          {isRequired ? <span className='ml-0.5 text-destructive'>*</span> : null}
+        </Label>
       )}
-      <OutlinedInput
-        id={name}
-        name={name}
-        type={password && setShow ? (show ? "text" : "password") : type}
-        value={value !== undefined ? value : formik.values[name]}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        placeholder={placeholder}
-        inputProps={{ maxLength }}
-        startAdornment={
-          currencyIcon && (
-            <InputAdornment position='start'>{currencyIcon}</InputAdornment>
-          )
-        }
-        endAdornment={
-          password &&
-          setShow && (
-            <InputAdornment position='end'>
-              <IconButton
-                onClick={() => setShow(!show)}
-                edge='end'
-                aria-label='toggle password visibility'
-              >
-                {!show ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          )
-        }
-        sx={{
-          height: h,
-          fontWeight: "normal",
-          fontSize: "0.875rem",
-        }}
-      />
-      {!isInvalid ? (
-        helpText && (
-          <FormHelperText sx={{ fontSize: "0.75rem", marginTop: 1 }}>
-            {helpText}
-          </FormHelperText>
-        )
-      ) : (
-        <FormHelperText
-          sx={{
-            fontSize: "0.75rem",
-            marginTop: 1,
-            position: formErrorPosition || "static",
-          }}
+      <div className='relative'>
+        {currencyIcon ? (
+          <span className='pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground'>
+            {currencyIcon}
+          </span>
+        ) : null}
+        <Input
+          id={name}
+          name={name}
+          type={password && setShow ? (show ? "text" : "password") : type}
+          value={inputValue}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          placeholder={placeholder}
+          maxLength={maxLength}
+          aria-invalid={Boolean(isInvalid)}
+          className={cn(
+            "h-11 rounded-md border-border bg-card text-sm text-foreground",
+            "placeholder:text-subtle",
+            "hover:border-primary-muted",
+            "focus-visible:border-primary focus-visible:ring-primary/30",
+            currencyIcon && "pl-8",
+            password && setShow && "pr-10",
+            isInvalid &&
+              "border-destructive focus-visible:border-destructive focus-visible:ring-destructive/20"
+          )}
+          style={h ? { height: h } : undefined}
+        />
+        {password && setShow ? (
+          <Button
+            type='button'
+            variant='ghost'
+            size='icon-sm'
+            className='absolute top-1/2 right-1.5 -translate-y-1/2 text-muted-foreground'
+            onClick={() => setShow(!show)}
+            aria-label='toggle password visibility'
+          >
+            !!!
+          </Button>
+        ) : null}
+      </div>
+      {errorText ? (
+        <p
+          className={cn(
+            "mt-1 text-xs",
+            isInvalid ? "text-destructive" : "text-muted-foreground",
+            formErrorPosition === "absolute" && "absolute"
+          )}
         >
-          {isInvalid ? (formik.errors[name] as string) : helpText}
-        </FormHelperText>
-      )}
-    </FormControl>
+          {errorText}
+        </p>
+      ) : null}
+    </div>
   );
 };
 

@@ -1,22 +1,19 @@
 import { useSignInMutation } from "@api/apis";
+import { Button } from "@/components/ui/button";
 import {
   getInitialValuesSignIn,
   getValidationSchemaSignIn,
 } from "@components/SignIn/config";
 import { FIELDS_NAME_SIGN_IN } from "@components/SignIn/types";
 import { FIELDS_NAME_SIGN_UP } from "@components/SignUp/types";
-import { Button, FormControl, Link, Typography } from "@mui/material";
-import Box from "@mui/material/Box";
 import { AppRoutes } from "@routing/appRoutes";
 import CustomInput from "@shared/CustomInput";
 import { useAppStore } from "@stores/zustandStore";
 import { getDeviceId } from "@utils/device";
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-
-import theme from "../../../theme";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const { t } = useTranslation();
@@ -45,41 +42,14 @@ const SignIn = () => {
   });
 
   return (
-    <FormControl
-      component='form'
+    <form
       onSubmit={formik.handleSubmit}
-      sx={{
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: theme.palette.colors.bg,
-        px: 2,
-        margin: "0 auto",
-      }}
+      className='mx-auto flex h-screen w-screen items-center justify-center bg-background px-2'
     >
-      <Box
-        sx={{
-          width: { xs: "97%", sm: 400 },
-          p: { xs: 2, sm: 4 },
-          backgroundColor: theme.palette.primary.contrastText,
-          borderRadius: 2,
-          boxShadow: theme.palette.shadow.card,
-        }}
-      >
-        <Typography
-          variant='h3'
-          component='h1'
-          sx={{
-            textAlign: "center",
-            mb: 3,
-            color: theme.palette.text.primary,
-            fontSize: { xs: "2rem", md: "2.5rem" },
-          }}
-        >
+      <div className='w-[97%] rounded-lg bg-card p-4 shadow-[var(--shadow-card)] sm:w-[400px] sm:p-8'>
+        <h1 className='mb-6 text-center text-[2rem] text-foreground md:text-[2.5rem]'>
           {t("login")}
-        </Typography>
+        </h1>
 
         <CustomInput
           formik={formik}
@@ -129,34 +99,20 @@ const SignIn = () => {
         />
 
         <Link
-          href={AppRoutes.FORGOT_PASSWORD}
-          underline='hover'
-          sx={{
-            display: "block",
-            textAlign: "right",
-            mb: 4,
-            color: theme.palette.text.primary,
-          }}
+          to={AppRoutes.FORGOT_PASSWORD}
+          className='mb-8 block text-right text-foreground underline-offset-4 hover:underline'
         >
           {t("forgot_password")}
         </Link>
 
         <Button
           type='submit'
-          variant='contained'
-          color='primary'
-          fullWidth
-          sx={{
-            backgroundColor: theme.palette.primary.dark,
-            "&:hover": {
-              backgroundColor: theme.palette.colors.actionHover,
-            },
-          }}
+          className='w-full bg-primary text-primary-foreground hover:bg-primary-hover'
         >
           {t("login")}
         </Button>
-      </Box>
-    </FormControl>
+      </div>
+    </form>
   );
 };
 

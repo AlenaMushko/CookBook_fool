@@ -1,20 +1,18 @@
 import { useSignUpMutation } from "@api/apis";
 import { ICreateUserReq } from "@apiTypes/auth.types";
+import { Button } from "@/components/ui/button";
 import {
   getInitialValuesSignUp,
   getValidationSchemaSignUp,
 } from "@components/SignUp/config";
 import { FIELDS_NAME_SIGN_UP } from "@components/SignUp/types";
-import { Button, FormControl, Typography } from "@mui/material";
 import { AppRoutes } from "@routing/appRoutes";
 import CustomInput from "@shared/CustomInput";
 import { getDeviceId } from "@utils/device";
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-
-import theme from "../../../theme";
 
 const SignUp = () => {
   const { t } = useTranslation();
@@ -49,40 +47,14 @@ const SignUp = () => {
   });
 
   return (
-    <FormControl
-      component='form'
+    <form
       onSubmit={formik.handleSubmit}
-      sx={{
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: theme.palette.colors.bg,
-        px: 2,
-      }}
+      className='flex h-screen w-screen items-center justify-center bg-background px-2'
     >
-      <FormControl
-        sx={{
-          width: { xs: "97%", sm: 400, md: 500 },
-          p: { xs: 2, sm: 4 },
-          backgroundColor: theme.palette.primary.contrastText,
-          borderRadius: 2,
-          boxShadow: theme.palette.shadow.card,
-        }}
-      >
-        <Typography
-          variant='h3'
-          component='h1'
-          sx={{
-            textAlign: "center",
-            mb: 3,
-            color: theme.palette.text.primary,
-            fontSize: { xs: "2rem", md: "2.5rem" },
-          }}
-        >
+      <div className='w-[97%] rounded-lg bg-card p-4 shadow-[var(--shadow-card)] sm:w-[400px] sm:p-8 md:w-[500px]'>
+        <h1 className='mb-6 text-center text-[2rem] text-foreground md:text-[2.5rem]'>
           {t("signup")}
-        </Typography>
+        </h1>
 
         <CustomInput
           formik={formik}
@@ -201,20 +173,12 @@ const SignUp = () => {
 
         <Button
           type='submit'
-          variant='contained'
-          color='primary'
-          fullWidth
-          sx={{
-            backgroundColor: theme.palette.primary.dark,
-            "&:hover": {
-              backgroundColor: theme.palette.colors.actionHover,
-            },
-          }}
+          className='w-full bg-primary text-primary-foreground hover:bg-primary-hover'
         >
           {t("signup")}
         </Button>
-      </FormControl>
-    </FormControl>
+      </div>
+    </form>
   );
 };
 

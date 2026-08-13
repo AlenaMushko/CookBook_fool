@@ -1,16 +1,13 @@
 import { IUser } from "@apiTypes/user.types";
 import UserForm from "@components/ModalContent/User/UserForm";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
 import CONFIG from "@config/config";
-import { Button } from "@mui/material";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-
-import theme from "../../../../theme";
 
 interface UserProps {
   userData: IUser;
@@ -37,103 +34,43 @@ const User: React.FC<UserProps> = ({ userData, refetchUser }) => {
     />
   ) : (
     <>
-      <Card>
+      <Card className='gap-0 border-border bg-card py-0'>
         {userData?.image ? (
-          <CardMedia
-            component='img'
-            height='140'
-            image={avatar}
+          <img
+            src={avatar}
             alt={`${userData?.lastName?.charAt(0)} ${userData?.firstName?.charAt(0)}`}
+            className='h-[140px] w-full object-cover'
           />
         ) : null}
-        <CardContent>
-          <Typography
-            variant='h5'
-            component='h5'
-            sx={{ color: theme.palette.text.primary }}
-          >
+        <CardContent className='pt-4'>
+          <h5 className='font-serif text-xl text-foreground'>
             {userData?.lastName} {userData?.firstName}
-          </Typography>
-          <Box
-            sx={{
-              mt: "16px",
-              display: "flex",
-              gap: "16px",
-              alignItems: "baseline",
-            }}
-          >
-            <Typography
-              variant='h6'
-              component='h5'
-              sx={{
-                color: theme.palette.text.primary,
-                fontSize: "1.2em",
-              }}
-            >
-              Email:
-            </Typography>
-            <Typography
-              variant='body1'
-              component='h5'
-              sx={{
-                color: theme.palette.text.primary,
-                fontSize: "1.2em",
-              }}
-            >
-              {userData?.email}
-            </Typography>
-          </Box>
+          </h5>
+          <div className='mt-4 flex items-baseline gap-4'>
+            <h5 className='text-[1.2em] font-semibold text-foreground'>Email:</h5>
+            <p className='text-[1.2em] text-foreground'>{userData?.email}</p>
+          </div>
 
           {userData?.phone ? (
-            <Box
-              sx={{
-                mt: "16px",
-                display: "flex",
-                gap: "16px",
-                alignItems: "baseline",
-              }}
-            >
-              <Typography
-                variant='h6'
-                component='h5'
-                sx={{
-                  color: theme.palette.text.primary,
-                  fontSize: "1.2em",
-                }}
-              >
+            <div className='mt-4 flex items-baseline gap-4'>
+              <h5 className='text-[1.2em] font-semibold text-foreground'>
                 Phone:
-              </Typography>
-              <Typography
-                variant='body1'
-                component='h5'
-                sx={{
-                  color: theme.palette.text.primary,
-                  fontSize: "1.2em",
-                }}
-              >
-                {userData?.phone}
-              </Typography>
-            </Box>
+              </h5>
+              <p className='text-[1.2em] text-foreground'>{userData?.phone}</p>
+            </div>
           ) : null}
         </CardContent>
       </Card>
 
-      <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
+      <div className='mt-4 flex justify-end'>
         <Button
           onClick={handleUserUpdate}
           type='button'
-          variant='contained'
-          color='primary'
-          sx={{
-            backgroundColor: theme.palette.secondary.light,
-            "&:hover": {
-              backgroundColor: theme.palette.secondary.main,
-            },
-          }}
+          className='bg-brand-soft text-foreground hover:bg-brand hover:text-brand-foreground'
         >
           {t("update")}
         </Button>
-      </Box>
+      </div>
     </>
   );
 };

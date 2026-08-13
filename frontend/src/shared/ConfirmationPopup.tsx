@@ -1,15 +1,13 @@
+import { Button } from "@/components/ui/button";
 import {
-  Button,
   Dialog,
-  DialogActions,
   DialogContent,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
-  Typography,
-} from "@mui/material";
+} from "@/components/ui/dialog";
 import React from "react";
 import { useTranslation } from "react-i18next";
-
-import theme from "../../theme";
 
 interface IConfirmationPopup {
   title?: string;
@@ -35,73 +33,48 @@ const ConfirmationPopup: React.FC<IConfirmationPopup> = ({
   const { t } = useTranslation();
 
   return (
-    <Dialog open={isOpenModal} onClose={onClose} maxWidth='sm' fullWidth>
-      {title && (
-        <DialogTitle
-          sx={{ fontSize: "1.5rem", fontWeight: "bold", textAlign: "center" }}
-        >
-          {title}
-        </DialogTitle>
-      )}
-      <DialogContent>
+    <Dialog open={isOpenModal} onOpenChange={(next) => !next && onClose()}>
+      <DialogContent className='max-w-sm gap-4 rounded-xl border-border bg-card sm:max-w-md'>
+        {title ? (
+          <DialogHeader>
+            <DialogTitle className='text-center text-xl font-bold'>
+              {title}
+            </DialogTitle>
+          </DialogHeader>
+        ) : null}
+
         {(message || highlightedMessage) && (
-          <Typography
-            sx={{ fontSize: "1rem", textAlign: "center", marginBottom: "10px" }}
-          >
-            {message && <span>{message} </span>}
-            {highlightedMessage && (
-              <span style={{ fontWeight: "bold", color: "#1976d2" }}>
-                {highlightedMessage}
-              </span>
-            )}
+          <p className='text-center text-base text-foreground'>
+            {message ? <span>{message} </span> : null}
+            {highlightedMessage ? (
+              <span className='font-bold text-info'>{highlightedMessage}</span>
+            ) : null}
             {secondaryMessage ? <span> {secondaryMessage}</span> : "?"}
-          </Typography>
+          </p>
         )}
-        {additionalText && (
-          <Typography
-            sx={{
-              fontSize: "0.875rem",
-              color: "#d32f2f",
-              textAlign: "center",
-              marginTop: "10px",
-            }}
+
+        {additionalText ? (
+          <p className='text-center text-sm text-destructive'>{additionalText}</p>
+        ) : null}
+
+        <DialogFooter className='flex w-full flex-row gap-2 sm:justify-center'>
+          <Button
+            type='button'
+            variant='secondary'
+            className='flex-1 bg-brand-soft text-foreground hover:bg-brand hover:text-brand-foreground'
+            onClick={onClose}
           >
-            {additionalText}
-          </Typography>
-        )}
+            {t("cancel")}
+          </Button>
+          <Button
+            type='button'
+            className='flex-1 bg-primary hover:bg-primary-hover'
+            onClick={onConfirmClick}
+          >
+            {t("confirm")}
+          </Button>
+        </DialogFooter>
       </DialogContent>
-      <DialogActions sx={{ justifyContent: "center", paddingBottom: "16px" }}>
-        <Button
-          onClick={onClose}
-          type='button'
-          variant='contained'
-          color='primary'
-          fullWidth
-          sx={{
-            backgroundColor: theme.palette.secondary.light,
-            "&:hover": {
-              backgroundColor: theme.palette.secondary.main,
-            },
-          }}
-        >
-          {t("cancel")}
-        </Button>
-        <Button
-          onClick={onConfirmClick}
-          type='button'
-          variant='contained'
-          color='primary'
-          fullWidth
-          sx={{
-            backgroundColor: theme.palette.primary.light,
-            "&:hover": {
-              backgroundColor: theme.palette?.primary.dark,
-            },
-          }}
-        >
-          {t("confirm")}
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };

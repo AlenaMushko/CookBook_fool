@@ -1,5 +1,10 @@
-import CloseIcon from "@mui/icons-material/Close";
-import { Box, IconButton, Modal, Typography } from "@mui/material";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import React from "react";
 
 interface CustomModalProps {
@@ -16,46 +21,33 @@ const CustomModal: React.FC<CustomModalProps> = ({
   children,
 }) => {
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby='custom-modal-title'
-      aria-describedby='custom-modal-description'
-      sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-    >
-      <Box
-        sx={{
-          width: { xs: "90%", sm: 600, md: 900 },
-          bgcolor: "background.paper",
-          borderRadius: 2,
-          boxShadow: 24,
-          p: 3,
-          position: "relative",
-        }}
+    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
+      <DialogContent
+        showCloseButton={false}
+        className='w-[90%] max-w-[600px] gap-0 rounded-xl border-border bg-card p-6 shadow-[var(--shadow-modal)] md:max-w-[900px]'
       >
+        <Button
+          type='button'
+          variant='ghost'
+          size='icon-sm'
+          className='absolute top-3 right-3'
+          onClick={onClose}
+          aria-label='Close'
+        >
+          !!!
+        </Button>
+
         {title ? (
-          <Typography
-            variant='h4'
-            component='h2'
-            sx={{ mb: 2, textAlign: "center" }}
-          >
-            {title}
-          </Typography>
+          <DialogHeader className='mb-4'>
+            <DialogTitle className='text-center font-serif text-lg font-normal'>
+              {title}
+            </DialogTitle>
+          </DialogHeader>
         ) : null}
 
-        <IconButton
-          onClick={onClose}
-          sx={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-        <Box id='custom-modal-description'>{children}</Box>
-      </Box>
-    </Modal>
+        <div>{children}</div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

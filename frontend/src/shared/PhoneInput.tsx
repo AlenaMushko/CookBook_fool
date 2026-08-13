@@ -1,11 +1,10 @@
 import "react-phone-input-2/lib/style.css";
 
-import { FormControl, FormHelperText, InputLabel } from "@mui/material";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import { FormikErrors, FormikTouched, getIn } from "formik";
 import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
-
-import theme from "../../theme";
 
 interface CustomPhoneInputProps {
   label: string;
@@ -43,103 +42,63 @@ const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
   const touched = getIn(formikTouched, fieldName);
   const error = getIn(formikErrors, fieldName);
   const isError = touched && error;
+  const borderColor = isError
+    ? "var(--destructive)"
+    : isFocused
+      ? "var(--brand-soft)"
+      : "var(--brand-pressed)";
 
   return (
-    <FormControl
-      fullWidth
-      variant='outlined'
-      error={!!isError}
-      required={isRequired}
-      sx={{
-        position: "relative",
-        background: "inherit",
-        mb: `${mb}px`,
-      }}
-    >
-      {label && (
-        <InputLabel
-          shrink
+    <div className='relative w-full' style={{ marginBottom: mb }}>
+      {label ? (
+        <Label
           htmlFor={fieldName}
-          sx={{
-            fontWeight: 700,
-            fontSize: "1rem",
-            "&.Mui-focused": {
-              color: theme.palette.secondary.light,
-            },
-            "& .MuiFormLabel-asterisk": {
-              color: "red",
-            },
-            transform: "translate(14px, 14px) scale(1)",
-            "&.MuiInputLabel-shrink": {
-              transform: "translate(14px, -6px) scale(0.75)",
-              backgroundColor: theme.palette.primary.contrastText,
-              padding: "0 4px",
-            },
-          }}
+          className='mb-1.5 text-xs font-semibold text-foreground'
         >
           {label}
-        </InputLabel>
-      )}
+          {isRequired ? <span className='ml-0.5 text-destructive'>*</span> : null}
+        </Label>
+      ) : null}
       <PhoneInput
         country={defaultCountry}
         value={value}
         onChange={(phone) => setFieldValue(fieldName, `+${phone}`)}
         inputStyle={{
           width: "100%",
-          height: "54px",
+          height: "44px",
           fontSize: "14px",
-          borderRadius: "4px",
-          border: isFocused
-            ? `1px solid ${theme.palette.secondary.light}`
-            : `1px solid ${theme.palette.secondary.dark}`,
+          borderRadius: "7px",
+          border: `1px solid ${borderColor}`,
           paddingLeft: "48px",
+          backgroundColor: "var(--card)",
+          color: "var(--foreground)",
         }}
         containerStyle={{
-          borderRadius: "4px",
+          borderRadius: "7px",
         }}
         inputProps={{
           name: fieldName,
           required: isRequired,
           disabled: disabled,
+          id: fieldName,
         }}
         buttonStyle={{
           border: "none",
-          borderLeft: `1px solid ${
-            isFocused
-              ? theme.palette.secondary.light
-              : theme.palette.secondary.dark
-          }`,
-          borderRight: `1px solid ${
-            isFocused ? "none" : theme.palette.secondary.dark
-          }`,
-          borderTop: `1px solid ${
-            isFocused
-              ? theme.palette.secondary.light
-              : theme.palette.secondary.dark
-          }`,
-          borderBottom: `1px solid ${
-            isFocused
-              ? theme.palette.secondary.light
-              : theme.palette.secondary.dark
-          }`,
-          borderRadius: "4px 0 0 4px",
+          borderLeft: `1px solid ${borderColor}`,
+          borderRight: `1px solid ${borderColor}`,
+          borderTop: `1px solid ${borderColor}`,
+          borderBottom: `1px solid ${borderColor}`,
+          borderRadius: "7px 0 0 7px",
+          backgroundColor: "var(--secondary)",
         }}
         disabled={disabled}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       />
-      {isError && (
-        <FormHelperText
-          sx={{
-            fontSize: "0.75rem",
-            marginTop: 1,
-            position: "static",
-          }}
-        >
-          {error}
-        </FormHelperText>
-      )}
-    </FormControl>
+      {isError ? (
+        <p className={cn("mt-1 text-xs text-destructive")}>{error}</p>
+      ) : null}
+    </div>
   );
 };
 

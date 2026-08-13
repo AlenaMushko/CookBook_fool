@@ -1,24 +1,19 @@
 import AvatarMenu from "@components/Header/AvatarMenu";
-import MenuIcon from "@mui/icons-material/Menu";
-import { IconButton } from "@mui/material";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 import { AppRoutes } from "@routing/appRoutes";
 import { LanguageSwitcher } from "@shared/index";
 import { useAppStore } from "@stores/zustandStore";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router-dom";
-
-import logo from "/logo.svg";
-
-import theme from "../../../theme";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
@@ -41,169 +36,91 @@ const Header: React.FC = () => {
 
   const pages = isAuthenticated ? pagesUser : pagesAuth;
 
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
-
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleNavigate = (route: string) => {
     navigate(route);
-    handleCloseNavMenu();
+    setMobileOpen(false);
   };
 
   return (
-    <>
-      <AppBar
-        position='absolute'
-        sx={{
-          t: 0,
-          l: 0,
-          width: "100vw",
-          backgroundColor: theme.palette.colors.card,
-          color: theme.palette.text.primary,
-          borderBottom: `1px solid ${theme.palette.colors.border}`,
-          px: "16px",
-        }}
-      >
-        <Container>
-          <Toolbar disableGutters>
-            {/*mobile */}
-            <Box
-              sx={{
-                mr: 2,
-                display: { xs: "flex", sm: "none" },
-                flexGrow: 1,
-                color: "inherit",
-              }}
-            >
-              <img
-                src={logo}
-                alt='Logo'
-                style={{
-                  height: "40px",
-                  marginRight: "8px",
-                }}
-              />
-            </Box>
-
-            <Box sx={{ flexGrow: 1, display: { xs: "flex", sm: "none" } }}>
-              <IconButton
-                size='large'
-                aria-label='account of current user'
-                aria-controls='menu-appbar'
-                aria-haspopup='true'
-                onClick={handleOpenNavMenu}
-                color='inherit'
+    <header className='absolute top-0 left-0 z-40 w-screen border-b border-border bg-card px-4 text-foreground'>
+      <div className='mx-auto flex h-14 max-w-7xl items-center'>
+        {/* Mobile menu */}
+        <div className='flex flex-1 sm:hidden'>
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild>
+              <Button
+                type='button'
+                variant='ghost'
+                size='icon-lg'
+                aria-label='Open navigation menu'
+                className='text-foreground'
               >
-                <MenuIcon sx={{ fontSize: "30px" }} />
-              </IconButton>
-              <Menu
-                id='menu-appbar'
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
-                sx={{ display: { xs: "block", sm: "none" } }}
-              >
-                {pages.map((page) => (
-                  <MenuItem
-                    key={page.label}
-                    onClick={() => handleNavigate(page.route)}
-                  >
-                    <Typography sx={{ textAlign: "center" }}>
-                      {page.label}
-                    </Typography>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
-
-            {/*desktop */}
-            <Box
-              sx={{
-                display: { xs: "none", sm: "flex" },
-                color: "inherit",
-              }}
-            >
-              <img
-                src={logo}
-                alt='Logo'
-                style={{
-                  height: "50px",
-                  marginRight: "8px",
-                  borderRadius: "4px",
-                }}
-              />
-            </Box>
-
-            <Box
-              sx={{
-                flexGrow: 0,
-                ml: "auto",
-                display: "flex",
-                gap: "2vw",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Box
-                sx={{
-                  display: { xs: "none", sm: "flex" },
-                  flexGrow: 0,
-                  gap: "2vw",
-                  ml: "auto",
-                  alignItems: "center",
-                }}
-              >
+                !!!
+              </Button>
+            </SheetTrigger>
+            <SheetContent side='left' className='w-64 bg-card p-0'>
+              <SheetHeader className='border-b border-border'>
+                <SheetTitle className='font-serif text-[19px] font-normal italic text-brand'>
+                  Cookbook
+                </SheetTitle>
+              </SheetHeader>
+              <nav className='flex flex-col gap-1 p-4'>
                 {pages.map((page) => (
                   <Button
-                    variant='text'
                     key={page.label}
+                    type='button'
+                    variant='ghost'
+                    className={cn(
+                      "justify-start",
+                      isActive(page.route)
+                        ? "bg-primary text-primary-foreground hover:bg-primary-hover hover:text-primary-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    )}
                     onClick={() => handleNavigate(page.route)}
-                    sx={{
-                      color: isActive(page.route)
-                        ? theme.palette.common.white
-                        : theme.palette.text.secondary,
-                      backgroundColor: isActive(page.route)
-                        ? theme.palette.colors.action
-                        : "transparent",
-                      "&:hover": {
-                        backgroundColor: isActive(page.route)
-                          ? theme.palette.colors.actionHover
-                          : theme.palette.colors.surface,
-                        color: isActive(page.route)
-                          ? theme.palette.common.white
-                          : theme.palette.text.primary,
-                      },
-                    }}
                   >
                     {page.label}
                   </Button>
                 ))}
-              </Box>
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
 
-              <LanguageSwitcher />
+        <RouterLink
+          to={AppRoutes.HOME}
+          aria-label='Cookbook home'
+          className='flex-1 font-serif text-[19px] leading-[1.1] font-normal italic text-brand no-underline transition-colors duration-[120ms] ease-in hover:text-brand-pressed sm:mr-[22px] sm:flex-none'
+        >
+          Cookbook
+        </RouterLink>
 
-              {isAuthenticated ? <AvatarMenu /> : null}
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
-    </>
+        <div className='ml-auto flex items-center justify-center gap-[2vw]'>
+          <nav className='ml-auto hidden items-center gap-[2vw] sm:flex'>
+            {pages.map((page) => (
+              <Button
+                key={page.label}
+                type='button'
+                variant='ghost'
+                onClick={() => handleNavigate(page.route)}
+                className={cn(
+                  isActive(page.route)
+                    ? "bg-primary text-primary-foreground hover:bg-primary-hover hover:text-primary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                {page.label}
+              </Button>
+            ))}
+          </nav>
+
+          <LanguageSwitcher />
+
+          {isAuthenticated ? <AvatarMenu /> : null}
+        </div>
+      </div>
+    </header>
   );
 };
 

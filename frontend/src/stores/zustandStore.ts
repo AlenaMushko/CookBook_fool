@@ -1,12 +1,13 @@
 import { LOCAL_STORAGE } from "@constants/localStorage";
-import { AlertColor } from "@mui/material";
 import { LocalStorageUtils } from "@utils/LocalStorage";
 import { create } from "zustand";
+
+import type { ToastType } from "@shared/Toast";
 
 interface ToastState {
   open: boolean;
   message: string;
-  type: AlertColor;
+  type: ToastType;
 }
 
 interface AppState {

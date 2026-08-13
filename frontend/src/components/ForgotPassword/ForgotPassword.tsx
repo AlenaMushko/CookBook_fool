@@ -1,16 +1,13 @@
 import { useForgotPasswordMutation } from "@api/apis";
+import { Button } from "@/components/ui/button";
 import { FIELDS_NAME_SIGN_IN } from "@components/SignIn/types";
 import { EMAIL_REGEX } from "@constants/regex";
 import { TEXT } from "@messages/validation";
-import { Box, Button, FormControl, Typography } from "@mui/material";
 import CustomInput from "@shared/CustomInput";
 import { showToast } from "@shared/Toast";
 import { useFormik } from "formik";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
-
-import theme from "../../../theme";
 
 const ForgotPassword = () => {
   const { t } = useTranslation();
@@ -36,41 +33,14 @@ const ForgotPassword = () => {
   });
 
   return (
-    <FormControl
-      component='form'
+    <form
       onSubmit={formik.handleSubmit}
-      sx={{
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: theme.palette.colors.bg,
-        px: 2,
-        margin: "0 auto",
-      }}
+      className='mx-auto flex h-screen w-screen items-center justify-center bg-background px-2'
     >
-      <Box
-        sx={{
-          width: { xs: "97%", sm: 400 },
-          p: { xs: 2, sm: 4 },
-          backgroundColor: theme.palette.primary.contrastText,
-          borderRadius: 2,
-          boxShadow: theme.palette.shadow.card,
-        }}
-      >
-        <Typography
-          variant='h3'
-          component='h1'
-          sx={{
-            textAlign: "center",
-            mb: 3,
-            color: theme.palette.text.primary,
-            fontSize: { xs: "2rem", md: "2.5rem" },
-          }}
-        >
+      <div className='w-[97%] rounded-lg bg-card p-4 shadow-[var(--shadow-card)] sm:w-[400px] sm:p-8'>
+        <h1 className='mb-6 text-center text-[2rem] text-foreground md:text-[2.5rem]'>
           {t("login")}
-        </Typography>
+        </h1>
 
         <CustomInput
           formik={formik}
@@ -96,20 +66,12 @@ const ForgotPassword = () => {
 
         <Button
           type='submit'
-          variant='contained'
-          color='primary'
-          fullWidth
-          sx={{
-            backgroundColor: theme.palette.primary.dark,
-            "&:hover": {
-              backgroundColor: theme.palette.colors.actionHover,
-            },
-          }}
+          className='w-full bg-primary text-primary-foreground hover:bg-primary-hover'
         >
           {t("login")}
         </Button>
-      </Box>
-    </FormControl>
+      </div>
+    </form>
   );
 };
 

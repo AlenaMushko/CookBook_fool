@@ -1,0 +1,166 @@
+/* -------------------------------------------------------------------------- */
+/* Cookbook design tokens — SINGLE source of truth for colors / fonts / etc. */
+/* Change hex here only. In components use Tailwind: bg-primary, text-brand */
+/* Rare JS inline styles: style={{ color: "var(--brand)" }}                 */
+/* -------------------------------------------------------------------------- */
+
+:root {
+  /* Surfaces */
+  --background: #fbf4ea;
+  --foreground: #2b2620;
+  --card: #fffdf8;
+  --card-foreground: #2b2620;
+  --popover: #fffdf8;
+  --popover-foreground: #2b2620;
+
+  /* Primary action (CTAs, active nav, focus, selection) */
+  --primary: #4a5a44;
+  --primary-foreground: #ffffff;
+  --primary-hover: #5c6e54;
+  --primary-muted: #8b9683;
+
+  /* Soft / secondary surfaces */
+  --secondary: #f4eadc;
+  --secondary-foreground: #2b2620;
+  --muted: #f4eadc;
+  --muted-foreground: #6b6050;
+  --accent: #eadfc9;
+  --accent-foreground: #2b2620;
+
+  /* Brand highlight (logo, tags, links) */
+  --brand: #b5502b;
+  --brand-foreground: #ffffff;
+  --brand-pressed: #7a3b1d;
+  --brand-soft: #f0decf;
+
+  --meta: #c79a56;
+  --subtle: #8e836d;
+  --divider: #ede2d0;
+
+  /* States */
+  --destructive: #8b2a1a;
+  --destructive-foreground: #ffffff;
+  --success: #3a6644;
+  --success-foreground: #ffffff;
+  --success-bg: #edf5ef;
+  --success-border: #c3dfc9;
+  --warning: #9b6b1e;
+  --warning-foreground: #ffffff;
+  --warning-bg: #fdf7ed;
+  --warning-border: #efddb0;
+  --info: #2d5a7a;
+  --info-foreground: #ffffff;
+  --info-bg: #eaf0ec;
+  --info-border: #b0cdbb;
+
+  --disabled-bg: #ede8e0;
+  --disabled-foreground: #b0a898;
+
+  --border: #e6d9c4;
+  --input: #e6d9c4;
+  --ring: #4a5a44;
+
+  --radius: 0.4375rem;
+
+  /* Sidebar */
+  --sidebar: #f4eadc;
+  --sidebar-foreground: #2b2620;
+  --sidebar-primary: #4a5a44;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eadfc9;
+  --sidebar-accent-foreground: #2b2620;
+  --sidebar-border: #e6d9c4;
+  --sidebar-ring: #4a5a44;
+
+  --chart-1: #4a5a44;
+  --chart-2: #b5502b;
+  --chart-3: #c79a56;
+  --chart-4: #3a6644;
+  --chart-5: #2d5a7a;
+
+  --shadow-subtle: 0 1px 4px rgb(43 38 32 / 0.06);
+  --shadow-card: 0 2px 8px rgb(43 38 32 / 0.08), 0 1px 2px rgb(43 38 32 / 0.04);
+  --shadow-dropdown: 0 4px 16px rgb(43 38 32 / 0.1), 0 1px 4px rgb(43 38 32 / 0.06);
+  --shadow-modal: 0 8px 40px rgb(43 38 32 / 0.14), 0 2px 8px rgb(43 38 32 / 0.06);
+  --shadow-recipe-hover: 0 4px 18px rgb(43 38 32 / 0.1);
+}
+
+@theme inline {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Source Serif 4", ui-serif, Georgia, serif;
+  --font-heading: var(--font-serif);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-muted: var(--primary-muted);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-pressed: var(--brand-pressed);
+  --color-brand-soft: var(--brand-soft);
+  --color-meta: var(--meta);
+  --color-subtle: var(--subtle);
+  --color-divider: var(--divider);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-bg: var(--success-bg);
+  --color-success-border: var(--success-border);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-border: var(--warning-border);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-bg: var(--info-bg);
+  --color-info-border: var(--info-border);
+  --color-disabled-bg: var(--disabled-bg);
+  --color-disabled-foreground: var(--disabled-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: 4px;
+  --radius-md: 7px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-pill: 9999px;
+
+  --shadow-subtle: 0 1px 4px rgb(43 38 32 / 0.06);
+  --shadow-card: 0 2px 8px rgb(43 38 32 / 0.08), 0 1px 2px rgb(43 38 32 / 0.04);
+  --shadow-dropdown: 0 4px 16px rgb(43 38 32 / 0.1), 0 1px 4px rgb(43 38 32 / 0.06);
+  --shadow-modal: 0 8px 40px rgb(43 38 32 / 0.14), 0 2px 8px rgb(43 38 32 / 0.06);
+  --shadow-recipe-hover: 0 4px 18px rgb(43 38 32 / 0.1);
+
+  --breakpoint-sm: 390px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1280px;
+  --breakpoint-xl: 1440px;
+}

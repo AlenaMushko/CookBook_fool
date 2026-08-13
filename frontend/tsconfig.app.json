@@ -17,7 +17,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "baseUrl": ".",
     "paths": {
+      "@/*": ["./src/*"],
       "@assets/*": ["./src/assets/*"],
       "@components/*": ["./src/components/*"],
       "@constants/*": ["./src/constants/*"],
@@ -31,8 +33,9 @@
       "@stores/*": ["./src/stores/*"],
       "@apis/*": ["./src/api/apis/*"],
       "@apiTypes/*": ["./src/api/types/*"],
-      "@messages/*": ["./src/messages/*"]
+      "@messages/*": ["./src/messages/*"],
+      "@theme/*": ["./src/theme/*"]
     }
   },
-  "include": ["src", "theme.ts", "theme"]
+  "include": ["src"]
 }

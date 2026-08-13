@@ -1,12 +1,12 @@
 import { IDishQuery } from "@api/types";
 import { useGetAllDishesQuery } from "@apis/dishAPI";
-import DishCategoryTitle from "@components/Dishes/DishCategoryTitle";
-import DishList from "@components/Dishes/DishList";
-import Filter from "@components/Dishes/Filter";
-import { Divider } from "@mui/material";
+// import DishCategoryTitle from "@components/Dishes/DishCategoryTitle";
+// import DishList from "@components/Dishes/DishList";
+// import Filter from "@components/Dishes/Filter";
+import { Separator } from "@/components/ui/separator";
 import { AnimationWrap, NoFoundData } from "@shared/index";
 import { useAppStore } from "@stores/zustandStore";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const DishesPage = () => {
@@ -40,16 +40,13 @@ const DishesPage = () => {
 
   return (
     <AnimationWrap>
-      <Filter
+      <h1>DishesPage</h1>
+      {/* <Filter
         setIsMyDishes={setIsMyDishes}
         setSearchDish={setSearchDish}
         isMyDishes={isMyDishes}
       />
-      <Divider
-        sx={{
-          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
-        }}
-      />
+      <Separator className='shadow-[0px_2px_4px_rgba(0,0,0,0.2)]' />
       {dishCategory ? (
         <DishCategoryTitle
           categoryName={dishCategory?.name}
@@ -65,7 +62,7 @@ const DishesPage = () => {
         />
       ) : (
         <NoFoundData text={t("dish.noDishes")} />
-      )}
+      )} */}
     </AnimationWrap>
   );
 };
