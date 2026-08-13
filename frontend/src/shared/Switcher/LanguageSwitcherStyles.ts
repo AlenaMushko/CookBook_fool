@@ -29,7 +29,7 @@ export const Switcher = styled(Switch)(() => ({
         opacity: 1,
       },
       "& .MuiSwitch-thumb": {
-        backgroundColor: colors.sage,
+        backgroundColor: colors.action,
         color: colors.white,
       },
     },

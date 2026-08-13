@@ -54,7 +54,7 @@ const SignIn = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: theme.palette.colors?.bgLight,
+        backgroundColor: theme.palette.colors.bg,
         px: 2,
         margin: "0 auto",
       }}
@@ -65,7 +65,7 @@ const SignIn = () => {
           p: { xs: 2, sm: 4 },
           backgroundColor: theme.palette.primary.contrastText,
           borderRadius: 2,
-          boxShadow: theme.palette?.shadow?.orange,
+          boxShadow: theme.palette.shadow.card,
         }}
       >
         <Typography
@@ -149,7 +149,7 @@ const SignIn = () => {
           sx={{
             backgroundColor: theme.palette.primary.dark,
             "&:hover": {
-              backgroundColor: theme.palette?.colors?.btnBgHover,
+              backgroundColor: theme.palette.colors.actionHover,
             },
           }}
         >

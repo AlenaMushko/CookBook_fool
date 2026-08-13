@@ -86,7 +86,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             <Paper
               variant='elevation'
               sx={{
-                backgroundColor: theme.palette.colors?.lightBlue,
+                backgroundColor: theme.palette.colors.infoBg,
                 width: { xs: "250px", md: "200px" },
                 height: 170,
               }}
@@ -101,9 +101,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               fontSize: "16px",
               padding: "0",
               lineHeight: "1.2",
-              backgroundColor: theme.palette?.colors?.lightGray,
+              backgroundColor: theme.palette.colors.border,
               "&:hover": {
-                backgroundColor: theme.palette?.colors?.darkBlue,
+                backgroundColor: theme.palette.info.main,
               },
             }}
           >

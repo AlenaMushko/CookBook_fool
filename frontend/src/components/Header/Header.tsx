@@ -179,11 +179,11 @@ const Header: React.FC = () => {
                         ? theme.palette.common.white
                         : theme.palette.text.secondary,
                       backgroundColor: isActive(page.route)
-                        ? theme.palette.colors.sage
+                        ? theme.palette.colors.action
                         : "transparent",
                       "&:hover": {
                         backgroundColor: isActive(page.route)
-                          ? theme.palette.colors.sageHover
+                          ? theme.palette.colors.actionHover
                           : theme.palette.colors.surface,
                         color: isActive(page.route)
                           ? theme.palette.common.white

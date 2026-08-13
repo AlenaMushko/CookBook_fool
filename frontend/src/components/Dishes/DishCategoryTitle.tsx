@@ -47,10 +47,10 @@ const DishCategoryTitle: React.FC<DishCategoryTitleProps> = ({
         sx={{
           width: "140px",
           color: theme.palette.primary.contrastText,
-          backgroundColor: theme.palette.colors?.blueBtn,
+          backgroundColor: theme.palette.colors.action,
           "&:hover": {
-            color: theme.palette.colors?.bgLight,
-            backgroundColor: theme.palette.colors?.blueBtnHover,
+            color: theme.palette.colors.bg,
+            backgroundColor: theme.palette.colors.actionHover,
           },
         }}
       >

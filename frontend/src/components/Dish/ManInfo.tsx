@@ -66,14 +66,14 @@ const ManInfo: React.FC<ManInfoProps> = ({ selectedDish }) => {
             >
               <AlarmIcon
                 sx={{
-                  color: theme.palette.colors?.btnBgHover,
+                  color: theme.palette.colors.actionHover,
                 }}
               />
               <Typography
                 variant='h6'
                 component='p'
                 sx={{
-                  color: theme.palette.colors?.btnBgHover,
+                  color: theme.palette.colors.actionHover,
                 }}
               >
                 - {formattedTime}
@@ -123,7 +123,7 @@ const ManInfo: React.FC<ManInfoProps> = ({ selectedDish }) => {
           // }}
         >
           Author -{" "}
-          <span style={{ color: theme.palette.colors?.btnBgHover }}>
+          <span style={{ color: theme.palette.colors.actionHover }}>
             {" "}
             {selectedDish?.user?.firstName} {selectedDish?.user?.lastName}
           </span>

@@ -78,11 +78,11 @@ const Dashboard = () => {
             height: "40px",
             borderRadius: isCollapsed ? "50%" : "8px",
             marginBottom: "12px",
-            backgroundColor: theme.palette.colors.sage,
+            backgroundColor: theme.palette.colors.action,
             color: theme.palette.common.white,
             transition: "all 0.12s ease",
             "&:hover": {
-              backgroundColor: theme.palette.colors.sageHover,
+              backgroundColor: theme.palette.colors.actionHover,
             },
           }}
         >
@@ -109,7 +109,7 @@ const Dashboard = () => {
                       name: mainCategory,
                     })
                   }
-                  variant='greenButton'
+                  variant='sidebar'
                   sx={{
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
@@ -149,13 +149,13 @@ const Dashboard = () => {
                     color: theme.palette.text.primary,
                     textTransform: "none",
                     "&.Mui-expanded": {
-                      backgroundColor: theme.palette.colors.sage,
+                      backgroundColor: theme.palette.colors.action,
                       borderRadius: "7px 7px 0 0",
                       color: theme.palette.common.white,
                       fontWeight: 600,
                     },
                     "&:hover": {
-                      backgroundColor: theme.palette.colors.surfaceAlt,
+                      backgroundColor: theme.palette.colors.surfaceHover,
                       color: theme.palette.text.primary,
                     },
                   }}
@@ -181,7 +181,7 @@ const Dashboard = () => {
                           ),
                         })
                       }
-                      variant='greenButton'
+                      variant='sidebar'
                     >
                       {t(
                         `categories.${mainCategory}-${subcategory.name}`,

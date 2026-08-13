@@ -21,16 +21,16 @@ const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: colors.sage,
-      light: colors.sageHover,
-      dark: colors.sage,
-      contrastText: colors.white,
+      main: colors.action,
+      light: colors.actionHover,
+      dark: colors.action,
+      contrastText: colors.onAction,
     },
     secondary: {
-      main: colors.clay,
-      light: colors.clayLight,
-      dark: colors.clayDark,
-      contrastText: colors.white,
+      main: colors.accent,
+      light: colors.accentSoft,
+      dark: colors.accentPressed,
+      contrastText: colors.onAction,
     },
     error: {
       main: colors.error,
@@ -67,7 +67,7 @@ const theme = createTheme({
     },
     divider: colors.divider,
     action: {
-      hover: colors.surfaceAlt,
+      hover: colors.surfaceHover,
       disabled: colors.disabledText,
       disabledBackground: colors.disabledBg,
     },
@@ -75,32 +75,22 @@ const theme = createTheme({
       bg: colors.bg,
       card: colors.card,
       surface: colors.surface,
-      surfaceAlt: colors.surfaceAlt,
-      sage: colors.sage,
-      sageHover: colors.sageHover,
-      sageUi: colors.sageUi,
-      clay: colors.clay,
-      clayDark: colors.clayDark,
-      clayLight: colors.clayLight,
-      gold: colors.gold,
+      surfaceHover: colors.surfaceHover,
+      action: colors.action,
+      actionHover: colors.actionHover,
+      actionMuted: colors.actionMuted,
+      accent: colors.accent,
+      accentPressed: colors.accentPressed,
+      accentSoft: colors.accentSoft,
+      meta: colors.meta,
       muted: colors.muted,
       subtle: colors.subtle,
       border: colors.border,
       divider: colors.divider,
       disabledBg: colors.disabledBg,
       disabledText: colors.disabledText,
-      // aliases used across existing screens
-      btnBgHover: colors.sageHover,
-      bgLight: colors.bg,
-      lightGreen: colors.successBg,
-      lightBlue: colors.infoBg,
-      lightGray: colors.border,
-      darkBlue: colors.info,
-      blueBtn: colors.sage,
-      blueBtnHover: colors.sageHover,
-      greenBtnBg: colors.surface,
-      greenBtnHoverBg: colors.surfaceAlt,
-      greyText: colors.text,
+      successBg: colors.successBg,
+      infoBg: colors.infoBg,
     },
     shadow: {
       subtle: shadows.subtle,
@@ -109,12 +99,6 @@ const theme = createTheme({
       modal: shadows.modal,
       focus: shadows.focus,
       recipeCardHover: shadows.recipeCardHover,
-      orange: shadows.card,
-      green: shadows.subtle,
-    },
-    gradients: {
-      green: colors.surface,
-      orange: colors.bg,
     },
   },
   components: {
@@ -179,12 +163,12 @@ const theme = createTheme({
           border: `1px solid ${colors.border}`,
           color: colors.text,
           "&:hover": {
-            backgroundColor: colors.surfaceAlt,
+            backgroundColor: colors.surfaceHover,
             border: `1px solid ${colors.border}`,
           },
         },
         text: {
-          color: colors.sage,
+          color: colors.action,
           "&:hover": {
             backgroundColor: colors.surface,
           },
@@ -194,13 +178,13 @@ const theme = createTheme({
         {
           props: { variant: "contained", color: "primary" },
           style: {
-            backgroundColor: colors.sage,
-            color: colors.white,
+            backgroundColor: colors.action,
+            color: colors.onAction,
             "&:hover": {
-              backgroundColor: colors.sageHover,
+              backgroundColor: colors.actionHover,
             },
             "&:active": {
-              backgroundColor: colors.sageHover,
+              backgroundColor: colors.actionHover,
               opacity: 0.82,
             },
           },
@@ -208,19 +192,19 @@ const theme = createTheme({
         {
           props: { variant: "contained", color: "secondary" },
           style: {
-            backgroundColor: colors.clay,
-            color: colors.white,
+            backgroundColor: colors.accent,
+            color: colors.onAction,
             "&:hover": {
-              backgroundColor: colors.clayDark,
+              backgroundColor: colors.accentPressed,
             },
             "&:active": {
-              backgroundColor: colors.clayDark,
+              backgroundColor: colors.accentPressed,
               opacity: 0.82,
             },
           },
         },
         {
-          props: { variant: "greenButton" },
+          props: { variant: "sidebar" },
           style: {
             justifyContent: "flex-start",
             borderRadius: `${radius.md}px`,
@@ -233,7 +217,7 @@ const theme = createTheme({
             fontSize: "14px",
             minHeight: 40,
             "&:hover": {
-              backgroundColor: colors.surfaceAlt,
+              backgroundColor: colors.surfaceHover,
               color: colors.text,
             },
           },
@@ -245,11 +229,11 @@ const theme = createTheme({
             border: `1px solid ${colors.border}`,
             color: colors.text,
             "&:hover": {
-              backgroundColor: colors.surfaceAlt,
+              backgroundColor: colors.surfaceHover,
               border: `1px solid ${colors.border}`,
             },
             "&:active": {
-              backgroundColor: colors.surfaceAlt,
+              backgroundColor: colors.surfaceHover,
               opacity: 0.82,
             },
           },
@@ -257,13 +241,13 @@ const theme = createTheme({
         {
           props: { variant: "destructive" },
           style: {
-            backgroundColor: colors.clay,
-            color: colors.white,
+            backgroundColor: colors.accent,
+            color: colors.onAction,
             "&:hover": {
-              backgroundColor: colors.clayDark,
+              backgroundColor: colors.accentPressed,
             },
             "&:active": {
-              backgroundColor: colors.clayDark,
+              backgroundColor: colors.accentPressed,
               opacity: 0.82,
             },
           },
@@ -278,7 +262,7 @@ const theme = createTheme({
           borderRadius: 8,
           backgroundColor: colors.card,
           border: `1px solid ${colors.border}`,
-          color: colors.sage,
+          color: colors.action,
           transition: `background-color ${transitions.fast}, border-color ${transitions.fast}`,
           "&:hover": {
             backgroundColor: colors.surface,
@@ -310,11 +294,11 @@ const theme = createTheme({
             borderWidth: 1,
           },
           "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: colors.sageUi,
+            borderColor: colors.actionMuted,
             borderWidth: 1.5,
           },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: colors.sage,
+            borderColor: colors.action,
             borderWidth: 1.5,
           },
           "&.Mui-error .MuiOutlinedInput-notchedOutline": {
@@ -390,7 +374,7 @@ const theme = createTheme({
           boxShadow: "none",
           transition: `transform ${transitions.base}, box-shadow ${transitions.base}, border-color ${transitions.base}`,
           "&:hover": {
-            borderColor: colors.sageUi,
+            borderColor: colors.actionMuted,
             boxShadow: shadows.recipeCardHover,
             transform: "translateY(-2px)",
           },
@@ -468,7 +452,7 @@ const theme = createTheme({
     MuiTabs: {
       styleOverrides: {
         indicator: {
-          backgroundColor: colors.sage,
+          backgroundColor: colors.action,
           height: 2,
         },
         root: {
@@ -488,11 +472,11 @@ const theme = createTheme({
           minHeight: 44,
           padding: "10px 20px",
           "&.Mui-selected": {
-            color: colors.sage,
+            color: colors.action,
             fontWeight: 600,
           },
           "&:hover": {
-            color: colors.sage,
+            color: colors.action,
           },
         },
       },
@@ -510,7 +494,7 @@ const theme = createTheme({
             transform: "translateX(18px)",
             color: colors.white,
             "& + .MuiSwitch-track": {
-              backgroundColor: colors.sage,
+              backgroundColor: colors.action,
               opacity: 1,
             },
           },
@@ -532,7 +516,7 @@ const theme = createTheme({
         root: {
           color: colors.border,
           "&.Mui-checked": {
-            color: colors.sage,
+            color: colors.action,
           },
         },
       },
@@ -542,7 +526,7 @@ const theme = createTheme({
         root: {
           color: colors.border,
           "&.Mui-checked": {
-            color: colors.sage,
+            color: colors.action,
           },
         },
       },
@@ -593,10 +577,10 @@ const theme = createTheme({
     MuiLink: {
       styleOverrides: {
         root: {
-          color: colors.clay,
-          textDecorationColor: colors.clay,
+          color: colors.accent,
+          textDecorationColor: colors.accent,
           "&:hover": {
-            color: colors.clayDark,
+            color: colors.accentPressed,
           },
         },
       },
@@ -610,31 +594,22 @@ declare module "@mui/material/styles" {
       bg: string;
       card: string;
       surface: string;
-      surfaceAlt: string;
-      sage: string;
-      sageHover: string;
-      sageUi: string;
-      clay: string;
-      clayDark: string;
-      clayLight: string;
-      gold: string;
+      surfaceHover: string;
+      action: string;
+      actionHover: string;
+      actionMuted: string;
+      accent: string;
+      accentPressed: string;
+      accentSoft: string;
+      meta: string;
       muted: string;
       subtle: string;
       border: string;
       divider: string;
       disabledBg: string;
       disabledText: string;
-      btnBgHover: string;
-      bgLight: string;
-      lightGreen: string;
-      lightGray: string;
-      darkBlue: string;
-      lightBlue: string;
-      greenBtnBg: string;
-      greenBtnHoverBg: string;
-      greyText: string;
-      blueBtn: string;
-      blueBtnHover: string;
+      successBg: string;
+      infoBg: string;
     };
     shadow: {
       subtle: string;
@@ -643,25 +618,18 @@ declare module "@mui/material/styles" {
       modal: string;
       focus: string;
       recipeCardHover: string;
-      orange: string;
-      green: string;
-    };
-    gradients: {
-      green: string;
-      orange: string;
     };
   }
 
   interface PaletteOptions {
     colors?: Partial<Palette["colors"]>;
     shadow?: Partial<Palette["shadow"]>;
-    gradients?: Partial<Palette["gradients"]>;
   }
 }
 
 declare module "@mui/material/Button" {
   interface ButtonPropsVariantOverrides {
-    greenButton: true;
+    sidebar: true;
     soft: true;
     destructive: true;
   }

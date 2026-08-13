@@ -69,10 +69,10 @@ const DishItem: React.FC<DishItemProps> = ({ dish }) => {
           zIndex: 10,
           padding: 1,
           borderRadius: "50%",
-          backgroundColor: theme.palette.colors.clay,
+          backgroundColor: theme.palette.colors.accent,
           transition: "background-color 0.12s ease",
           "&:hover": {
-            backgroundColor: theme.palette.colors.clayDark,
+            backgroundColor: theme.palette.colors.accentPressed,
           },
         }}
         onClick={(e) => handleDeleteDish(e)}

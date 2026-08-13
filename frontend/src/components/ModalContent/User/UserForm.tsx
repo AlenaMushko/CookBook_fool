@@ -186,7 +186,7 @@ const UserForm: React.FC<UserFormProps> = ({
             sx={{
               backgroundColor: theme.palette.primary.dark,
               "&:hover": {
-                backgroundColor: theme.palette?.colors?.btnBgHover,
+                backgroundColor: theme.palette.colors.actionHover,
               },
             }}
           >

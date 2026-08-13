@@ -1,27 +1,32 @@
-
 export const colors = {
   bg: "#FBF4EA",
   card: "#FFFDF8",
   surface: "#F4EADC",
-  surfaceAlt: "#EADFC9",
+  surfaceHover: "#EADFC9",
 
-  sage: "#4A5A44",
-  sageHover: "#5C6E54",
-  sageUi: "#8B9683",
+  // Primary action (buttons, active nav, focus, selection)
+  action: "#4A5A44",
+  actionHover: "#5C6E54",
+  actionMuted: "#8B9683",
 
-  clay: "#B5502B",
-  clayDark: "#7A3B1D",
-  clayLight: "#F0DECF",
+  // Brand / accent (logo, tags, links, highlights)
+  accent: "#B5502B",
+  accentPressed: "#7A3B1D",
+  accentSoft: "#F0DECF",
 
-  gold: "#C79A56",
+  // Metadata / premium accents
+  meta: "#C79A56",
 
+  // Typography
   text: "#2B2620",
   muted: "#6B6050",
   subtle: "#8E836D",
 
+  // Structure
   border: "#E6D9C4",
   divider: "#EDE2D0",
 
+  // Semantic states
   success: "#3A6644",
   successBg: "#EDF5EF",
   successBd: "#C3DFC9",
@@ -42,13 +47,14 @@ export const colors = {
   disabledText: "#B0A898",
 
   white: "#FFFFFF",
+  onAction: "#FFFFFF",
   tooltipFg: "#FAF6ED",
 } as const;
 
 export const difficulty = {
-  easy: { color: "#3A6644", bg: "#EDF5EF" },
-  medium: { color: "#9B6B1E", bg: "#FDF7ED" },
-  hard: { color: "#8B2A1A", bg: "#FDF0EE" },
+  easy: { color: colors.success, bg: colors.successBg },
+  medium: { color: colors.warning, bg: colors.warningBg },
+  hard: { color: colors.error, bg: colors.errorBg },
 } as const;
 
 export const fonts = {
@@ -85,11 +91,10 @@ export const shadows = {
   card: "0 2px 8px rgba(43,38,32,0.08), 0 1px 2px rgba(43,38,32,0.04)",
   dropdown: "0 4px 16px rgba(43,38,32,0.1), 0 1px 4px rgba(43,38,32,0.06)",
   modal: "0 8px 40px rgba(43,38,32,0.14), 0 2px 8px rgba(43,38,32,0.06)",
-  focus: "0 0 0 2.5px #4A5A44, 0 0 0 4px #FBF4EA",
+  focus: `0 0 0 2.5px ${colors.action}, 0 0 0 4px ${colors.bg}`,
   recipeCardHover: "0 4px 18px rgba(43,38,32,0.1)",
 } as const;
 
-/** Breakpoints aligned with UI kit + product TZ */
 export const breakpoints = {
   values: {
     xs: 0,
