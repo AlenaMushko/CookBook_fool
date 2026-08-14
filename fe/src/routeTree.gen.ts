@@ -1,0 +1,402 @@
+/* eslint-disable */
+
+// @ts-nocheck
+
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
+import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as authRegisterRouteImport } from './routes/(auth)/register'
+import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
+import { Route as publicIndexRouteImport } from './routes/(public)/index'
+import { Route as AuthenticatedChangePasswordRouteImport } from './routes/_authenticated/change-password'
+import { Route as AuthenticatedMyCookbookRouteImport } from './routes/_authenticated/my-cookbook'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as publicRecipesIndexRouteImport } from './routes/(public)/recipes/index'
+import { Route as publicRecipesRecipeIdRouteImport } from './routes/(public)/recipes/$recipeId'
+import { Route as AuthenticatedMenusIndexRouteImport } from './routes/_authenticated/menus/index'
+import { Route as AuthenticatedMenusNewRouteImport } from './routes/_authenticated/menus/new'
+import { Route as AuthenticatedRecipesNewRouteImport } from './routes/_authenticated/recipes/new'
+import { Route as AuthenticatedMenusMenuIdIndexRouteImport } from './routes/_authenticated/menus/$menuId/index'
+import { Route as AuthenticatedMenusMenuIdEditRouteImport } from './routes/_authenticated/menus/$menuId/edit'
+import { Route as AuthenticatedRecipesRecipeIdEditRouteImport } from './routes/_authenticated/recipes/$recipeId/edit'
+
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
+  id: '/(auth)/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authLoginRoute = authLoginRouteImport.update({
+  id: '/(auth)/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authRegisterRoute = authRegisterRouteImport.update({
+  id: '/(auth)/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authResetPasswordRoute = authResetPasswordRouteImport.update({
+  id: '/(auth)/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicIndexRoute = publicIndexRouteImport.update({
+  id: '/(public)/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedChangePasswordRoute =
+  AuthenticatedChangePasswordRouteImport.update({
+    id: '/change-password',
+    path: '/change-password',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedMyCookbookRoute = AuthenticatedMyCookbookRouteImport.update({
+  id: '/my-cookbook',
+  path: '/my-cookbook',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const publicRecipesIndexRoute = publicRecipesIndexRouteImport.update({
+  id: '/(public)/recipes/',
+  path: '/recipes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicRecipesRecipeIdRoute = publicRecipesRecipeIdRouteImport.update({
+  id: '/(public)/recipes/$recipeId',
+  path: '/recipes/$recipeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedMenusIndexRoute = AuthenticatedMenusIndexRouteImport.update({
+  id: '/menus/',
+  path: '/menus/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedMenusNewRoute = AuthenticatedMenusNewRouteImport.update({
+  id: '/menus/new',
+  path: '/menus/new',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedRecipesNewRoute = AuthenticatedRecipesNewRouteImport.update({
+  id: '/recipes/new',
+  path: '/recipes/new',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedMenusMenuIdIndexRoute =
+  AuthenticatedMenusMenuIdIndexRouteImport.update({
+    id: '/menus/$menuId/',
+    path: '/menus/$menuId/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedMenusMenuIdEditRoute =
+  AuthenticatedMenusMenuIdEditRouteImport.update({
+    id: '/menus/$menuId/edit',
+    path: '/menus/$menuId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedRecipesRecipeIdEditRoute =
+  AuthenticatedRecipesRecipeIdEditRouteImport.update({
+    id: '/recipes/$recipeId/edit',
+    path: '/recipes/$recipeId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+export interface FileRoutesByFullPath {
+  '/': typeof publicIndexRoute
+  '/forgot-password': typeof authForgotPasswordRoute
+  '/login': typeof authLoginRoute
+  '/register': typeof authRegisterRoute
+  '/reset-password': typeof authResetPasswordRoute
+  '/change-password': typeof AuthenticatedChangePasswordRoute
+  '/my-cookbook': typeof AuthenticatedMyCookbookRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/recipes/$recipeId': typeof publicRecipesRecipeIdRoute
+  '/menus/new': typeof AuthenticatedMenusNewRoute
+  '/recipes/new': typeof AuthenticatedRecipesNewRoute
+  '/recipes/': typeof publicRecipesIndexRoute
+  '/menus/': typeof AuthenticatedMenusIndexRoute
+  '/menus/$menuId/edit': typeof AuthenticatedMenusMenuIdEditRoute
+  '/recipes/$recipeId/edit': typeof AuthenticatedRecipesRecipeIdEditRoute
+  '/menus/$menuId/': typeof AuthenticatedMenusMenuIdIndexRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof publicIndexRoute
+  '/forgot-password': typeof authForgotPasswordRoute
+  '/login': typeof authLoginRoute
+  '/register': typeof authRegisterRoute
+  '/reset-password': typeof authResetPasswordRoute
+  '/change-password': typeof AuthenticatedChangePasswordRoute
+  '/my-cookbook': typeof AuthenticatedMyCookbookRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/recipes/$recipeId': typeof publicRecipesRecipeIdRoute
+  '/menus/new': typeof AuthenticatedMenusNewRoute
+  '/recipes/new': typeof AuthenticatedRecipesNewRoute
+  '/recipes': typeof publicRecipesIndexRoute
+  '/menus': typeof AuthenticatedMenusIndexRoute
+  '/menus/$menuId/edit': typeof AuthenticatedMenusMenuIdEditRoute
+  '/recipes/$recipeId/edit': typeof AuthenticatedRecipesRecipeIdEditRoute
+  '/menus/$menuId': typeof AuthenticatedMenusMenuIdIndexRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/(auth)/forgot-password': typeof authForgotPasswordRoute
+  '/(auth)/login': typeof authLoginRoute
+  '/(auth)/register': typeof authRegisterRoute
+  '/(auth)/reset-password': typeof authResetPasswordRoute
+  '/_authenticated/change-password': typeof AuthenticatedChangePasswordRoute
+  '/_authenticated/my-cookbook': typeof AuthenticatedMyCookbookRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/(public)/': typeof publicIndexRoute
+  '/(public)/recipes/$recipeId': typeof publicRecipesRecipeIdRoute
+  '/_authenticated/menus/new': typeof AuthenticatedMenusNewRoute
+  '/_authenticated/recipes/new': typeof AuthenticatedRecipesNewRoute
+  '/(public)/recipes/': typeof publicRecipesIndexRoute
+  '/_authenticated/menus/': typeof AuthenticatedMenusIndexRoute
+  '/_authenticated/menus/$menuId/edit': typeof AuthenticatedMenusMenuIdEditRoute
+  '/_authenticated/recipes/$recipeId/edit': typeof AuthenticatedRecipesRecipeIdEditRoute
+  '/_authenticated/menus/$menuId/': typeof AuthenticatedMenusMenuIdIndexRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+    | '/reset-password'
+    | '/change-password'
+    | '/my-cookbook'
+    | '/profile'
+    | '/recipes/$recipeId'
+    | '/menus/new'
+    | '/recipes/new'
+    | '/recipes/'
+    | '/menus/'
+    | '/menus/$menuId/edit'
+    | '/recipes/$recipeId/edit'
+    | '/menus/$menuId/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+    | '/reset-password'
+    | '/change-password'
+    | '/my-cookbook'
+    | '/profile'
+    | '/recipes/$recipeId'
+    | '/menus/new'
+    | '/recipes/new'
+    | '/recipes'
+    | '/menus'
+    | '/menus/$menuId/edit'
+    | '/recipes/$recipeId/edit'
+    | '/menus/$menuId'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/(auth)/forgot-password'
+    | '/(auth)/login'
+    | '/(auth)/register'
+    | '/(auth)/reset-password'
+    | '/_authenticated/change-password'
+    | '/_authenticated/my-cookbook'
+    | '/_authenticated/profile'
+    | '/(public)/'
+    | '/(public)/recipes/$recipeId'
+    | '/_authenticated/menus/new'
+    | '/_authenticated/recipes/new'
+    | '/(public)/recipes/'
+    | '/_authenticated/menus/'
+    | '/_authenticated/menus/$menuId/edit'
+    | '/_authenticated/recipes/$recipeId/edit'
+    | '/_authenticated/menus/$menuId/'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  authForgotPasswordRoute: typeof authForgotPasswordRoute
+  authLoginRoute: typeof authLoginRoute
+  authRegisterRoute: typeof authRegisterRoute
+  authResetPasswordRoute: typeof authResetPasswordRoute
+  publicIndexRoute: typeof publicIndexRoute
+  publicRecipesRecipeIdRoute: typeof publicRecipesRecipeIdRoute
+  publicRecipesIndexRoute: typeof publicRecipesIndexRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/forgot-password': {
+      id: '/(auth)/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof authForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/register': {
+      id: '/(auth)/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/reset-password': {
+      id: '/(auth)/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof authResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/': {
+      id: '/(public)/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof publicIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/change-password': {
+      id: '/_authenticated/change-password'
+      path: '/change-password'
+      fullPath: '/change-password'
+      preLoaderRoute: typeof AuthenticatedChangePasswordRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/my-cookbook': {
+      id: '/_authenticated/my-cookbook'
+      path: '/my-cookbook'
+      fullPath: '/my-cookbook'
+      preLoaderRoute: typeof AuthenticatedMyCookbookRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/(public)/recipes/': {
+      id: '/(public)/recipes/'
+      path: '/recipes'
+      fullPath: '/recipes/'
+      preLoaderRoute: typeof publicRecipesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/recipes/$recipeId': {
+      id: '/(public)/recipes/$recipeId'
+      path: '/recipes/$recipeId'
+      fullPath: '/recipes/$recipeId'
+      preLoaderRoute: typeof publicRecipesRecipeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/menus/': {
+      id: '/_authenticated/menus/'
+      path: '/menus'
+      fullPath: '/menus/'
+      preLoaderRoute: typeof AuthenticatedMenusIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/menus/new': {
+      id: '/_authenticated/menus/new'
+      path: '/menus/new'
+      fullPath: '/menus/new'
+      preLoaderRoute: typeof AuthenticatedMenusNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/recipes/new': {
+      id: '/_authenticated/recipes/new'
+      path: '/recipes/new'
+      fullPath: '/recipes/new'
+      preLoaderRoute: typeof AuthenticatedRecipesNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/menus/$menuId/': {
+      id: '/_authenticated/menus/$menuId/'
+      path: '/menus/$menuId'
+      fullPath: '/menus/$menuId/'
+      preLoaderRoute: typeof AuthenticatedMenusMenuIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/menus/$menuId/edit': {
+      id: '/_authenticated/menus/$menuId/edit'
+      path: '/menus/$menuId/edit'
+      fullPath: '/menus/$menuId/edit'
+      preLoaderRoute: typeof AuthenticatedMenusMenuIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/recipes/$recipeId/edit': {
+      id: '/_authenticated/recipes/$recipeId/edit'
+      path: '/recipes/$recipeId/edit'
+      fullPath: '/recipes/$recipeId/edit'
+      preLoaderRoute: typeof AuthenticatedRecipesRecipeIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+  }
+}
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedChangePasswordRoute: typeof AuthenticatedChangePasswordRoute
+  AuthenticatedMyCookbookRoute: typeof AuthenticatedMyCookbookRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedMenusNewRoute: typeof AuthenticatedMenusNewRoute
+  AuthenticatedRecipesNewRoute: typeof AuthenticatedRecipesNewRoute
+  AuthenticatedMenusIndexRoute: typeof AuthenticatedMenusIndexRoute
+  AuthenticatedMenusMenuIdEditRoute: typeof AuthenticatedMenusMenuIdEditRoute
+  AuthenticatedRecipesRecipeIdEditRoute: typeof AuthenticatedRecipesRecipeIdEditRoute
+  AuthenticatedMenusMenuIdIndexRoute: typeof AuthenticatedMenusMenuIdIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedChangePasswordRoute: AuthenticatedChangePasswordRoute,
+  AuthenticatedMyCookbookRoute: AuthenticatedMyCookbookRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedMenusNewRoute: AuthenticatedMenusNewRoute,
+  AuthenticatedRecipesNewRoute: AuthenticatedRecipesNewRoute,
+  AuthenticatedMenusIndexRoute: AuthenticatedMenusIndexRoute,
+  AuthenticatedMenusMenuIdEditRoute: AuthenticatedMenusMenuIdEditRoute,
+  AuthenticatedRecipesRecipeIdEditRoute: AuthenticatedRecipesRecipeIdEditRoute,
+  AuthenticatedMenusMenuIdIndexRoute: AuthenticatedMenusMenuIdIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  authForgotPasswordRoute: authForgotPasswordRoute,
+  authLoginRoute: authLoginRoute,
+  authRegisterRoute: authRegisterRoute,
+  authResetPasswordRoute: authResetPasswordRoute,
+  publicIndexRoute: publicIndexRoute,
+  publicRecipesRecipeIdRoute: publicRecipesRecipeIdRoute,
+  publicRecipesIndexRoute: publicRecipesIndexRoute,
+}
+export const routeTree = rootRouteImport
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()

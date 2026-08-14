@@ -1,4 +1,4 @@
-import { URLS } from "@constants/url";
+import { URLS } from "../../../fe/src/constants/url";
 
 export const API_ROUTES = {
   AUTH: {
