@@ -1,10 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { EditRecipePage } from '@pages/recipes'
 
 export const Route = createFileRoute('/_authenticated/recipes/$recipeId/edit')({
-  component: EditRecipePage,
+  component: EditRecipeRoute,
 })
 
-function EditRecipePage() {
+function EditRecipeRoute() {
   const { recipeId } = Route.useParams()
-  return <div>Edit Recipe {recipeId}</div>
+  return <EditRecipePage recipeId={recipeId} />
 }

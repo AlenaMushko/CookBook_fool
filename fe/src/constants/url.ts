@@ -1,10 +1,10 @@
-import { CONFIG } from "@config/index";
+import { CONFIG } from '@config'
 
-export const API_URL = CONFIG.API_URL;
+export const API_URL = CONFIG.API_URL
 
 export const URLS = {
-  AUTH: "/auth",
-  USER: "/user",
-  s3: "/s3",
-  DISH: "/dish",
-};
+  AUTH: '/auth',
+  USER: '/user',
+  s3: '/s3',
+  DISH: '/dish',
+}

@@ -1,10 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { EditMenuPage } from '@pages/menus'
 
 export const Route = createFileRoute('/_authenticated/menus/$menuId/edit')({
-  component: EditMenuPage,
+  component: EditMenuRoute,
 })
 
-function EditMenuPage() {
+function EditMenuRoute() {
   const { menuId } = Route.useParams()
-  return <div>Edit Menu {menuId}</div>
+  return <EditMenuPage menuId={menuId} />
 }

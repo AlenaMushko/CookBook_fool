@@ -10,6 +10,7 @@ export const Routes = {
   RESET_PASSWORD: '/reset-password',
   RECIPES: '/recipes',
   RECIPE: '/recipes/$recipeId',
+  // authenticated routes
   PROFILE: '/profile',
   CHANGE_PASSWORD: '/change-password',
   MY_COOKBOOK: '/my-cookbook',

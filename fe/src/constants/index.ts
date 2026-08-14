@@ -1,0 +1,5 @@
+export { Routes } from './routes'
+export { API_URL, URLS } from './url'
+export { LOCAL_STORAGE } from './localStorage'
+export { PHONE_REGEX, EMAIL_REGEX, PASSWORD_REGEX } from './regex'
+export { DishCategoryEnum, DishSubCategoryEnum } from './dishCategories'

@@ -1,8 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
-import { ErrorPage } from '@/components/ErrorPage'
-import { NotFoundPage } from '@/components/NotFoundPage'
+import { ErrorPage, NotFoundPage } from '@pages/errors'
 import { routeTree } from './routeTree.gen'
 import './index.css'
 

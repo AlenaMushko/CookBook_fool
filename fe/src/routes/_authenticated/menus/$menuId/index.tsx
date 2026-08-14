@@ -1,10 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { MenuDetailsPage } from '@pages/menus'
 
 export const Route = createFileRoute('/_authenticated/menus/$menuId/')({
-  component: MenuPage,
+  component: MenuDetailsRoute,
 })
 
-function MenuPage() {
+function MenuDetailsRoute() {
   const { menuId } = Route.useParams()
-  return <div>Menu {menuId}</div>
+  return <MenuDetailsPage menuId={menuId} />
 }
