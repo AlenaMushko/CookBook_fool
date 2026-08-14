@@ -1,9 +1,3 @@
-import { ResetPasswordForm } from '@features/auth'
-
-export function ResetPasswordPage() {
-  return (
-    <div>
-      <ResetPasswordForm />
-    </div>
-  )
+export const ResetPasswordPage = () => {
+  return <div>ResetPasswordPage</div>
 }

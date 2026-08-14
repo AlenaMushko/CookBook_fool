@@ -1,7 +1,3 @@
-type MenuDetailsPageProps = {
-  menuId: string
-}
-
-export function MenuDetailsPage({ menuId }: MenuDetailsPageProps) {
-  return <div>Menu {menuId}</div>
+export const MenuDetailsPage = ({ menuId }: { menuId: string }) => {
+  return <div>MenuDetailsPage {menuId}</div>
 }

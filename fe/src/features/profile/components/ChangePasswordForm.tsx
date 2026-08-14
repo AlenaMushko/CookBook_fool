@@ -1,9 +1,5 @@
-import React from 'react'
-
-const ChangePasswordForm = () => {
+export const ChangePasswordForm = () => {
   return (
     <div>ChangePasswordForm</div>
   )
 }
-
-export default ChangePasswordForm

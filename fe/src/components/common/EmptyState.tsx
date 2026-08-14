@@ -1,3 +1,3 @@
-export function EmptyState() {
+export const EmptyState = () => {
   return <div>EmptyState</div>
 }

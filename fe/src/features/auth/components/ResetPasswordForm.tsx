@@ -1,3 +1,3 @@
-export function ResetPasswordForm() {
+export const ResetPasswordForm = () => {
   return <form>ResetPasswordForm</form>
 }

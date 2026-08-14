@@ -1,9 +1,3 @@
-import React from 'react'
-
-const EditMenuPage = () => {
-  return (
-    <div>EditMenuPage</div>
-  )
+export const EditMenuPage = ({ menuId }: { menuId: string }) => {
+  return <div>EditMenuPage {menuId}</div>
 }
-
-export default EditMenuPage

@@ -1,3 +1,3 @@
-export function ImageUploader() {
+export const ImageUploader = () => {
   return <div>ImageUploader</div>
 }

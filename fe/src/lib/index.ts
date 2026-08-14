@@ -1,5 +1,5 @@
 export { cn } from './utils'
-export { LocalStorageUtils } from './LocalStorage'
 export { formatPreparationTime } from './formatPreparationTime'
 export { groupCategories } from './groupCategories'
 export { getDeviceId } from './device'
+export { showToast, type ToastType } from './toast'

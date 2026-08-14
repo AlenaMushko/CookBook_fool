@@ -1,3 +1,3 @@
-export function LoginForm() {
+export const LoginForm = () => {
   return <form>LoginForm</form>
 }

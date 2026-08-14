@@ -1,3 +1,3 @@
-export function RegisterForm() {
+export const RegisterForm = () => {
   return <form>RegisterForm</form>
 }

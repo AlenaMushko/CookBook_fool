@@ -1,3 +1,3 @@
-export function UserMenu() {
+export const UserMenu = () => {
   return <div>UserMenu</div>
 }

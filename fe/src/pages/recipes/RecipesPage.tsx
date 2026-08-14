@@ -1,9 +1,5 @@
-import React from 'react'
-
-const RecipesPage = () => {
+export const RecipesPage = () => {
   return (
     <div>RecipesPage</div>
   )
 }
-
-export default RecipesPage

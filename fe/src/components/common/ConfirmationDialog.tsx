@@ -1,3 +1,3 @@
-export function ConfirmationDialog() {
+export const ConfirmationDialog = () => {
   return null
 }

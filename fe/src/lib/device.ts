@@ -1,8 +1,10 @@
+import { LOCAL_STORAGE } from '@constants/localStorage'
+
 export const getDeviceId = () => {
-  let deviceId = localStorage.getItem("deviceId");
+  let deviceId = localStorage.getItem(LOCAL_STORAGE.DEVICE_ID)
   if (!deviceId) {
-    deviceId = Math.random().toString(36).substring(2);
-    localStorage.setItem("deviceId", deviceId);
+    deviceId = crypto.randomUUID()
+    localStorage.setItem(LOCAL_STORAGE.DEVICE_ID, deviceId)
   }
-  return deviceId;
-};
+  return deviceId
+}

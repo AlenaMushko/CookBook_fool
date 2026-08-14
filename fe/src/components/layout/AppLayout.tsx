@@ -1,8 +1,10 @@
 import { Outlet } from '@tanstack/react-router'
+import { Loader } from '@components/common'
 
-export function AppLayout() {
+export const AppLayout = () => {
   return (
     <div>
+      <Loader />
       {/* <Header /> */}
       <main>
         <Outlet />

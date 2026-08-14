@@ -1,3 +1,3 @@
-export function CreateRecipePage() {
-  return <div>Create Recipe</div>
+export const CreateRecipePage = () => {
+  return <div>CreateRecipePage</div>
 }

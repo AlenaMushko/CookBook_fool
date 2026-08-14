@@ -1,3 +1,3 @@
-export function MobileNavigation() {
+export const MobileNavigation = () => {
   return <nav>MobileNavigation</nav>
 }

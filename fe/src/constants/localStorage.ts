@@ -1,6 +1,4 @@
+/** Non-auth client prefs only. Auth tokens live in httpOnly cookies. */
 export const LOCAL_STORAGE = {
-  ACCESS_TOKEN: "accessToken",
-  REFRESH_TOKEN: "refreshToken",
-  USER_ID: "userId",
-  DEVICE_ID: "deviceId",
-};
+  DEVICE_ID: 'deviceId',
+} as const

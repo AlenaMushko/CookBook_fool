@@ -1,3 +1,3 @@
-export function AddToCookbookButton() {
+export const AddToCookbookButton = () => {
   return <button type="button">AddToCookbookButton</button>
 }

@@ -1,3 +1,3 @@
-export function MainNavigation() {
+export const MainNavigation = () => {
   return <nav>MainNavigation</nav>
 }
