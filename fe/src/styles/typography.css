@@ -1,0 +1,49 @@
+@layer components {
+  .type-display {
+    @apply font-serif text-display font-normal text-foreground;
+  }
+
+  .type-h1 {
+    @apply font-serif text-h1 font-normal text-foreground;
+  }
+
+  .type-h2 {
+    @apply font-serif text-h2 font-normal text-foreground;
+  }
+
+  .type-h3 {
+    @apply font-serif text-h3 font-normal text-foreground;
+  }
+
+  .type-h4 {
+    @apply font-sans text-h4 font-semibold text-foreground;
+  }
+
+  .type-subtitle {
+    @apply font-sans text-subtitle font-medium text-foreground;
+  }
+
+  .type-body-large {
+    @apply font-sans text-body-large font-normal text-foreground;
+  }
+
+  .type-body {
+    @apply font-sans text-body font-normal text-foreground;
+  }
+
+  .type-body-small {
+    @apply font-sans text-body-small font-normal text-foreground;
+  }
+
+  .type-caption {
+    @apply font-sans text-caption font-normal text-muted-foreground;
+  }
+
+  .type-label {
+    @apply font-sans text-label font-bold uppercase text-foreground;
+  }
+
+  .type-btn {
+    @apply font-sans text-btn font-semibold;
+  }
+}

@@ -3,6 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { ErrorPage, NotFoundPage } from '@pages/errors'
 import { AppProviders } from '@/providers'
+
+import "@fontsource-variable/manrope"
+import "@fontsource-variable/source-serif-4"
+
 import { routeTree } from './routeTree.gen'
 import './index.css'
 import './i18n'
