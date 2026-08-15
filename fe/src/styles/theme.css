@@ -11,21 +11,26 @@
   --primary: #4a5a44;
   --primary-foreground: #ffffff;
   --primary-hover: #5c6e54;
-  --primary-pressed: #7f9079;
-  --primary-muted: #8b9683;
+  --primary-active: #4a5a44;
 
   /* Secondary button */
   --secondary: #f4eadc;
   --secondary-foreground: #2b2620;
   --secondary-hover: #eadfc9;
-  --secondary-pressed: #eee4d3;
+  --secondary-active: #eee4d3;
   --secondary-border: #e6d9c4;
 
-  /* Tertiary button */
-  --tertiary: transparent;
-  --tertiary-foreground: #4a5a44;
-  --tertiary-hover: #f4eadc;
-  --tertiary-pressed: #f6eee2;
+  /* Outline button */
+  --outline: rgb(255 255 255 / 0);
+  --outline-foreground: #4a5a44;
+  --outline-hover: #f4eadc;
+  --outline-active: #f6eee2;
+
+  /* Destructive button */
+  --destructive: #b5502b;
+  --destructive-foreground: #ffffff;
+  --destructive-hover: #7a3b1d;
+  --destructive-active: #b5502b;
 
   /* Soft / secondary surfaces */
   --muted: #f4eadc;
@@ -36,18 +41,12 @@
   /* Brand highlight (logo, tags, links) */
   --brand: #b5502b;
   --brand-foreground: #ffffff;
-  --brand-pressed: #7a3b1d;
+  --brand-active: #7a3b1d;
   --brand-soft: #f0decf;
 
   --meta: #c79a56;
   --subtle: #8e836d;
   --divider: #ede2d0;
-
-  /* Destructive button */
-  --destructive: #b5502b;
-  --destructive-foreground: #ffffff;
-  --destructive-hover: #7f381c;
-  --destructive-pressed: #996047;
 
   /* States */
   --success: #3a6644;
@@ -77,6 +76,8 @@
   --elevation-dropdown: 0 4px 16px rgb(43 38 32 / 0.1), 0 1px 4px rgb(43 38 32 / 0.06);
   --elevation-modal: 0 8px 40px rgb(43 38 32 / 0.14), 0 2px 8px rgb(43 38 32 / 0.06);
   --elevation-recipe-hover: 0 4px 18px rgb(43 38 32 / 0.1);
+  /* Primary :active ring — 2.5px primary + 4px page background */
+  --elevation-primary-active: 0 0 0 2.5px var(--primary), 0 0 0 4px var(--background);
 
   /* Layout */
   --page-padding-x: 40px;
@@ -148,9 +149,9 @@
   --text-label--line-height: 1.4;
   --text-label--letter-spacing: 0.1em;
 
-  --text-button: 14px;
-  --text-button--line-height: 1;
-  --text-button--letter-spacing: 0.02em;
+  --text-btn: 13px;
+  --text-btn--line-height: 1.5;
+  --text-btn--letter-spacing: 0.02em;
 
   /* Colors → bg-*, text-*, border-*, ring-*, fill-*, … */
   --color-background: var(--background);
@@ -162,24 +163,23 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-hover: var(--primary-hover);
-  --color-primary-pressed: var(--primary-pressed);
-  --color-primary-muted: var(--primary-muted);
+  --color-primary-active: var(--primary-active);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary-hover: var(--secondary-hover);
-  --color-secondary-pressed: var(--secondary-pressed);
+  --color-secondary-active: var(--secondary-active);
   --color-secondary-border: var(--secondary-border);
-  --color-tertiary: var(--tertiary);
-  --color-tertiary-foreground: var(--tertiary-foreground);
-  --color-tertiary-hover: var(--tertiary-hover);
-  --color-tertiary-pressed: var(--tertiary-pressed);
+  --color-outline: var(--outline);
+  --color-outline-foreground: var(--outline-foreground);
+  --color-outline-hover: var(--outline-hover);
+  --color-outline-active: var(--outline-active);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
-  --color-brand-pressed: var(--brand-pressed);
+  --color-brand-active: var(--brand-active);
   --color-brand-soft: var(--brand-soft);
   --color-meta: var(--meta);
   --color-subtle: var(--subtle);
@@ -187,7 +187,7 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive-hover: var(--destructive-hover);
-  --color-destructive-pressed: var(--destructive-pressed);
+  --color-destructive-active: var(--destructive-active);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-success-bg: var(--success-bg);
@@ -222,11 +222,13 @@
   --radius-3xl: 24px;
   --radius-4xl: 32px;
 
-/* Shadows */
---shadow-subtle: var(--elevation-subtle);
---shadow-card: var(--elevation-card);
---shadow-dropdown: var(--elevation-dropdown);
---shadow-modal: var(--elevation-modal);
+  /* Shadows → shadow-subtle, shadow-primary-active, … */
+  --shadow-subtle: var(--elevation-subtle);
+  --shadow-card: var(--elevation-card);
+  --shadow-dropdown: var(--elevation-dropdown);
+  --shadow-modal: var(--elevation-modal);
+  --shadow-recipe-hover: var(--elevation-recipe-hover);
+  --shadow-primary-active: var(--elevation-primary-active);
 
   /* Layout → max-w-page, max-w-form, px-page-x, w-sidebar */
   --container-page: var(--page-max-width);

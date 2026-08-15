@@ -44,6 +44,6 @@
   }
 
   .type-btn {
-    @apply font-sans text-btn font-semibold;
+    @apply text-center font-sans text-btn font-semibold;
   }
 }
