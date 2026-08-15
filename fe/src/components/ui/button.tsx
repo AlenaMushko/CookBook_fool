@@ -40,8 +40,15 @@ const buttonVariants = cva(
           "active:bg-secondary-active",
         ],
         outline: [
-          "border border-outline",
-          "bg-tertiary text-outline-foreground",
+          "border border-transparent",
+          "bg-outline text-outline-foreground",
+          "hover:bg-outline-hover",
+          "active:bg-outline-active",
+        ],
+        // alias for shadcn internals (close, clear, pagination)
+        ghost: [
+          "border border-transparent",
+          "bg-outline text-outline-foreground",
           "hover:bg-outline-hover",
           "active:bg-outline-active",
         ],

@@ -1,12 +1,10 @@
 import { cn } from "@/lib/utils"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Loading03Icon } from "@hugeicons/core-free-icons"
+import { Loader2 } from "lucide-react"
 
 function Spinner({ className }: { className?: string }) {
   return (
-    <HugeiconsIcon
-      icon={Loading03Icon}
-      strokeWidth={2}
+    <Loader2
+      strokeWidth={1.5}
       data-slot="spinner"
       role="status"
       aria-label="Loading"

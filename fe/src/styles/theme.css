@@ -20,11 +20,11 @@
   --secondary-active: #eee4d3;
   --secondary-border: #e6d9c4;
 
-  /* Outline button */
-  --outline: rgb(255 255 255 / 0);
+  /* Tertiary button */
+  --outline: transparent;
   --outline-foreground: #4a5a44;
   --outline-hover: #f4eadc;
-  --outline-active: #f6eee2;
+  --outline-active:  rgb(255 255 255 / 0)
 
   /* Destructive button */
   --destructive: #b5502b;
