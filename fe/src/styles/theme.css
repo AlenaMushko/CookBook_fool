@@ -1,27 +1,33 @@
-/* -------------------------------------------------------------------------- */
-/* Cookbook design tokens — SINGLE source of truth for colors / fonts / etc. */
-/* Change hex here only. In components use Tailwind: bg-primary, text-brand */
-/* Rare JS inline styles: style={{ color: "var(--brand)" }}                 */
-/* -------------------------------------------------------------------------- */
-
 :root {
   /* Surfaces */
   --background: #fbf4ea;
-  --foreground: #2b2620;
+  --foreground: #2b2620; /* text primary */
   --card: #fffdf8;
   --card-foreground: #2b2620;
   --popover: #fffdf8;
   --popover-foreground: #2b2620;
 
-  /* Primary action (CTAs, active nav, focus, selection) */
+  /* Primary button */
   --primary: #4a5a44;
   --primary-foreground: #ffffff;
   --primary-hover: #5c6e54;
+  --primary-pressed: #7f9079;
   --primary-muted: #8b9683;
 
-  /* Soft / secondary surfaces */
+  /* Secondary button */
   --secondary: #f4eadc;
   --secondary-foreground: #2b2620;
+  --secondary-hover: #eadfc9;
+  --secondary-pressed: #eee4d3;
+  --secondary-border: #e6d9c4;
+
+  /* Tertiary button */
+  --tertiary: transparent;
+  --tertiary-foreground: #4a5a44;
+  --tertiary-hover: #f4eadc;
+  --tertiary-pressed: #f6eee2;
+
+  /* Soft / secondary surfaces */
   --muted: #f4eadc;
   --muted-foreground: #6b6050;
   --accent: #eadfc9;
@@ -37,9 +43,13 @@
   --subtle: #8e836d;
   --divider: #ede2d0;
 
-  /* States */
-  --destructive: #8b2a1a;
+  /* Destructive button */
+  --destructive: #b5502b;
   --destructive-foreground: #ffffff;
+  --destructive-hover: #7f381c;
+  --destructive-pressed: #996047;
+
+  /* States */
   --success: #3a6644;
   --success-foreground: #ffffff;
   --success-bg: #edf5ef;
@@ -53,6 +63,7 @@
   --info-bg: #eaf0ec;
   --info-border: #b0cdbb;
 
+  /* Disabled */
   --disabled-bg: #ede8e0;
   --disabled-foreground: #b0a898;
 
@@ -60,7 +71,18 @@
   --input: #e6d9c4;
   --ring: #4a5a44;
 
-  --radius: 0.4375rem;
+  /* Elevations (mapped to --shadow-* in @theme) */
+  --elevation-subtle: 0 1px 4px rgb(43 38 32 / 0.06);
+  --elevation-card: 0 2px 8px rgb(43 38 32 / 0.08), 0 1px 2px rgb(43 38 32 / 0.04);
+  --elevation-dropdown: 0 4px 16px rgb(43 38 32 / 0.1), 0 1px 4px rgb(43 38 32 / 0.06);
+  --elevation-modal: 0 8px 40px rgb(43 38 32 / 0.14), 0 2px 8px rgb(43 38 32 / 0.06);
+  --elevation-recipe-hover: 0 4px 18px rgb(43 38 32 / 0.1);
+
+  /* Layout */
+  --page-padding-x: 40px;
+  --page-max-width: 1440px;
+  --form-max-width: 720px;
+  --sidebar-width: 300px;
 
   /* Sidebar */
   --sidebar: #f4eadc;
@@ -71,25 +93,15 @@
   --sidebar-accent-foreground: #2b2620;
   --sidebar-border: #e6d9c4;
   --sidebar-ring: #4a5a44;
-
-  --chart-1: #4a5a44;
-  --chart-2: #b5502b;
-  --chart-3: #c79a56;
-  --chart-4: #3a6644;
-  --chart-5: #2d5a7a;
-
-  --shadow-subtle: 0 1px 4px rgb(43 38 32 / 0.06);
-  --shadow-card: 0 2px 8px rgb(43 38 32 / 0.08), 0 1px 2px rgb(43 38 32 / 0.04);
-  --shadow-dropdown: 0 4px 16px rgb(43 38 32 / 0.1), 0 1px 4px rgb(43 38 32 / 0.06);
-  --shadow-modal: 0 8px 40px rgb(43 38 32 / 0.14), 0 2px 8px rgb(43 38 32 / 0.06);
-  --shadow-recipe-hover: 0 4px 18px rgb(43 38 32 / 0.1);
 }
 
 @theme inline {
+  /* Fonts → font-sans, font-serif, font-heading */
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Source Serif 4", ui-serif, Georgia, serif;
   --font-heading: var(--font-serif);
 
+  /* Colors → bg-*, text-*, border-*, ring-*, fill-*, … */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -99,9 +111,17 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-hover: var(--primary-hover);
+  --color-primary-pressed: var(--primary-pressed);
   --color-primary-muted: var(--primary-muted);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-pressed: var(--secondary-pressed);
+  --color-secondary-border: var(--secondary-border);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-foreground: var(--tertiary-foreground);
+  --color-tertiary-hover: var(--tertiary-hover);
+  --color-tertiary-pressed: var(--tertiary-pressed);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -115,6 +135,8 @@
   --color-divider: var(--divider);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-hover: var(--destructive-hover);
+  --color-destructive-pressed: var(--destructive-pressed);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-success-bg: var(--success-bg);
@@ -140,25 +162,28 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
 
   --radius-sm: 4px;
   --radius-md: 7px;
   --radius-lg: 10px;
   --radius-xl: 12px;
   --radius-2xl: 16px;
-  --radius-pill: 9999px;
+  --radius-3xl: 24px;
+  --radius-4xl: 32px;
+  
+/* Shadows */
+--shadow-subtle: var(--elevation-subtle);
+--shadow-card: var(--elevation-card);
+--shadow-dropdown: var(--elevation-dropdown);
+--shadow-modal: var(--elevation-modal);
 
-  --shadow-subtle: 0 1px 4px rgb(43 38 32 / 0.06);
-  --shadow-card: 0 2px 8px rgb(43 38 32 / 0.08), 0 1px 2px rgb(43 38 32 / 0.04);
-  --shadow-dropdown: 0 4px 16px rgb(43 38 32 / 0.1), 0 1px 4px rgb(43 38 32 / 0.06);
-  --shadow-modal: 0 8px 40px rgb(43 38 32 / 0.14), 0 2px 8px rgb(43 38 32 / 0.06);
-  --shadow-recipe-hover: 0 4px 18px rgb(43 38 32 / 0.1);
+  /* Layout → max-w-page, max-w-form, px-page-x, w-sidebar */
+  --container-page: var(--page-max-width);
+  --container-form: var(--form-max-width);
+  --spacing-page-x: var(--page-padding-x);
+  --spacing-sidebar: var(--sidebar-width);
 
+  /* Breakpoints → sm: md: lg: xl: */
   --breakpoint-sm: 390px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1280px;
