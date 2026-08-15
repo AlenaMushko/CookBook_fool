@@ -1,4 +1,5 @@
 export { ImageUploader } from './ImageUploader'
 export { ConfirmationDialog } from './ConfirmationDialog'
+export { Modal } from './Modal'
 export { Loader } from './Loader'
 export { EmptyState } from './EmptyState'

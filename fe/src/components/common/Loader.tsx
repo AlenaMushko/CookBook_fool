@@ -15,7 +15,7 @@ export const Loader = () => {
       aria-live="polite"
       aria-busy="true"
     >
-      <Spinner className="size-8 text-primary" />
+      <Spinner size="xl" className="text-primary" />
     </div>
   )
 }

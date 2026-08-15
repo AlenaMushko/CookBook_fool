@@ -62,15 +62,16 @@ const buttonVariants = cva(
       },
       size: {
         default:
-          "px-5 py-[9px] has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-start]:pl-4",
-        modal: "px-4 py-2 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
+          "min-h-11 px-4 py-2.5 md:min-h-0 md:px-5 md:py-[9px] has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 md:has-data-[icon=inline-end]:pr-4 md:has-data-[icon=inline-start]:pl-4",
+        modal:
+          "min-h-10 px-3 py-2 md:min-h-0 md:px-4 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 md:has-data-[icon=inline-end]:pr-3 md:has-data-[icon=inline-start]:pl-3",
         xs: "gap-1 px-2.5 py-1 text-xs has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3",
-        sm: "gap-1 px-3 py-1.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        lg: "gap-2 px-6 py-3 has-data-[icon=inline-end]:pr-5 has-data-[icon=inline-start]:pl-5",
-        icon: "size-10 p-0",
+        sm: "min-h-9 gap-1 px-3 py-1.5 md:min-h-0 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        lg: "min-h-12 gap-2 px-5 py-3 md:min-h-0 md:px-6 has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-start]:pl-4 md:has-data-[icon=inline-end]:pr-5 md:has-data-[icon=inline-start]:pl-5",
+        icon: "size-11 p-0 md:size-10",
         "icon-xs": "size-6 p-0 [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm": "size-8 p-0",
-        "icon-lg": "size-11 p-0",
+        "icon-sm": "size-9 p-0 md:size-8",
+        "icon-lg": "size-12 p-0 md:size-11",
       },
     },
     defaultVariants: {

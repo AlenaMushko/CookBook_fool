@@ -1,7 +1,6 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
@@ -23,7 +22,7 @@ function PaginationContent({
   return (
     <ul
       data-slot="pagination-content"
-      className={cn("flex items-center gap-1", className)}
+      className={cn("flex flex-wrap items-center justify-center gap-1 md:gap-1.5", className)}
       {...props}
     />
   )
@@ -35,65 +34,60 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
 
 type PaginationLinkProps = {
   isActive?: boolean
-} & Pick<React.ComponentProps<typeof Button>, "size"> &
-  React.ComponentProps<"a">
+} & React.ComponentProps<"a">
 
 function PaginationLink({
   className,
   isActive,
-  size = "icon",
   ...props
 }: PaginationLinkProps) {
   return (
-    <Button
-      variant={isActive ? "outline" : "ghost"}
-      size={size}
-      className={cn(className)}
-      nativeButton={false}
-      render={
-        <a
-          aria-current={isActive ? "page" : undefined}
-          data-slot="pagination-link"
-          data-active={isActive}
-          {...props}
-        />
-      }
+    <a
+      aria-current={isActive ? "page" : undefined}
+      data-slot="pagination-link"
+      data-active={isActive}
+      className={cn(
+        "inline-flex size-9 shrink-0 items-center justify-center md:size-8",
+        "rounded-[6px] border-[1.5px] font-sans text-btn font-semibold",
+        "transition-colors outline-none",
+        "focus-visible:ring-[3px] focus-visible:ring-ring/35",
+        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
+        isActive
+          ? "border-primary bg-primary text-primary-foreground"
+          : "border-border bg-card text-foreground hover:bg-secondary",
+        className
+      )}
+      {...props}
     />
   )
 }
 
 function PaginationPrevious({
   className,
-  text = "Previous",
   ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+}: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink
       aria-label="Go to previous page"
-      size="default"
-      className={cn("pl-2!", className)}
+      className={className}
       {...props}
     >
-      <ChevronLeft strokeWidth={1.5} data-icon="inline-start" />
-      <span className="hidden sm:block">{text}</span>
+      <ChevronLeft strokeWidth={1.5} />
     </PaginationLink>
   )
 }
 
 function PaginationNext({
   className,
-  text = "Next",
   ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+}: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink
       aria-label="Go to next page"
-      size="default"
-      className={cn("pr-2!", className)}
+      className={className}
       {...props}
     >
-      <span className="hidden sm:block">{text}</span>
-      <ChevronRight strokeWidth={1.5} data-icon="inline-end" />
+      <ChevronRight strokeWidth={1.5} />
     </PaginationLink>
   )
 }
@@ -107,7 +101,9 @@ function PaginationEllipsis({
       aria-hidden
       data-slot="pagination-ellipsis"
       className={cn(
-        "flex size-9 items-center justify-center [&_svg:not([class*='size-'])]:size-4",
+        "inline-flex size-9 shrink-0 items-center justify-center md:size-8",
+        "rounded-[6px] border-[1.5px] border-border bg-card text-foreground",
+        "[&_svg]:size-3.5",
         className
       )}
       {...props}

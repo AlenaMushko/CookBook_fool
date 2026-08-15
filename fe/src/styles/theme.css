@@ -20,11 +20,11 @@
   --secondary-active: #eee4d3;
   --secondary-border: #e6d9c4;
 
-  /* Tertiary button */
-  --outline: transparent;
+  /* Outline button */
+  --outline: rgb(255 255 255 / 0);
   --outline-foreground: #4a5a44;
   --outline-hover: #f4eadc;
-  --outline-active:  rgb(255 255 255 / 0)
+  --outline-active: rgb(255 255 255 / 0);
 
   /* Destructive button */
   --destructive: #b5502b;
@@ -62,12 +62,20 @@
   --info-bg: #eaf0ec;
   --info-border: #b0cdbb;
 
+  /* Form validation (distinct from button destructive) */
+  --error: #8b2a1a;
+  --error-bg: #fdf0ee;
+  --error-border: #f8c4bc;
+
   /* Disabled */
   --disabled-bg: #ede8e0;
   --disabled-foreground: #b0a898;
 
   --border: #e6d9c4;
   --input: #e6d9c4;
+  --input-bg: #fffdf8;
+  --input-hover: #8b9683;
+  --input-focus: #2b2620;
   --ring: #4a5a44;
 
   /* Elevations (mapped to --shadow-* in @theme) */
@@ -79,8 +87,8 @@
   /* Primary :active ring — 2.5px primary + 4px page background */
   --elevation-primary-active: 0 0 0 2.5px var(--primary), 0 0 0 4px var(--background);
 
-  /* Layout */
-  --page-padding-x: 40px;
+  /* Layout — mobile first (overridden at md) */
+  --page-padding-x: 16px;
   --page-max-width: 1440px;
   --form-max-width: 720px;
   --sidebar-width: 300px;
@@ -94,6 +102,12 @@
   --sidebar-accent-foreground: #2b2620;
   --sidebar-border: #e6d9c4;
   --sidebar-ring: #4a5a44;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-padding-x: 40px;
+  }
 }
 
 @theme inline {
@@ -153,6 +167,9 @@
   --text-btn--line-height: 1.5;
   --text-btn--letter-spacing: 0.02em;
 
+  --text-counter: 10px;
+  --text-counter--line-height: 1.5;
+
   /* Colors → bg-*, text-*, border-*, ring-*, fill-*, … */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -192,6 +209,9 @@
   --color-success-foreground: var(--success-foreground);
   --color-success-bg: var(--success-bg);
   --color-success-border: var(--success-border);
+  --color-error: var(--error);
+  --color-error-bg: var(--error-bg);
+  --color-error-border: var(--error-border);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
   --color-warning-bg: var(--warning-bg);
@@ -204,6 +224,9 @@
   --color-disabled-foreground: var(--disabled-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-input-bg: var(--input-bg);
+  --color-input-hover: var(--input-hover);
+  --color-input-focus: var(--input-focus);
   --color-ring: var(--ring);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
