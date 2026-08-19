@@ -3,11 +3,6 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
-/**
- * Metadata Badges & Tags (Figma)
- * One shell for all: padding 6×12, gap 6, radius 20, border 1.5px.
- * Colored soft fills — preferred look (Vegetarian / Trending / difficulty).
- */
 const metaBadgeVariants = cva(
   [
     "inline-flex w-fit shrink-0 items-center gap-1.5",
@@ -18,15 +13,10 @@ const metaBadgeVariants = cva(
   {
     variants: {
       variant: {
-        // beige meta — time, serves, saves
         default: "border-border bg-secondary text-muted-foreground",
-        // Vegetarian / Easy
         success: "border-success-border bg-success-bg text-success",
-        // Medium difficulty
         warning: "border-warning-border bg-warning-bg text-warning",
-        // Hard / alert tags
         error: "border-error-border bg-error-bg text-error",
-        // Trending
         brand: "border-border bg-brand-soft text-brand",
       },
     },
@@ -38,9 +28,7 @@ const metaBadgeVariants = cva(
 
 type MetaBadgeProps = React.ComponentProps<"span"> &
   VariantProps<typeof metaBadgeVariants> & {
-    /** Lucide (or any) icon node */
     icon?: React.ReactNode
-    /** Label text */
     children: React.ReactNode
   }
 

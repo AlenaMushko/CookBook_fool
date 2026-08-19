@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { ErrorPage, NotFoundPage } from '@pages/errors'
 import { AppProviders } from '@/providers'
+import { queryClient } from '@api/queryClient'
 
 import "@fontsource-variable/manrope"
 import "@fontsource-variable/source-serif-4"
@@ -13,6 +14,13 @@ import './i18n'
 
 const router = createRouter({
   routeTree,
+  context: {
+    queryClient,
+    auth: {
+      user: null,
+      isAuthenticated: false,
+    },
+  },
   defaultErrorComponent: ErrorPage,
   defaultNotFoundComponent: NotFoundPage,
 })
