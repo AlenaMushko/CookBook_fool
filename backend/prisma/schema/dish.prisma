@@ -1,0 +1,157 @@
+model DishCategory {
+  id      String   @id @default(uuid()) @db.Uuid
+  created DateTime @default(now())
+  updated DateTime @updatedAt
+  nameEn  String
+  nameUk  String
+  slug    String   @unique
+  order   Int
+
+  subcategories DishSubcategory[]
+  dishes        Dish[]
+
+  @@map("dish-categories")
+}
+
+model DishSubcategory {
+  id         String @id @default(uuid()) @db.Uuid
+  categoryId String @db.Uuid
+  nameEn     String
+  nameUk     String
+  slug       String
+  order      Int
+
+  category DishCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  dishes   Dish[]
+
+  @@unique([categoryId, slug])
+  @@index([categoryId])
+  @@map("dish-subcategories")
+}
+
+model Ingredient {
+  id      String   @id @default(uuid()) @db.Uuid
+  created DateTime @default(now())
+  updated DateTime @updatedAt
+  en      Json
+  uk      Json
+  image   String?
+
+  dishIngredients     DishIngredient[]
+  conversionRules     ConversionRule[]
+  userConversionRules UserConversionRule[]
+
+  @@map("ingredients")
+}
+
+model MeasurementUnit {
+  id       String              @id @default(uuid()) @db.Uuid
+  code     String              @unique
+  nameEn   String
+  nameUk   String
+  symbolEn String?
+  symbolUk String?
+  type     MeasurementUnitType
+  order    Int
+  isActive Boolean             @default(true)
+
+  dishIngredients DishIngredient[]
+  conversionsFrom ConversionRule[] @relation("ConversionFromUnit")
+  conversionsTo   ConversionRule[] @relation("ConversionToUnit")
+
+  @@map("measurement-units")
+}
+
+model DishIngredientGroup {
+  id     String @id @default(uuid()) @db.Uuid
+  dishId String @db.Uuid
+  nameEn String
+  nameUk String
+  order  Int
+
+  dish        Dish             @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  ingredients DishIngredient[]
+
+  @@index([dishId])
+  @@map("dish-ingredient-groups")
+}
+
+model DishIngredient {
+  id           String  @id @default(uuid()) @db.Uuid
+  dishId       String  @db.Uuid
+  ingredientId String  @db.Uuid
+  unitId       String  @db.Uuid
+  groupId      String? @db.Uuid
+  quantity     Decimal @db.Decimal(10, 3)
+  order        Int
+
+  dish       Dish                 @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  ingredient Ingredient           @relation(fields: [ingredientId], references: [id])
+  unit       MeasurementUnit      @relation(fields: [unitId], references: [id])
+  group      DishIngredientGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+
+  @@index([dishId])
+  @@index([ingredientId])
+  @@index([unitId])
+  @@map("dish-ingredients")
+}
+
+model ConversionRule {
+  id           String  @id @default(uuid()) @db.Uuid
+  ingredientId String? @db.Uuid
+  fromUnitId   String  @db.Uuid
+  toUnitId     String  @db.Uuid
+  factor       Decimal @db.Decimal(12, 6)
+
+  ingredient Ingredient?     @relation(fields: [ingredientId], references: [id])
+  fromUnit   MeasurementUnit @relation("ConversionFromUnit", fields: [fromUnitId], references: [id])
+  toUnit     MeasurementUnit @relation("ConversionToUnit", fields: [toUnitId], references: [id])
+
+  @@map("conversion-rules")
+}
+
+model Dish {
+  id      String   @id @default(uuid()) @db.Uuid
+  created DateTime @default(now())
+  updated DateTime @updatedAt
+
+  titleEn       String
+  titleUk       String
+  descriptionEn String?
+  descriptionUk String?
+  noteEn        String?
+  noteUk        String?
+
+  visibility DishVisibility
+  difficulty DishDifficulty
+
+  prepTime     Int?
+  cookTime     Int?
+  baseServings Decimal? @db.Decimal(5, 1)
+
+  steps  Json
+  photos Json?
+
+  ownerId        String  @db.Uuid
+  categoryId     String  @db.Uuid
+  subcategoryId  String? @db.Uuid
+  originalDishId String? @db.Uuid
+
+  owner         User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  category      DishCategory      @relation(fields: [categoryId], references: [id])
+  subcategory   DishSubcategory?  @relation(fields: [subcategoryId], references: [id])
+  originalDish  Dish?             @relation("DishVersions", fields: [originalDishId], references: [id], onDelete: SetNull)
+  versions      Dish[]            @relation("DishVersions")
+
+  ingredients      DishIngredient[]
+  ingredientGroups DishIngredientGroup[]
+  likes            Like[]
+  menuDishes       MenuDish[]
+
+  @@index([ownerId])
+  @@index([categoryId])
+  @@index([subcategoryId])
+  @@index([visibility])
+  @@index([created])
+  @@map("dishes")
+}

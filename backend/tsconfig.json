@@ -17,8 +17,8 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
-    "moduleResolution": "node10",
-    "ignoreDeprecations": "6.0",
-    "typeRoots": ["node_modules/@types"]
-  }
+    "moduleResolution": "node",
+    "ignoreDeprecations": "5.0"
+  },
+  "include": ["src/**/*", "prisma/**/*"]
 }

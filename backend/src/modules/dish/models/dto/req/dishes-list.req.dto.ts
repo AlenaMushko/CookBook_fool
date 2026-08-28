@@ -1,36 +1,87 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { DishDifficulty, DishVisibility } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
-  IsBoolean,
+  IsEnum,
   IsInt,
   IsOptional,
   IsString,
+  IsUUID,
   Max,
   Min,
 } from 'class-validator';
 
+export enum DishListScope {
+  PUBLIC = 'public',
+  CREATED = 'created',
+  SAVED = 'saved',
+  COOKBOOK = 'cookbook',
+}
+
+export enum DishListSort {
+  NEWEST = 'newest',
+  OLDEST = 'oldest',
+  ALPHABETICAL = 'alphabetical',
+  POPULARITY = 'popularity',
+  COOK_TIME = 'cookTime',
+  DIFFICULTY = 'difficulty',
+}
+
 export class DishesListReqDto {
+  @ApiPropertyOptional({ default: 12 })
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  @Max(100)
-  @IsOptional()
-  limit?: number = 10;
+  @Max(50)
+  limit?: number = 12;
 
+  @ApiPropertyOptional({ default: 0 })
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  @IsOptional()
   offset?: number = 0;
 
-  @IsOptional()
-  @IsString()
-  categoryId?: string;
-
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   search?: string;
 
+  @ApiPropertyOptional()
   @IsOptional()
-  @IsBoolean()
-  my?: boolean;
+  @IsUUID()
+  categoryId?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUUID()
+  subcategoryId?: string;
+
+  @ApiPropertyOptional({ enum: DishDifficulty })
+  @IsOptional()
+  @IsEnum(DishDifficulty)
+  difficulty?: DishDifficulty;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  maxCookTime?: number;
+
+  @ApiPropertyOptional({ enum: DishVisibility })
+  @IsOptional()
+  @IsEnum(DishVisibility)
+  visibility?: DishVisibility;
+
+  @ApiPropertyOptional({ enum: DishListScope, default: DishListScope.PUBLIC })
+  @IsOptional()
+  @IsEnum(DishListScope)
+  scope?: DishListScope = DishListScope.PUBLIC;
+
+  @ApiPropertyOptional({ enum: DishListSort, default: DishListSort.POPULARITY })
+  @IsOptional()
+  @IsEnum(DishListSort)
+  sort?: DishListSort = DishListSort.POPULARITY;
 }

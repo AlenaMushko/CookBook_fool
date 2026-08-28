@@ -1,6 +1,7 @@
 import { CreateBucketCommand, S3Client } from '@aws-sdk/client-s3';
-import { Logger } from '@nestjs/common';
 import * as dotenv from 'dotenv';
+
+import logger from '../logger';
 
 dotenv.config({ path: 'environments/local.env' });
 
@@ -26,9 +27,9 @@ async function createBucket() {
         Bucket: process.env.AWS_S3_BUCKET_NAME,
       }),
     );
-    Logger.log('Bucket is created');
-  } catch (e) {
-    Logger.log('Bucket already exists');
+    logger.info({ bucket: process.env.AWS_S3_BUCKET_NAME }, 'Bucket created');
+  } catch {
+    logger.info({ bucket: process.env.AWS_S3_BUCKET_NAME }, 'Bucket already exists');
   }
 }
 

@@ -9,6 +9,8 @@ export type Config = {
 export type AppConfig = {
   port: number;
   host: string;
+  nodeEnv: string;
+  allowedOrigins: string[];
 };
 
 export type PostgresConfig = {

@@ -1,11 +1,9 @@
-import {
-  ConflictException,
-  Injectable,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { User } from '@prisma/client';
 
-import { UserEntity } from '../../../database/entities/user.entity';
-import { UserRepository } from '../../repository/services/user.repository';
+import { ErrorCode } from '../../../common/constants/error-codes';
+import { AppException } from '../../../common/exceptions/app.exception';
+import { UserRepository } from '../repositories/user.repository';
 import { UpdateUserReqDto } from '../models/dto/req/update-user.req.dto';
 import { UserResDto } from '../models/dto/res/user.res.dto';
 import { UserMapper } from './user.mapper';
@@ -23,12 +21,17 @@ export class UserService {
     id: string,
     updateUserDto: Partial<UpdateUserReqDto>,
   ): Promise<UserResDto> {
-    const user = await this.findByIdOrThrow(id, true);
+    await this.findByIdOrThrow(id);
 
-    const updatedUser = await this.userRepository.save({
-      ...user,
-      ...updateUserDto,
-    });
+    const updatedUser = await this.userRepository.save(
+      { id },
+      {
+        firstName: updateUserDto.firstName,
+        lastName: updateUserDto.lastName,
+        phone: updateUserDto.phone,
+        image: updateUserDto.image,
+      },
+    );
 
     return UserMapper.toResDto(updatedUser);
   }
@@ -36,30 +39,32 @@ export class UserService {
   public async isEmailUniqueOrThrow(email: string): Promise<void> {
     const user = await this.userRepository.findOneBy({ email });
     if (user) {
-      throw new ConflictException('Email is already taken');
+      throw new AppException(
+        ErrorCode.USER_EMAIL_EXISTS,
+        409,
+        'Email is already taken',
+      );
     }
   }
 
   public async findByIdOrThrow(
     id: string,
     includePassword = false,
-  ): Promise<UserEntity> {
-    const selectFields: (keyof UserEntity)[] = [
-      'id',
-      'firstName',
-      'lastName',
-      'email',
-      'phone',
-      'image',
-    ];
-
-    if (includePassword) {
-      selectFields.push('password');
-    }
-    const user = await this.userRepository.findOne({
-      where: { id },
-      select: selectFields,
-    });
+  ): Promise<User> {
+    const user = await this.userRepository.findOne(
+      { id },
+      {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        image: true,
+        ...(includePassword ? { password: true } : {}),
+        created: true,
+        updated: true,
+      },
+    );
 
     if (!user) {
       throw new UnprocessableEntityException();
@@ -67,7 +72,7 @@ export class UserService {
     return user;
   }
 
-  public async findByImage(image: string): Promise<UserEntity> {
-    return await this.userRepository.findOne({ where: { image } });
+  public async findByImage(image: string): Promise<User | null> {
+    return this.userRepository.findOne({ image });
   }
 }

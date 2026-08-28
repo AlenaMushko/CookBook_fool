@@ -1,0 +1,16 @@
+enum DishVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+enum DishDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum MeasurementUnitType {
+  MASS
+  VOLUME
+  COUNT
+}

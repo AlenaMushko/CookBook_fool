@@ -1,14 +1,32 @@
-import { Controller, Delete, Get, Param, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { OptionalAuth } from '../auth/decorators/optional-auth.decorator';
+import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
+import { CreateDishDto } from './models/dto/req/create-dish.dto';
 import { DishesListReqDto } from './models/dto/req/dishes-list.req.dto';
-import { DishListResDto, DishResDto } from './models/dto/res/dish.res.dto';
+import { UpdateDishDto } from './models/dto/req/update-dish.req.dto';
+import {
+  DishCategoryListResDto,
+} from './models/dto/res/dish.category.res.dto';
+import {
+  DishListResDto,
+  ParsedDishResDto,
+} from './models/dto/res/dish.res.dto';
 import { DishCategoryService } from './services/dish.category.service';
 import { DishService } from './services/dish.service';
 
-@ApiBearerAuth()
 @ApiTags('Dish')
 @Controller('dish')
 export class DishController {
@@ -17,29 +35,91 @@ export class DishController {
     private readonly dishService: DishService,
   ) {}
 
+  @SkipAuth()
   @Get('categories')
-  public async getDishCategories() {
+  @ApiOperation({ summary: 'List dish categories with subcategories' })
+  public async getDishCategories(): Promise<DishCategoryListResDto> {
     return await this.dishCategoryService.getDishCategories();
   }
 
+  @ApiBearerAuth()
+  @Post()
+  @ApiOperation({ summary: 'Create dish' })
+  public async createDish(
+    @Body() dto: CreateDishDto,
+    @CurrentUser() userData: IUserData,
+  ): Promise<ParsedDishResDto> {
+    return await this.dishService.createDish(dto, userData);
+  }
+
+  @OptionalAuth()
   @Get()
+  @ApiOperation({ summary: 'List dishes' })
   public async getAllDishes(
     @Query() query: DishesListReqDto,
-    @CurrentUser() userData: IUserData,
+    @CurrentUser() userData?: IUserData,
   ): Promise<DishListResDto> {
     return await this.dishService.getAllDishes(query, userData);
   }
 
+  @OptionalAuth()
   @Get(':id')
-  public async getDishById(@Param('id') id: string): Promise<DishResDto> {
-    return await this.dishService.getDishById(id);
+  @ApiOperation({ summary: 'Get dish by id' })
+  public async getDishById(
+    @Param('id') id: string,
+    @CurrentUser() userData?: IUserData,
+  ): Promise<ParsedDishResDto> {
+    return await this.dishService.getDishById(id, userData);
   }
 
+  @ApiBearerAuth()
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update dish' })
+  public async updateDish(
+    @Param('id') id: string,
+    @Body() dto: UpdateDishDto,
+    @CurrentUser() userData: IUserData,
+  ): Promise<ParsedDishResDto> {
+    return await this.dishService.updateDish(id, dto, userData);
+  }
+
+  @ApiBearerAuth()
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete dish' })
   public async deleteDish(
     @Param('id') id: string,
     @CurrentUser() userData: IUserData,
   ): Promise<void> {
     return await this.dishService.deleteDish(id, userData);
+  }
+
+  @ApiBearerAuth()
+  @Post(':id/like')
+  @ApiOperation({ summary: 'Save dish to cookbook' })
+  public async saveDish(
+    @Param('id') id: string,
+    @CurrentUser() userData: IUserData,
+  ): Promise<void> {
+    return await this.dishService.saveDish(id, userData);
+  }
+
+  @ApiBearerAuth()
+  @Delete(':id/like')
+  @ApiOperation({ summary: 'Unsave dish from cookbook' })
+  public async unsaveDish(
+    @Param('id') id: string,
+    @CurrentUser() userData: IUserData,
+  ): Promise<void> {
+    return await this.dishService.unsaveDish(id, userData);
+  }
+
+  @ApiBearerAuth()
+  @Post(':id/duplicate')
+  @ApiOperation({ summary: 'Create my version of dish' })
+  public async duplicateDish(
+    @Param('id') id: string,
+    @CurrentUser() userData: IUserData,
+  ): Promise<ParsedDishResDto> {
+    return await this.dishService.duplicateDish(id, userData);
   }
 }

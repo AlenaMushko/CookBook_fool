@@ -2,6 +2,9 @@
 /dist
 /node_modules
 /build
+/prisma/seed.js
+/prisma/seed.js.map
+/prisma/seed.d.ts
 
 # Logs
 logs

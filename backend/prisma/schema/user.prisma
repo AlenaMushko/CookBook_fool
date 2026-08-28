@@ -1,0 +1,63 @@
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  created   DateTime @default(now())
+  updated   DateTime @updatedAt
+  firstName String
+  lastName  String?
+  email     String   @unique
+  password  String
+  image     String?
+  phone     String?
+
+  dishes              Dish[]
+  refreshTokens       RefreshToken[]
+  likes               Like[]
+  menus               Menu[]
+  passwordResetTokens PasswordResetToken[]
+  conversionRules     UserConversionRule[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id           String   @id @default(uuid()) @db.Uuid
+  created      DateTime @default(now())
+  updated      DateTime @updatedAt
+  refreshToken String   @unique
+  deviceId     String
+  userId       String   @db.Uuid
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, deviceId])
+  @@map("refresh-tokens")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  created   DateTime  @default(now())
+  expiresAt DateTime
+  usedAt    DateTime?
+  tokenHash String    @unique
+  userId    String    @db.Uuid
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password-reset-tokens")
+}
+
+model UserConversionRule {
+  id           String  @id @default(uuid()) @db.Uuid
+  userId       String  @db.Uuid
+  ingredientId String  @db.Uuid
+  fromUnitId   String  @db.Uuid
+  toUnitId     String  @db.Uuid
+  factor       Decimal @db.Decimal(12, 6)
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@unique([userId, ingredientId, fromUnitId, toUnitId])
+  @@map("user-conversion-rules")
+}

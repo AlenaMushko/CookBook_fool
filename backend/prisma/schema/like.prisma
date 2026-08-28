@@ -1,0 +1,14 @@
+model Like {
+  id      String   @id @default(uuid()) @db.Uuid
+  created DateTime @default(now())
+  dishId  String   @db.Uuid
+  userId  String   @db.Uuid
+
+  dish Dish @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([dishId, userId])
+  @@index([userId])
+  @@index([dishId])
+  @@map("likes")
+}

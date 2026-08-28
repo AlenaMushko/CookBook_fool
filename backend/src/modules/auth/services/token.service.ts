@@ -1,13 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { SourceCode } from 'eslint';
 
-import { JWTConfig } from '../../../config/config.type';
+import { Config, JWTConfig } from '../../../config/config.type';
 import { TokenResponseDto } from '../dto/response/token.response.dto';
 import { TokenType } from '../enums/token-type.enum';
 import { JwtPayload } from '../types/jwt-payload.type';
-import Config = SourceCode.Config;
 
 @Injectable()
 export class TokenService {

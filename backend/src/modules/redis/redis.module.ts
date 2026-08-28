@@ -1,29 +1,29 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SourceCode } from 'eslint';
 import { Redis } from 'ioredis';
 
-import { RedisConfig } from '../../config/config.type';
+import { Config, RedisConfig } from '../../config/config.type';
+import logger from '../../logger';
 import { RedisService } from './redis.service';
-import Config = SourceCode.Config;
 
 const redisProvider = {
   provide: 'REDIS_PROVIDER',
   useFactory: (configService: ConfigService<Config>) => {
-    const redisConfig = configService.get<RedisConfig>('redis' as keyof Config);
+    const redisConfig = configService.get<RedisConfig>('redis');
 
     return new Redis({
-      host: redisConfig.host,
-      port: redisConfig.port,
-      password: redisConfig.password,
+      host: redisConfig.host || 'localhost',
+      port: redisConfig.port || 6379,
+      password: redisConfig.password || undefined,
+      maxRetriesPerRequest: 3,
+    }).on('error', (error: Error) => {
+      logger.error({ err: error }, 'Redis connection error');
     });
   },
   inject: [ConfigService],
 };
 
 @Module({
-  imports: [],
-  controllers: [],
   providers: [redisProvider, RedisService],
   exports: [RedisService],
 })

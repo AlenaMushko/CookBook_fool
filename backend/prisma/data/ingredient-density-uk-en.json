@@ -1,0 +1,990 @@
+[
+  {
+    "slug": "all-purpose-flour",
+    "name": {
+      "en": "All-Purpose Flour",
+      "uk": "Пшеничне борошно"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 120,
+    "aliases": [
+      "plain flour",
+      "ap flour"
+    ]
+  },
+  {
+    "slug": "bread-flour",
+    "name": {
+      "en": "Bread Flour",
+      "uk": "Хлібне борошно"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 120,
+    "aliases": [
+      "strong flour"
+    ]
+  },
+  {
+    "slug": "cake-flour",
+    "name": {
+      "en": "Cake Flour",
+      "uk": "Кондитерське борошно"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 120,
+    "aliases": []
+  },
+  {
+    "slug": "whole-wheat-flour",
+    "name": {
+      "en": "Whole Wheat Flour",
+      "uk": "Цільнозернове пшеничне борошно"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 113,
+    "aliases": [
+      "wholemeal flour"
+    ]
+  },
+  {
+    "slug": "self-rising-flour",
+    "name": {
+      "en": "Self-Rising Flour",
+      "uk": "Самопіднімальне борошно"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 113,
+    "aliases": [
+      "self raising flour"
+    ]
+  },
+  {
+    "slug": "almond-flour",
+    "name": {
+      "en": "Almond Flour",
+      "uk": "Мигдалеве борошно"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 96,
+    "aliases": [
+      "ground almonds",
+      "almond meal"
+    ]
+  },
+  {
+    "slug": "cornstarch",
+    "name": {
+      "en": "Cornstarch",
+      "uk": "Кукурудзяний крохмаль"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 112,
+    "aliases": [
+      "corn flour",
+      "cornflour"
+    ]
+  },
+  {
+    "slug": "cocoa-powder",
+    "name": {
+      "en": "Cocoa Powder",
+      "uk": "Какао-порошок"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 85,
+    "aliases": [
+      "unsweetened cocoa"
+    ]
+  },
+  {
+    "slug": "granulated-sugar",
+    "name": {
+      "en": "Granulated Sugar",
+      "uk": "Цукор-пісок"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 200,
+    "aliases": [
+      "white sugar",
+      "granulated white sugar"
+    ]
+  },
+  {
+    "slug": "brown-sugar",
+    "name": {
+      "en": "Brown Sugar (packed)",
+      "uk": "Коричневий цукор (утрамбований)"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 213,
+    "aliases": [
+      "light brown sugar",
+      "dark brown sugar"
+    ]
+  },
+  {
+    "slug": "powdered-sugar",
+    "name": {
+      "en": "Powdered Sugar",
+      "uk": "Цукрова пудра"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 113,
+    "aliases": [
+      "confectioners sugar",
+      "icing sugar"
+    ]
+  },
+  {
+    "slug": "honey",
+    "name": {
+      "en": "Honey",
+      "uk": "Мед"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 340,
+    "aliases": []
+  },
+  {
+    "slug": "maple-syrup",
+    "name": {
+      "en": "Maple Syrup",
+      "uk": "Кленовий сироп"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 322,
+    "aliases": []
+  },
+  {
+    "slug": "corn-syrup",
+    "name": {
+      "en": "Corn Syrup",
+      "uk": "Кукурудзяний сироп"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 328,
+    "aliases": []
+  },
+  {
+    "slug": "butter",
+    "name": {
+      "en": "Butter",
+      "uk": "Вершкове масло"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 227,
+    "aliases": []
+  },
+  {
+    "slug": "milk",
+    "name": {
+      "en": "Milk",
+      "uk": "Молоко"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 240,
+    "aliases": [
+      "whole milk"
+    ]
+  },
+  {
+    "slug": "heavy-cream",
+    "name": {
+      "en": "Heavy Cream",
+      "uk": "Вершки для збивання"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 232,
+    "aliases": [
+      "double cream",
+      "whipping cream",
+      "heavy whipping cream",
+      "dairy cream"
+    ]
+  },
+  {
+    "slug": "sour-cream",
+    "name": {
+      "en": "Sour Cream",
+      "uk": "Сметана"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 230,
+    "aliases": []
+  },
+  {
+    "slug": "cream-cheese",
+    "name": {
+      "en": "Cream Cheese",
+      "uk": "Вершковий сир"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 232,
+    "aliases": []
+  },
+  {
+    "slug": "yogurt",
+    "name": {
+      "en": "Yogurt",
+      "uk": "Йогурт"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 245,
+    "aliases": [
+      "yoghurt",
+      "greek yogurt",
+      "natural yogurt",
+      "skyr"
+    ]
+  },
+  {
+    "slug": "vegetable-oil",
+    "name": {
+      "en": "Vegetable Oil",
+      "uk": "Рослинна олія"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 218,
+    "aliases": [
+      "canola oil",
+      "cooking oil",
+      "sunflower oil",
+      "corn oil",
+      "soybean oil"
+    ]
+  },
+  {
+    "slug": "olive-oil",
+    "name": {
+      "en": "Olive Oil",
+      "uk": "Оливкова олія"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 216,
+    "aliases": []
+  },
+  {
+    "slug": "coconut-oil",
+    "name": {
+      "en": "Coconut Oil",
+      "uk": "Кокосова олія"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 218,
+    "aliases": []
+  },
+  {
+    "slug": "peanut-butter",
+    "name": {
+      "en": "Peanut Butter",
+      "uk": "Арахісова паста"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 256,
+    "aliases": []
+  },
+  {
+    "slug": "chocolate-chips",
+    "name": {
+      "en": "Chocolate Chips",
+      "uk": "Шоколадні краплі"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 170,
+    "aliases": [
+      "choc chips",
+      "chocolate morsels",
+      "semi-sweet chocolate chips"
+    ]
+  },
+  {
+    "slug": "shredded-coconut",
+    "name": {
+      "en": "Shredded Coconut",
+      "uk": "Кокосова стружка"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 80,
+    "aliases": [
+      "desiccated coconut"
+    ]
+  },
+  {
+    "slug": "raisins",
+    "name": {
+      "en": "Raisins",
+      "uk": "Родзинки"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 145,
+    "aliases": []
+  },
+  {
+    "slug": "chopped-nuts",
+    "name": {
+      "en": "Chopped Nuts",
+      "uk": "Подрібнені горіхи"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 120,
+    "aliases": [
+      "walnuts",
+      "pecans"
+    ]
+  },
+  {
+    "slug": "rolled-oats",
+    "name": {
+      "en": "Rolled Oats",
+      "uk": "Вівсяні пластівці"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 90,
+    "aliases": [
+      "old fashioned oats",
+      "quick oats",
+      "porridge oats",
+      "wholegrain oats"
+    ]
+  },
+  {
+    "slug": "white-rice",
+    "name": {
+      "en": "White Rice (uncooked)",
+      "uk": "Білий рис (сухий)"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 185,
+    "aliases": [
+      "long grain rice",
+      "basmati rice",
+      "jasmine rice"
+    ]
+  },
+  {
+    "slug": "quinoa",
+    "name": {
+      "en": "Quinoa (uncooked)",
+      "uk": "Кіноа (суха)"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 170,
+    "aliases": []
+  },
+  {
+    "slug": "cornmeal",
+    "name": {
+      "en": "Cornmeal",
+      "uk": "Кукурудзяна крупа"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 122,
+    "aliases": [
+      "polenta"
+    ]
+  },
+  {
+    "slug": "breadcrumbs",
+    "name": {
+      "en": "Breadcrumbs (dry)",
+      "uk": "Панірувальні сухарі"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 108,
+    "aliases": []
+  },
+  {
+    "slug": "water",
+    "name": {
+      "en": "Water",
+      "uk": "Вода"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 237,
+    "aliases": []
+  },
+  {
+    "slug": "salt",
+    "name": {
+      "en": "Table Salt",
+      "uk": "Кухонна сіль"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 273,
+    "aliases": []
+  },
+  {
+    "slug": "caster-sugar",
+    "name": {
+      "en": "Caster Sugar",
+      "uk": "Дрібнокристалічний цукор"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 190,
+    "aliases": [
+      "superfine sugar",
+      "baker's special sugar",
+      "castor sugar"
+    ]
+  },
+  {
+    "slug": "coconut-sugar",
+    "name": {
+      "en": "Coconut Sugar",
+      "uk": "Кокосовий цукор"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 154,
+    "aliases": [
+      "coconut palm sugar",
+      "coco sugar"
+    ]
+  },
+  {
+    "slug": "molasses",
+    "name": {
+      "en": "Molasses",
+      "uk": "Меляса"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 340,
+    "aliases": [
+      "black treacle"
+    ]
+  },
+  {
+    "slug": "golden-syrup",
+    "name": {
+      "en": "Golden Syrup",
+      "uk": "Золотий сироп"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 340,
+    "aliases": [
+      "light treacle",
+      "cane syrup"
+    ]
+  },
+  {
+    "slug": "agave-nectar",
+    "name": {
+      "en": "Agave Nectar",
+      "uk": "Сироп агави"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 336,
+    "aliases": [
+      "agave syrup"
+    ]
+  },
+  {
+    "slug": "pitted-dates-chopped",
+    "name": {
+      "en": "Pitted Dates (Chopped)",
+      "uk": "Фініки без кісточок (подрібнені)"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 149,
+    "aliases": [
+      "chopped dates",
+      "pitted dates"
+    ]
+  },
+  {
+    "slug": "dried-cranberries",
+    "name": {
+      "en": "Dried Cranberries",
+      "uk": "Сушена журавлина"
+    },
+    "category": "Sugars & Syrups",
+    "grams_per_us_cup": 114,
+    "aliases": [
+      "craisins",
+      "sweetened dried cranberries"
+    ]
+  },
+  {
+    "slug": "sweetened-condensed-milk",
+    "name": {
+      "en": "Sweetened Condensed Milk",
+      "uk": "Згущене молоко з цукром"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 306,
+    "aliases": [
+      "condensed milk"
+    ]
+  },
+  {
+    "slug": "evaporated-milk",
+    "name": {
+      "en": "Evaporated Milk",
+      "uk": "Випарене молоко"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 226,
+    "aliases": [
+      "unsweetened condensed milk"
+    ]
+  },
+  {
+    "slug": "buttermilk",
+    "name": {
+      "en": "Buttermilk",
+      "uk": "Кисле молоко"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 227,
+    "aliases": [
+      "cultured buttermilk"
+    ]
+  },
+  {
+    "slug": "ricotta-cheese",
+    "name": {
+      "en": "Ricotta Cheese",
+      "uk": "Сир рикота"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 227,
+    "aliases": [
+      "ricotta"
+    ]
+  },
+  {
+    "slug": "mascarpone",
+    "name": {
+      "en": "Mascarpone",
+      "uk": "Маскарпоне"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 227,
+    "aliases": [
+      "mascarpone cheese",
+      "italian cream cheese"
+    ]
+  },
+  {
+    "slug": "cottage-cheese",
+    "name": {
+      "en": "Cottage Cheese",
+      "uk": "Зернистий кисломолочний сир"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 226,
+    "aliases": [
+      "curd cheese"
+    ]
+  },
+  {
+    "slug": "grated-parmesan",
+    "name": {
+      "en": "Grated Parmesan",
+      "uk": "Тертий пармезан"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 100,
+    "aliases": [
+      "grated parmigiano",
+      "parmesan cheese"
+    ]
+  },
+  {
+    "slug": "shredded-cheddar",
+    "name": {
+      "en": "Shredded Cheddar",
+      "uk": "Тертий чедер"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 113,
+    "aliases": [
+      "grated cheddar",
+      "cheddar cheese"
+    ]
+  },
+  {
+    "slug": "shredded-mozzarella",
+    "name": {
+      "en": "Shredded Mozzarella",
+      "uk": "Терта моцарела"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 113,
+    "aliases": [
+      "grated mozzarella",
+      "mozzarella cheese"
+    ]
+  },
+  {
+    "slug": "pumpkin-puree",
+    "name": {
+      "en": "Pumpkin Puree",
+      "uk": "Гарбузове пюре"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 227,
+    "aliases": [
+      "pumpkin purée",
+      "canned pumpkin"
+    ]
+  },
+  {
+    "slug": "applesauce",
+    "name": {
+      "en": "Applesauce",
+      "uk": "Яблучне пюре"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 255,
+    "aliases": [
+      "apple sauce",
+      "apple puree"
+    ]
+  },
+  {
+    "slug": "mashed-banana",
+    "name": {
+      "en": "Mashed Banana",
+      "uk": "Бананове пюре"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 227,
+    "aliases": [
+      "banana puree"
+    ]
+  },
+  {
+    "slug": "rye-flour",
+    "name": {
+      "en": "Rye Flour",
+      "uk": "Житнє борошно"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 106,
+    "aliases": [
+      "dark rye flour",
+      "whole rye flour"
+    ]
+  },
+  {
+    "slug": "oat-flour",
+    "name": {
+      "en": "Oat Flour",
+      "uk": "Вівсяне борошно"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 92,
+    "aliases": [
+      "ground oats"
+    ]
+  },
+  {
+    "slug": "coconut-flour",
+    "name": {
+      "en": "Coconut Flour",
+      "uk": "Кокосове борошно"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 128,
+    "aliases": []
+  },
+  {
+    "slug": "semolina",
+    "name": {
+      "en": "Semolina",
+      "uk": "Манна крупа"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 163,
+    "aliases": [
+      "semolina flour",
+      "durum semolina",
+      "rava",
+      "sooji",
+      "suji"
+    ]
+  },
+  {
+    "slug": "tapioca-flour",
+    "name": {
+      "en": "Tapioca Flour",
+      "uk": "Тапіокове борошно"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 113,
+    "aliases": [
+      "tapioca starch"
+    ]
+  },
+  {
+    "slug": "arrowroot-powder",
+    "name": {
+      "en": "Arrowroot Powder",
+      "uk": "Крохмаль маранти"
+    },
+    "category": "Flours & Starches",
+    "grams_per_us_cup": 128,
+    "aliases": [
+      "arrowroot flour",
+      "arrowroot starch"
+    ]
+  },
+  {
+    "slug": "pecan-halves",
+    "name": {
+      "en": "Pecan Halves",
+      "uk": "Половинки пекану"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 105,
+    "aliases": [
+      "pecans"
+    ]
+  },
+  {
+    "slug": "whole-almonds",
+    "name": {
+      "en": "Whole Almonds",
+      "uk": "Мигдаль (цілий)"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 142,
+    "aliases": [
+      "almonds"
+    ]
+  },
+  {
+    "slug": "sesame-seeds",
+    "name": {
+      "en": "Sesame Seeds",
+      "uk": "Насіння кунжуту"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 142,
+    "aliases": [
+      "sesame"
+    ]
+  },
+  {
+    "slug": "chia-seeds",
+    "name": {
+      "en": "Chia Seeds",
+      "uk": "Насіння чіа"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 148,
+    "aliases": [
+      "chia"
+    ]
+  },
+  {
+    "slug": "ground-flaxseed",
+    "name": {
+      "en": "Ground Flaxseed",
+      "uk": "Мелене насіння льону"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 100,
+    "aliases": [
+      "flax meal",
+      "ground flax",
+      "milled flaxseed",
+      "flaxseed meal"
+    ]
+  },
+  {
+    "slug": "poppy-seeds",
+    "name": {
+      "en": "Poppy Seeds",
+      "uk": "Насіння маку"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 144,
+    "aliases": [
+      "poppyseed"
+    ]
+  },
+  {
+    "slug": "panko-breadcrumbs",
+    "name": {
+      "en": "Panko Breadcrumbs",
+      "uk": "Панірувальні сухарі панко"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 50,
+    "aliases": [
+      "panko",
+      "japanese breadcrumbs"
+    ]
+  },
+  {
+    "slug": "steel-cut-oats",
+    "name": {
+      "en": "Steel-Cut Oats",
+      "uk": "Подрібнена вівсяна крупа"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 160,
+    "aliases": [
+      "pinhead oats",
+      "irish oats"
+    ]
+  },
+  {
+    "slug": "couscous-dry",
+    "name": {
+      "en": "Couscous (Dry)",
+      "uk": "Кускус (сухий)"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 175,
+    "aliases": [
+      "dry couscous"
+    ]
+  },
+  {
+    "slug": "bulgur-dry",
+    "name": {
+      "en": "Bulgur (Dry)",
+      "uk": "Булгур (сухий)"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 140,
+    "aliases": [
+      "dry bulgur",
+      "bulgur wheat",
+      "cracked wheat"
+    ]
+  },
+  {
+    "slug": "pearl-barley",
+    "name": {
+      "en": "Pearl Barley (Dry)",
+      "uk": "Перлова крупа (суха)"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 213,
+    "aliases": [
+      "pearled barley",
+      "dry barley"
+    ]
+  },
+  {
+    "slug": "vegetable-shortening",
+    "name": {
+      "en": "Vegetable Shortening",
+      "uk": "Рослинний кондитерський жир"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 184,
+    "aliases": [
+      "shortening",
+      "crisco"
+    ]
+  },
+  {
+    "slug": "tahini",
+    "name": {
+      "en": "Tahini",
+      "uk": "Тахіні"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 256,
+    "aliases": [
+      "sesame paste",
+      "tahini paste",
+      "hulled tahini",
+      "sesame butter"
+    ]
+  },
+  {
+    "slug": "almond-butter",
+    "name": {
+      "en": "Almond Butter",
+      "uk": "Мигдалева паста"
+    },
+    "category": "Dairy & Fats",
+    "grams_per_us_cup": 272,
+    "aliases": [
+      "almond nut butter"
+    ]
+  },
+  {
+    "slug": "white-chocolate-chips",
+    "name": {
+      "en": "White Chocolate Chips",
+      "uk": "Краплі з білого шоколаду"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 170,
+    "aliases": [
+      "white choc chips",
+      "white chocolate morsels"
+    ]
+  },
+  {
+    "slug": "walnuts-chopped",
+    "name": {
+      "en": "Walnuts (Chopped)",
+      "uk": "Волоські горіхи (подрібнені)"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 113,
+    "aliases": [
+      "walnuts",
+      "chopped walnuts"
+    ]
+  },
+  {
+    "slug": "graham-cracker-crumbs",
+    "name": {
+      "en": "Graham Cracker Crumbs",
+      "uk": "Крихти з крекерів Ґрема"
+    },
+    "category": "Grains & Misc",
+    "grams_per_us_cup": 100,
+    "aliases": [
+      "graham crumbs",
+      "crushed graham crackers"
+    ]
+  },
+  {
+    "slug": "hazelnuts",
+    "name": {
+      "en": "Hazelnuts (Whole)",
+      "uk": "Фундук (цілий)"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 142,
+    "aliases": [
+      "filberts",
+      "whole hazelnuts"
+    ]
+  },
+  {
+    "slug": "cashews",
+    "name": {
+      "en": "Cashews (Whole)",
+      "uk": "Кеш'ю (цілі)"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 113,
+    "aliases": [
+      "whole cashews",
+      "cashew nuts"
+    ]
+  },
+  {
+    "slug": "pine-nuts",
+    "name": {
+      "en": "Pine Nuts",
+      "uk": "Кедрові горіхи"
+    },
+    "category": "Baking Ingredients",
+    "grams_per_us_cup": 142,
+    "aliases": [
+      "pignoli",
+      "pinoli"
+    ]
+  }
+]

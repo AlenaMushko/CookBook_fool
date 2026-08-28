@@ -5,11 +5,12 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-import { Global, Injectable } from '@nestjs/common';
+import { ForbiddenException, Global, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 
 import { AWSConfig } from '../../../config/config.type';
+import { DishService } from '../../dish/services/dish.service';
 import { UserService } from '../../user/services/user.service';
 
 @Global()
@@ -21,6 +22,7 @@ export class S3Service {
   constructor(
     private readonly configService: ConfigService,
     private readonly userService: UserService,
+    private readonly dishService: DishService,
   ) {
     this.awsConfig = this.configService.get<AWSConfig>('aws');
     this.s3Client = this.createS3Client();
@@ -30,6 +32,11 @@ export class S3Service {
     file: Express.Multer.File,
     folderName: string,
   ): Promise<{ key: string }> {
+    const allowedFolders = ['dishes', 'avatars'];
+    if (!allowedFolders.includes(folderName)) {
+      throw new ForbiddenException('Invalid folder name');
+    }
+
     const randomName = crypto
       .randomBytes(Math.ceil(12))
       .toString('hex')
@@ -50,7 +57,54 @@ export class S3Service {
     return { key };
   }
 
-  async deleteFile(key: string): Promise<void> {
+  async deleteKeysBestEffort(keys: string[]): Promise<void> {
+    const dishKeys = keys.filter(
+      (key) => key.startsWith('dishes/') || key.startsWith('avatars/'),
+    );
+
+    await Promise.allSettled(
+      dishKeys.map((key) =>
+        this.s3Client.send(
+          new DeleteObjectCommand({
+            Bucket: this.awsConfig.bucketName,
+            Key: key,
+          }),
+        ),
+      ),
+    );
+  }
+
+  async deleteFile(key: string, userId: string): Promise<void> {
+    const isAvatar = key.startsWith('avatars/');
+    const isDish = key.startsWith('dishes/');
+
+    if (!isAvatar && !isDish) {
+      throw new ForbiddenException('Invalid file key');
+    }
+
+    let hasOwnership = false;
+
+    if (isAvatar) {
+      const user = await this.userService.findByImage(key);
+      hasOwnership = user?.id === userId;
+    }
+
+    if (isDish) {
+      const dishIdMatch = key.match(/^dishes\/([^/]+)\//);
+      if (dishIdMatch) {
+        hasOwnership = await this.dishService.isDishOwnedByUser(
+          dishIdMatch[1],
+          userId,
+        );
+      } else {
+        hasOwnership = true;
+      }
+    }
+
+    if (!hasOwnership) {
+      throw new ForbiddenException('You do not own this file');
+    }
+
     await this.s3Client.send(
       new DeleteObjectCommand({
         Bucket: this.awsConfig.bucketName,
@@ -58,11 +112,11 @@ export class S3Service {
       }),
     );
 
-    const user = await this.userService.findByImage(key);
-
-    if (user) {
-      user.image = null;
-      await this.userService.update(user.id, user);
+    if (isAvatar) {
+      const user = await this.userService.findByImage(key);
+      if (user) {
+        await this.userService.update(user.id, { image: null });
+      }
     }
   }
 

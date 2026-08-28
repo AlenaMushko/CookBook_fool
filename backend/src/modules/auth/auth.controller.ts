@@ -1,28 +1,41 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+
+import { AUTH_COOKIE_NAMES } from './constants/constants';
+import { Response } from 'express';
 
 import { CurrentUser } from './decorators/current-user.decorator';
 import { SkipAuth } from './decorators/skip-auth.decorator';
+import { ForgotPasswordRequestDto } from './dto/request/forgot-password.request.dto';
+import { ResetPasswordRequestDto } from './dto/request/reset-password.request.dto';
 import { SignInRequestDto } from './dto/request/sign-in.request.dto';
 import { SignUpRequestDto } from './dto/request/sign-up.request.dto';
-import { AuthUserResponseDto } from './dto/response/auth-user.response.dto';
-import { TokenResponseDto } from './dto/response/token.response.dto';
+import { AuthSessionResponseDto } from './dto/response/auth-session.response.dto';
+import { RefreshSessionResponseDto } from './dto/response/refresh-session.response.dto';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { IUserData } from './interfaces/user-data.interface';
 import { AuthService } from './services/auth.service';
+import { AuthCookieService } from './services/auth-cookie.service';
 
 @ApiTags('Auth')
-@Controller({ path: 'auth', version: '1' })
+@ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
+@Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private authCookieService: AuthCookieService,
+  ) {}
 
   @SkipAuth()
   @ApiOperation({ summary: 'Registration' })
   @Post('sign-up')
   public async signUp(
     @Body() dto: SignUpRequestDto,
-  ): Promise<AuthUserResponseDto> {
-    return await this.authService.signUp(dto);
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AuthSessionResponseDto> {
+    const session = await this.authService.signUp(dto);
+    this.authCookieService.setAuthCookies(res, session.tokens);
+    return { user: session.user };
   }
 
   @SkipAuth()
@@ -30,32 +43,53 @@ export class AuthController {
   @Post('sign-in')
   public async signIn(
     @Body() dto: SignInRequestDto,
-  ): Promise<AuthUserResponseDto> {
-    return await this.authService.signIn(dto);
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AuthSessionResponseDto> {
+    const session = await this.authService.signIn(dto);
+    this.authCookieService.setAuthCookies(res, session.tokens);
+    return { user: session.user };
   }
 
   @SkipAuth()
   @ApiOperation({ summary: 'Forgot password' })
   @Post('forgot-password')
-  public async forgotPassword(@Body() dto: { email: string }): Promise<void> {
+  public async forgotPassword(
+    @Body() dto: ForgotPasswordRequestDto,
+  ): Promise<{ message: string }> {
     return await this.authService.forgotPassword(dto);
   }
 
-  @ApiBearerAuth()
+  @SkipAuth()
+  @ApiOperation({ summary: 'Reset password' })
+  @Post('reset-password')
+  public async resetPassword(
+    @Body() dto: ResetPasswordRequestDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
+    await this.authService.resetPassword(dto);
+    this.authCookieService.clearAuthCookies(res);
+  }
+
   @ApiOperation({ summary: 'Logout' })
   @Post('logout')
-  public async logout(@CurrentUser() userData: IUserData): Promise<void> {
+  public async logout(
+    @CurrentUser() userData: IUserData,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
     await this.authService.logout(userData);
+    this.authCookieService.clearAuthCookies(res);
   }
 
   @SkipAuth()
-  @ApiBearerAuth()
   @UseGuards(JwtRefreshGuard)
   @ApiOperation({ summary: 'Update token pair' })
   @Post('refresh')
   public async updateRefreshToken(
     @CurrentUser() userData: IUserData,
-  ): Promise<TokenResponseDto> {
-    return await this.authService.refreshToken(userData);
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<RefreshSessionResponseDto> {
+    const tokens = await this.authService.refreshToken(userData);
+    this.authCookieService.setAuthCookies(res, tokens);
+    return { success: true };
   }
 }

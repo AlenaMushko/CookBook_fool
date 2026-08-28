@@ -20,11 +20,12 @@ export class CreateUserDto {
   @Type(() => String)
   firstName: string;
 
+  @IsOptional()
   @IsString()
   @Length(3, 20)
-  @Transform(({ value }) => value.toString().trim())
+  @Transform(({ value }) => value?.toString().trim())
   @Type(() => String)
-  lastName: string;
+  lastName?: string;
 
   @IsString()
   @IsEmail()

@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SourceCode } from 'eslint';
 
-import { JWTConfig } from '../../../config/config.type';
+import { Config, JWTConfig } from '../../../config/config.type';
 import { RedisService } from '../../redis/redis.service';
 import { AUTH_CACHE } from '../constants/constants';
-import Config = SourceCode.Config;
 
 @Injectable()
 export class AuthCacheService {
@@ -45,5 +43,13 @@ export class AuthCacheService {
       `${AUTH_CACHE.ACCESS_TOKEN}:${userId}:${deviceId}`,
     );
     return userAccessTokens.some((token: string) => token === accessToken);
+  }
+
+  public async invalidateAllUserSessions(userId: string): Promise<void> {
+    const pattern = `${AUTH_CACHE.ACCESS_TOKEN}:${userId}:*`;
+    const keys = await this.redisService.keys(pattern);
+    if (keys.length > 0) {
+      await Promise.all(keys.map((key) => this.redisService.deleteByKey(key)));
+    }
   }
 }

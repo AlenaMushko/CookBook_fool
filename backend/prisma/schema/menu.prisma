@@ -1,0 +1,43 @@
+model Menu {
+  id          String   @id @default(uuid()) @db.Uuid
+  created     DateTime @default(now())
+  updated     DateTime @updatedAt
+  userId      String   @db.Uuid
+  name        String
+  description String?
+
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sections MenuSection[]
+  dishes   MenuDish[]
+
+  @@index([userId])
+  @@map("menus")
+}
+
+model MenuSection {
+  id     String @id @default(uuid()) @db.Uuid
+  menuId String @db.Uuid
+  name   String
+  order  Int
+
+  menu   Menu       @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  dishes MenuDish[]
+
+  @@index([menuId])
+  @@map("menu-sections")
+}
+
+model MenuDish {
+  id        String  @id @default(uuid()) @db.Uuid
+  menuId    String  @db.Uuid
+  dishId    String  @db.Uuid
+  sectionId String? @db.Uuid
+  order     Int
+
+  menu    Menu         @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  dish    Dish         @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  section MenuSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+
+  @@unique([menuId, dishId])
+  @@map("menu-dishes")
+}

@@ -1,8 +1,9 @@
-import { UserEntity } from '../../../database/entities/user.entity';
+import { User } from '@prisma/client';
+
 import { UserResDto } from '../models/dto/res/user.res.dto';
 
 export class UserMapper {
-  public static toResDto(user: UserEntity): UserResDto {
+  public static toResDto(user: User): UserResDto {
     return {
       id: user.id,
       email: user.email,

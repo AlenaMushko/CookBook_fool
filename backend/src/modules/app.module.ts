@@ -3,11 +3,14 @@ import { ConfigModule } from '@nestjs/config';
 
 import configuration from '../config/configs';
 import { AuthModule } from './auth/auth.module';
+import { ConversionModule } from './conversion/conversion.module';
 import { DishModule } from './dish/dish.module';
 import { HealthModule } from './health/health.module';
-import { PostgresModule } from './postgres/postgres.module';
+import { IngredientModule } from './ingredient/ingredient.module';
+import { MeasurementUnitModule } from './measurement-unit/measurement-unit.module';
+import { MenuModule } from './menu/menu.module';
+import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
-import { RepositoryModule } from './repository/repository.module';
 import { S3Module } from './s3/s3.module';
 import { UserModule } from './user/user.module';
 
@@ -16,21 +19,23 @@ import { UserModule } from './user/user.module';
     ConfigModule.forRoot({
       envFilePath: [
         './environments/local.env',
-        './environments/prod.env',
+        './.env',
+        '../.env',
       ],
       load: [configuration],
       isGlobal: true,
     }),
+    PrismaModule,
     UserModule,
     HealthModule,
-    PostgresModule,
-    RepositoryModule,
     RedisModule,
     AuthModule,
+    IngredientModule,
+    MeasurementUnitModule,
     S3Module,
     DishModule,
+    MenuModule,
+    ConversionModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}
