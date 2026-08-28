@@ -7,8 +7,9 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
 import {
@@ -21,7 +22,7 @@ import {
 } from './models/menu.dto';
 import { MenuService } from './services/menu.service';
 
-@ApiBearerAuth()
+@ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
 @ApiTags('Menu')
 @Controller('menu')
 export class MenuController {

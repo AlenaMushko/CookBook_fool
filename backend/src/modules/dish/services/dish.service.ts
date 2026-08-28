@@ -7,7 +7,7 @@ import {
 import { DishVisibility, Prisma } from '@prisma/client';
 
 import { ErrorCode } from '../../../common/constants/error-codes';
-import { AppException } from '../../../common/exceptions/app.exception';
+import { AppException } from '../../../common/expections/app.exception';
 import { extractDishMediaKeys } from '../../../common/helpers/dish-media.helper';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { IngredientService } from '../../ingredient/services/ingredient.service';

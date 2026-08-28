@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ErrorCode } from '../../../common/constants/error-codes';
-import { AppException } from '../../../common/exceptions/app.exception';
+import { AppException } from '../../../common/expections/app.exception';
 import {
   CreateIngredientDto,
   IngredientListResDto,

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, RefreshToken } from '@prisma/client';
+import { RefreshToken } from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -28,8 +28,13 @@ export class RefreshTokenRepository {
     return !!existingToken;
   }
 
-  public async delete(where: Prisma.RefreshTokenWhereInput): Promise<void> {
-    await this.prisma.refreshToken.deleteMany({ where });
+  public async deleteByUserAndDevice(
+    userId: string,
+    deviceId: string,
+  ): Promise<void> {
+    await this.prisma.refreshToken.deleteMany({
+      where: { userId, deviceId },
+    });
   }
 
   public async deleteAllByUserId(userId: string): Promise<void> {

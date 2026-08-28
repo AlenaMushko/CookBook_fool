@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 import {
   CreateIngredientDto,
@@ -24,7 +25,7 @@ export class IngredientController {
     return await this.ingredientService.search(query.search, query.limit);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
   @Post()
   @ApiOperation({ summary: 'Create ingredient' })
   public async create(

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DishVisibility } from '@prisma/client';
 
 import { ErrorCode } from '../../../common/constants/error-codes';
-import { AppException } from '../../../common/exceptions/app.exception';
+import { AppException } from '../../../common/expections/app.exception';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { DishRepository } from '../../dish/repositories/dish.repository';
 import {

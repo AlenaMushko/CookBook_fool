@@ -35,7 +35,14 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
-  app.use(pinoHttp({ logger }));
+  app.use(
+    pinoHttp({
+      logger,
+      autoLogging: {
+        ignore: (req) => req.url?.startsWith('/docs') ?? false,
+      },
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('CookBook API')
@@ -56,6 +63,7 @@ async function bootstrap() {
       docExpansion: 'none',
       defaultModelExpandDepth: 1,
       persistAuthorization: true,
+      withCredentials: true,
     },
   });
 

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MeasurementUnit } from '@prisma/client';
 
 import { ErrorCode } from '../../../common/constants/error-codes';
-import { AppException } from '../../../common/exceptions/app.exception';
+import { AppException } from '../../../common/expections/app.exception';
 import { MeasurementUnitListResDto } from '../models/measurement-unit.dto';
 import { MeasurementUnitRepository } from '../repositories/measurement-unit.repository';
 

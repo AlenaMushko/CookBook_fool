@@ -23,17 +23,15 @@ export class PasswordResetTokenRepository {
     });
   }
 
-  public async markUsed(id: string): Promise<void> {
-    await this.prisma.passwordResetToken.update({
+  public async deleteById(id: string): Promise<void> {
+    await this.prisma.passwordResetToken.delete({
       where: { id },
-      data: { usedAt: new Date() },
     });
   }
 
-  public async invalidateUserTokens(userId: string): Promise<void> {
-    await this.prisma.passwordResetToken.updateMany({
-      where: { userId, usedAt: null },
-      data: { usedAt: new Date() },
+  public async deleteByUserId(userId: string): Promise<void> {
+    await this.prisma.passwordResetToken.deleteMany({
+      where: { userId },
     });
   }
 }

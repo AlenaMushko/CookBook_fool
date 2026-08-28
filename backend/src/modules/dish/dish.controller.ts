@@ -8,8 +8,9 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { OptionalAuth } from '../auth/decorators/optional-auth.decorator';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
@@ -40,7 +41,7 @@ export class DishController {
     return await this.dishCategoryService.getDishCategories();
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
   @Post()
   @ApiOperation({ summary: 'Create dish' })
   public async createDish(
@@ -70,7 +71,7 @@ export class DishController {
     return await this.dishService.getDishById(id, userData);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
   @Patch(':id')
   @ApiOperation({ summary: 'Update dish' })
   public async updateDish(
@@ -81,7 +82,7 @@ export class DishController {
     return await this.dishService.updateDish(id, dto, userData);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete dish' })
   public async deleteDish(
@@ -91,7 +92,7 @@ export class DishController {
     return await this.dishService.deleteDish(id, userData);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
   @Post(':id/like')
   @ApiOperation({ summary: 'Save dish to cookbook' })
   public async saveDish(
@@ -101,7 +102,7 @@ export class DishController {
     return await this.dishService.saveDish(id, userData);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
   @Delete(':id/like')
   @ApiOperation({ summary: 'Unsave dish from cookbook' })
   public async unsaveDish(
@@ -111,7 +112,7 @@ export class DishController {
     return await this.dishService.unsaveDish(id, userData);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
   @Post(':id/duplicate')
   @ApiOperation({ summary: 'Create my version of dish' })
   public async duplicateDish(

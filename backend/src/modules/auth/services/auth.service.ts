@@ -3,7 +3,7 @@ import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 
 import { ErrorCode } from '../../../common/constants/error-codes';
-import { AppException } from '../../../common/exceptions/app.exception';
+import { AppException } from '../../../common/expections/app.exception';
 import logger from '../../../logger';
 import { UserRepository } from '../../user/repositories/user.repository';
 import { UserService } from '../../user/services/user.service';
@@ -101,10 +101,7 @@ export class AuthService {
     });
 
     await Promise.all([
-      this.refreshRepository.delete({
-        userId: user.id,
-        deviceId: dto.deviceId,
-      }),
+      this.refreshRepository.deleteByUserAndDevice(user.id, dto.deviceId),
       this.authCacheService.removeToken(user.id, dto.deviceId),
     ]);
 
@@ -126,10 +123,10 @@ export class AuthService {
 
   public async logout(userData: IUserData): Promise<void> {
     await Promise.all([
-      this.refreshRepository.delete({
-        userId: userData.userId,
-        deviceId: userData.deviceId,
-      }),
+      this.refreshRepository.deleteByUserAndDevice(
+        userData.userId,
+        userData.deviceId,
+      ),
       this.authCacheService.removeToken(userData.userId, userData.deviceId),
     ]);
   }
@@ -149,13 +146,14 @@ export class AuthService {
         .update(rawToken)
         .digest('hex');
 
-      await this.passwordResetRepository.invalidateUserTokens(user.id);
+      await this.passwordResetRepository.deleteByUserId(user.id);
       await this.passwordResetRepository.create({
         userId: user.id,
         tokenHash,
         expiresAt: new Date(Date.now() + RESET_TOKEN_TTL_MS),
       });
 
+      // TODO: send password-reset email with link containing rawToken
       logger.info(
         { email: dto.email, resetToken: rawToken },
         'Password reset token generated',
@@ -177,13 +175,18 @@ export class AuthService {
     const resetToken =
       await this.passwordResetRepository.findByTokenHash(tokenHash);
 
-    if (!resetToken || resetToken.usedAt || resetToken.expiresAt < new Date()) {
+    if (!resetToken) {
+      throw new AppException(ErrorCode.AUTH_TOKEN_EXPIRED, 401);
+    }
+
+    if (resetToken.expiresAt < new Date()) {
+      await this.passwordResetRepository.deleteById(resetToken.id);
       throw new AppException(ErrorCode.AUTH_TOKEN_EXPIRED, 401);
     }
 
     const password = await bcrypt.hash(dto.password, 10);
     await this.userRepository.save({ id: resetToken.userId }, { password });
-    await this.passwordResetRepository.markUsed(resetToken.id);
+    await this.passwordResetRepository.deleteById(resetToken.id);
     await this.invalidateAllSessions(resetToken.userId);
   }
 
@@ -193,10 +196,7 @@ export class AuthService {
     });
 
     await Promise.all([
-      this.refreshRepository.delete({
-        userId: user.id,
-        deviceId: userData.deviceId,
-      }),
+      this.refreshRepository.deleteByUserAndDevice(user.id, userData.deviceId),
       this.authCacheService.removeToken(user.id, userData.deviceId),
     ]);
 

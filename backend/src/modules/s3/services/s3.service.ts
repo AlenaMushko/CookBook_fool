@@ -83,10 +83,12 @@ export class S3Service {
     }
 
     let hasOwnership = false;
+    const avatarUser = isAvatar
+      ? await this.userService.findOne({ image: key })
+      : null;
 
     if (isAvatar) {
-      const user = await this.userService.findByImage(key);
-      hasOwnership = user?.id === userId;
+      hasOwnership = avatarUser?.id === userId;
     }
 
     if (isDish) {
@@ -112,11 +114,8 @@ export class S3Service {
       }),
     );
 
-    if (isAvatar) {
-      const user = await this.userService.findByImage(key);
-      if (user) {
-        await this.userService.update(user.id, { image: null });
-      }
+    if (avatarUser) {
+      await this.userService.update(avatarUser.id, { image: null });
     }
   }
 

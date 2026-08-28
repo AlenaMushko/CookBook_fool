@@ -7,16 +7,17 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { memoryStorage } from 'multer';
 
+import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
 import { imgConstants } from './constants/constants';
 import { S3Service } from './services/s3.service';
 
 @ApiTags('S3')
-@ApiBearerAuth()
+@ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
 @Controller('s3')
 export class S3Controller {
   constructor(private readonly s3Service: S3Service) {}

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ErrorCode } from '../../../common/constants/error-codes';
-import { AppException } from '../../../common/exceptions/app.exception';
+import { AppException } from '../../../common/expections/app.exception';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { IngredientService } from '../../ingredient/services/ingredient.service';
 import { MeasurementUnitService } from '../../measurement-unit/services/measurement-unit.service';

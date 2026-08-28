@@ -29,6 +29,8 @@ export class JwtAccessGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
+    if (skipAuth) return true;
+
     const optionalAuth = this.reflector.getAllAndOverride<boolean>(
       OPTIONAL_AUTH,
       [context.getHandler(), context.getClass()],
@@ -39,15 +41,15 @@ export class JwtAccessGuard implements CanActivate {
       this.authCookieService.getAccessTokenFromRequest(request);
 
     if (!accessToken) {
-      if (skipAuth || optionalAuth) return true;
+      if (optionalAuth) return true;
       throw new UnauthorizedException();
     }
 
-    if (skipAuth || optionalAuth) {
+    if (optionalAuth) {
       try {
         await this.attachUser(request, accessToken);
       } catch {
-        // optional — invalid token is ignored
+        // guest with invalid/expired cookie — continue without user
       }
       return true;
     }

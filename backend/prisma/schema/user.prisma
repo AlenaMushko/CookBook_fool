@@ -34,12 +34,11 @@ model RefreshToken {
 }
 
 model PasswordResetToken {
-  id        String    @id @default(uuid()) @db.Uuid
-  created   DateTime  @default(now())
+  id        String   @id @default(uuid()) @db.Uuid
+  created   DateTime @default(now())
   expiresAt DateTime
-  usedAt    DateTime?
-  tokenHash String    @unique
-  userId    String    @db.Uuid
+  tokenHash String   @unique
+  userId    String   @db.Uuid
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
