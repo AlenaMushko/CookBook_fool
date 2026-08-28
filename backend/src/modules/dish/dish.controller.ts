@@ -17,9 +17,7 @@ import { IUserData } from '../auth/interfaces/user-data.interface';
 import { CreateDishDto } from './models/dto/req/create-dish.dto';
 import { DishesListReqDto } from './models/dto/req/dishes-list.req.dto';
 import { UpdateDishDto } from './models/dto/req/update-dish.req.dto';
-import {
-  DishCategoryListResDto,
-} from './models/dto/res/dish.category.res.dto';
+import { DishCategoryListResDto } from './models/dto/res/dish.category.res.dto';
 import {
   DishListResDto,
   ParsedDishResDto,

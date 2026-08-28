@@ -1,9 +1,8 @@
 import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-
-import { AUTH_COOKIE_NAMES } from './constants/constants';
 import { Response } from 'express';
 
+import { AUTH_COOKIE_NAMES } from './constants/constants';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { SkipAuth } from './decorators/skip-auth.decorator';
 import { ForgotPasswordRequestDto } from './dto/request/forgot-password.request.dto';

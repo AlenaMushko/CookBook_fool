@@ -37,7 +37,7 @@ export class ConversionController {
     @Body() dto: ConvertRequestDto,
     @CurrentUser() userData: IUserData,
   ): Promise<ConvertResponseDto> {
-    return this.conversionService.convert(dto, userData);
+    return await this.conversionService.convert(dto, userData);
   }
 
   @Get('conversions/effective')
@@ -49,7 +49,7 @@ export class ConversionController {
     @Query() query: GetEffectiveConversionQueryDto,
     @CurrentUser() userData: IUserData,
   ): Promise<EffectiveConversionResDto> {
-    return this.conversionService.getEffectiveConversion(query, userData);
+    return await this.conversionService.getEffectiveConversion(query, userData);
   }
 
   @Get('user/me/conversions')
@@ -57,7 +57,7 @@ export class ConversionController {
   public async getUserConversions(
     @CurrentUser() userData: IUserData,
   ): Promise<UserConversionListResDto> {
-    return this.conversionService.getUserConversions(userData);
+    return await this.conversionService.getUserConversions(userData);
   }
 
   @Post('user/me/conversions')
@@ -69,7 +69,7 @@ export class ConversionController {
     @Body() dto: CreateUserConversionDto,
     @CurrentUser() userData: IUserData,
   ): Promise<UserConversionResDto> {
-    return this.conversionService.saveUserConversion(dto, userData);
+    return await this.conversionService.saveUserConversion(dto, userData);
   }
 
   @Patch('user/me/conversions/:id')
@@ -79,7 +79,7 @@ export class ConversionController {
     @Body() dto: UpdateUserConversionDto,
     @CurrentUser() userData: IUserData,
   ): Promise<UserConversionResDto> {
-    return this.conversionService.updateUserConversion(id, dto, userData);
+    return await this.conversionService.updateUserConversion(id, dto, userData);
   }
 
   @Delete('user/me/conversions/:id')
@@ -90,6 +90,6 @@ export class ConversionController {
     @Param('id') id: string,
     @CurrentUser() userData: IUserData,
   ): Promise<DeleteUserConversionResDto> {
-    return this.conversionService.deleteUserConversion(id, userData);
+    return await this.conversionService.deleteUserConversion(id, userData);
   }
 }

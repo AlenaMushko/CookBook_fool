@@ -19,9 +19,7 @@ import {
 import { ConversionRepository } from '../repositories/conversion.repository';
 
 export type ConversionSource =
-  | 'USER_INGREDIENT_RULE'
-  | 'GLOBAL_INGREDIENT_RULE'
-  | 'GENERIC_UNIT_RULE';
+  'USER_INGREDIENT_RULE' | 'GLOBAL_INGREDIENT_RULE' | 'GENERIC_UNIT_RULE';
 
 @Injectable()
 export class ConversionService {
@@ -83,7 +81,7 @@ export class ConversionService {
       };
     }
 
-    return this.resolveEffectiveRule(
+    return await this.resolveEffectiveRule(
       userData.userId,
       query.ingredientId,
       query.fromUnitId,
@@ -179,12 +177,11 @@ export class ConversionService {
       };
     }
 
-    const globalRule =
-      await this.conversionRepository.findGlobalIngredientRule(
-        ingredientId,
-        fromUnitId,
-        toUnitId,
-      );
+    const globalRule = await this.conversionRepository.findGlobalIngredientRule(
+      ingredientId,
+      fromUnitId,
+      toUnitId,
+    );
     if (globalRule) {
       return {
         factor: Number(globalRule.factor),

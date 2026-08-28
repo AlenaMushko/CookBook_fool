@@ -1,7 +1,4 @@
-import {
-  UnprocessableEntityException,
-  ValidationPipe,
-} from '@nestjs/common';
+import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -9,8 +6,8 @@ import cookieParser from 'cookie-parser';
 import { pinoHttp } from 'pino-http';
 
 import { GlobalExceptionFilter } from './common/expections/global-exception.filter';
-import { formatValidationErrors } from './common/helpers/validation-error.helper';
 import { SwaggerHelper } from './common/helpers/swagger.helper';
+import { formatValidationErrors } from './common/helpers/validation-error.helper';
 import { AppConfig, Config } from './config/config.type';
 import logger from './logger';
 import { AppModule } from './modules/app.module';
@@ -76,7 +73,10 @@ async function bootstrap() {
 
   await app.listen(appConfig.port, () => {
     const url = `http://${appConfig.host}:${appConfig.port}`;
-    logger.info({ port: appConfig.port, url, docs: `${url}/docs` }, 'Server started');
+    logger.info(
+      { port: appConfig.port, url, docs: `${url}/docs` },
+      'Server started',
+    );
   });
 }
 bootstrap();

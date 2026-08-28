@@ -21,7 +21,7 @@ export class IngredientController {
   public async search(
     @Query() query: IngredientSearchQueryDto,
   ): Promise<IngredientListResDto> {
-    return this.ingredientService.search(query.search, query.limit);
+    return await this.ingredientService.search(query.search, query.limit);
   }
 
   @ApiBearerAuth()
@@ -30,6 +30,6 @@ export class IngredientController {
   public async create(
     @Body() dto: CreateIngredientDto,
   ): Promise<IngredientResDto> {
-    return this.ingredientService.create(dto);
+    return await this.ingredientService.create(dto);
   }
 }

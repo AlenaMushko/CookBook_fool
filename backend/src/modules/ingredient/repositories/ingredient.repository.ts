@@ -9,11 +9,8 @@ export type IngredientJson = { name: string; desc?: string };
 export class IngredientRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  public async search(
-    search: string,
-    limit: number,
-  ): Promise<Ingredient[]> {
-    return this.prisma.$queryRaw<Ingredient[]>`
+  public async search(search: string, limit: number): Promise<Ingredient[]> {
+    return await this.prisma.$queryRaw<Ingredient[]>`
       SELECT * FROM "ingredients"
       WHERE
         (en->>'name') ILIKE ${'%' + search + '%'}
@@ -42,10 +39,10 @@ export class IngredientRepository {
   }
 
   public async findById(id: string): Promise<Ingredient | null> {
-    return this.prisma.ingredient.findUnique({ where: { id } });
+    return await this.prisma.ingredient.findUnique({ where: { id } });
   }
 
   public async create(data: Prisma.IngredientCreateInput): Promise<Ingredient> {
-    return this.prisma.ingredient.create({ data });
+    return await this.prisma.ingredient.create({ data });
   }
 }

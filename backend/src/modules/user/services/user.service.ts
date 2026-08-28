@@ -3,9 +3,9 @@ import { User } from '@prisma/client';
 
 import { ErrorCode } from '../../../common/constants/error-codes';
 import { AppException } from '../../../common/exceptions/app.exception';
-import { UserRepository } from '../repositories/user.repository';
 import { UpdateUserReqDto } from '../models/dto/req/update-user.req.dto';
 import { UserResDto } from '../models/dto/res/user.res.dto';
+import { UserRepository } from '../repositories/user.repository';
 import { UserMapper } from './user.mapper';
 
 @Injectable()
@@ -73,6 +73,6 @@ export class UserService {
   }
 
   public async findByImage(image: string): Promise<User | null> {
-    return this.userRepository.findOne({ image });
+    return await this.userRepository.findOne({ image });
   }
 }

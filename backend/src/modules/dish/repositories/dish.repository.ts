@@ -3,9 +3,9 @@ import { DishVisibility, Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
 import {
-  DishListSort,
-  DishListScope,
   DishesListReqDto,
+  DishListScope,
+  DishListSort,
 } from '../models/dto/req/dishes-list.req.dto';
 
 const dishListInclude = {
@@ -93,7 +93,7 @@ export class DishRepository {
   }
 
   public async findDishById(id: string): Promise<DishWithRelations | null> {
-    return this.prisma.dish.findUnique({
+    return await this.prisma.dish.findUnique({
       where: { id },
       include: dishDetailInclude,
     });
@@ -102,7 +102,7 @@ export class DishRepository {
   public async create(
     data: Prisma.DishUncheckedCreateInput,
   ): Promise<DishWithRelations> {
-    return this.prisma.dish.create({
+    return await this.prisma.dish.create({
       data,
       include: dishDetailInclude,
     });
@@ -112,7 +112,7 @@ export class DishRepository {
     id: string,
     data: Prisma.DishUncheckedUpdateInput,
   ): Promise<DishWithRelations> {
-    return this.prisma.dish.update({
+    return await this.prisma.dish.update({
       where: { id },
       data,
       include: dishDetailInclude,
@@ -125,7 +125,12 @@ export class DishRepository {
 
   public async createWithRelations(
     dishData: Prisma.DishUncheckedCreateInput,
-    groups: Array<{ tempId: string; nameEn: string; nameUk: string; order: number }>,
+    groups: Array<{
+      tempId: string;
+      nameEn: string;
+      nameUk: string;
+      order: number;
+    }>,
     ingredients: Array<{
       ingredientId: string;
       unitId: string;
@@ -134,7 +139,7 @@ export class DishRepository {
       order: number;
     }>,
   ): Promise<DishWithRelations> {
-    return this.prisma.$transaction(async (tx) => {
+    return await this.prisma.$transaction(async (tx) => {
       const dish = await tx.dish.create({ data: dishData });
 
       const groupIdMap = new Map<string, string>();
@@ -158,14 +163,14 @@ export class DishRepository {
             unitId: ing.unitId,
             quantity: ing.quantity,
             groupId: ing.groupTempId
-              ? groupIdMap.get(ing.groupTempId) ?? null
+              ? (groupIdMap.get(ing.groupTempId) ?? null)
               : null,
             order: ing.order,
           },
         });
       }
 
-      return tx.dish.findUniqueOrThrow({
+      return await tx.dish.findUniqueOrThrow({
         where: { id: dish.id },
         include: dishDetailInclude,
       });
@@ -175,7 +180,12 @@ export class DishRepository {
   public async updateWithRelations(
     id: string,
     dishData: Prisma.DishUncheckedUpdateInput,
-    groups?: Array<{ tempId: string; nameEn: string; nameUk: string; order: number }>,
+    groups?: Array<{
+      tempId: string;
+      nameEn: string;
+      nameUk: string;
+      order: number;
+    }>,
     ingredients?: Array<{
       ingredientId: string;
       unitId: string;
@@ -184,7 +194,7 @@ export class DishRepository {
       order: number;
     }>,
   ): Promise<DishWithRelations> {
-    return this.prisma.$transaction(async (tx) => {
+    return await this.prisma.$transaction(async (tx) => {
       await tx.dish.update({ where: { id }, data: dishData });
 
       if (groups !== undefined && ingredients !== undefined) {
@@ -212,7 +222,7 @@ export class DishRepository {
               unitId: ing.unitId,
               quantity: ing.quantity,
               groupId: ing.groupTempId
-                ? groupIdMap.get(ing.groupTempId) ?? null
+                ? (groupIdMap.get(ing.groupTempId) ?? null)
                 : null,
               order: ing.order,
             },
@@ -220,7 +230,7 @@ export class DishRepository {
         }
       }
 
-      return tx.dish.findUniqueOrThrow({
+      return await tx.dish.findUniqueOrThrow({
         where: { id },
         include: dishDetailInclude,
       });
@@ -231,7 +241,7 @@ export class DishRepository {
     source: DishWithRelations,
     ownerId: string,
   ): Promise<DishWithRelations> {
-    return this.prisma.$transaction(async (tx) => {
+    return await this.prisma.$transaction(async (tx) => {
       const dish = await tx.dish.create({
         data: {
           titleEn: source.titleEn,
@@ -274,13 +284,13 @@ export class DishRepository {
             ingredientId: ing.ingredientId,
             unitId: ing.unitId,
             quantity: ing.quantity,
-            groupId: ing.groupId ? groupIdMap.get(ing.groupId) ?? null : null,
+            groupId: ing.groupId ? (groupIdMap.get(ing.groupId) ?? null) : null,
             order: ing.order,
           },
         });
       }
 
-      return tx.dish.findUniqueOrThrow({
+      return await tx.dish.findUniqueOrThrow({
         where: { id: dish.id },
         include: dishDetailInclude,
       });
@@ -372,10 +382,7 @@ export class DishRepository {
         break;
       case DishListScope.COOKBOOK:
         and.push({
-          OR: [
-            { ownerId: userId },
-            { id: { in: savedDishIds ?? [] } },
-          ],
+          OR: [{ ownerId: userId }, { id: { in: savedDishIds ?? [] } }],
         });
         break;
       default:
@@ -395,14 +402,22 @@ export class DishRepository {
       case DishListSort.ALPHABETICAL:
         return [{ titleEn: 'asc' }, { id: 'asc' }];
       case DishListSort.COOK_TIME:
-        return [{ cookTime: { sort: 'asc', nulls: 'last' } }, { created: 'desc' }, { id: 'desc' }];
+        return [
+          { cookTime: { sort: 'asc', nulls: 'last' } },
+          { created: 'desc' },
+          { id: 'desc' },
+        ];
       case DishListSort.DIFFICULTY:
         return [{ difficulty: 'asc' }, { created: 'desc' }, { id: 'desc' }];
       case DishListSort.NEWEST:
         return [{ created: 'desc' }, { id: 'desc' }];
       case DishListSort.POPULARITY:
       default:
-        return [{ likes: { _count: 'desc' } }, { created: 'desc' }, { id: 'desc' }];
+        return [
+          { likes: { _count: 'desc' } },
+          { created: 'desc' },
+          { id: 'desc' },
+        ];
     }
   }
 }

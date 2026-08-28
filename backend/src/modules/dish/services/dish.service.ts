@@ -1,27 +1,30 @@
 import {
+  forwardRef,
   Inject,
   Injectable,
   UnauthorizedException,
-  forwardRef,
 } from '@nestjs/common';
 import { DishVisibility, Prisma } from '@prisma/client';
 
-import { extractDishMediaKeys } from '../../../common/helpers/dish-media.helper';
 import { ErrorCode } from '../../../common/constants/error-codes';
 import { AppException } from '../../../common/exceptions/app.exception';
+import { extractDishMediaKeys } from '../../../common/helpers/dish-media.helper';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { IngredientService } from '../../ingredient/services/ingredient.service';
 import { MeasurementUnitService } from '../../measurement-unit/services/measurement-unit.service';
 import { S3Service } from '../../s3/services/s3.service';
 import { CreateDishDto } from '../models/dto/req/create-dish.dto';
 import {
-  DishListScope,
   DishesListReqDto,
+  DishListScope,
 } from '../models/dto/req/dishes-list.req.dto';
 import { UpdateDishDto } from '../models/dto/req/update-dish.req.dto';
-import { DishListResDto, ParsedDishResDto } from '../models/dto/res/dish.res.dto';
-import { DishCategoryRepository } from '../repositories/dish-category.repository';
+import {
+  DishListResDto,
+  ParsedDishResDto,
+} from '../models/dto/res/dish.res.dto';
 import { DishRepository } from '../repositories/dish.repository';
+import { DishCategoryRepository } from '../repositories/dish-category.repository';
 import { LikeRepository } from '../repositories/like.repository';
 import { DishMapper } from './dish.mapper';
 
@@ -41,7 +44,10 @@ export class DishService {
     dto: CreateDishDto,
     userData: IUserData,
   ): Promise<ParsedDishResDto> {
-    await this.validateCategoryAndSubcategory(dto.categoryId, dto.subcategoryId);
+    await this.validateCategoryAndSubcategory(
+      dto.categoryId,
+      dto.subcategoryId,
+    );
     await this.validateIngredients(dto.ingredients);
 
     const dish = await this.dishRepository.createWithRelations(
@@ -99,8 +105,12 @@ export class DishService {
     const dishData: Prisma.DishUncheckedUpdateInput = {
       ...(dto.titleEn !== undefined && { titleEn: dto.titleEn }),
       ...(dto.titleUk !== undefined && { titleUk: dto.titleUk }),
-      ...(dto.descriptionEn !== undefined && { descriptionEn: dto.descriptionEn }),
-      ...(dto.descriptionUk !== undefined && { descriptionUk: dto.descriptionUk }),
+      ...(dto.descriptionEn !== undefined && {
+        descriptionEn: dto.descriptionEn,
+      }),
+      ...(dto.descriptionUk !== undefined && {
+        descriptionUk: dto.descriptionUk,
+      }),
       ...(dto.noteEn !== undefined && { noteEn: dto.noteEn }),
       ...(dto.noteUk !== undefined && { noteUk: dto.noteUk }),
       ...(dto.visibility !== undefined && { visibility: dto.visibility }),
@@ -109,7 +119,9 @@ export class DishService {
       ...(dto.cookTime !== undefined && { cookTime: dto.cookTime }),
       ...(dto.baseServings !== undefined && { baseServings: dto.baseServings }),
       ...(dto.categoryId !== undefined && { categoryId: dto.categoryId }),
-      ...(dto.subcategoryId !== undefined && { subcategoryId: dto.subcategoryId }),
+      ...(dto.subcategoryId !== undefined && {
+        subcategoryId: dto.subcategoryId,
+      }),
       ...(dto.steps !== undefined && {
         steps: dto.steps as unknown as Prisma.InputJsonValue,
       }),
@@ -145,11 +157,7 @@ export class DishService {
   ): Promise<DishListResDto> {
     const userId = userData?.userId;
 
-    if (
-      query.scope &&
-      query.scope !== DishListScope.PUBLIC &&
-      !userId
-    ) {
+    if (query.scope && query.scope !== DishListScope.PUBLIC && !userId) {
       throw new UnauthorizedException();
     }
 

@@ -14,9 +14,8 @@
     "start:prod": "node dist/main.js",
     "start:docker": "docker compose --env-file ../.env -f ../docker-compose.yml up --build -d",
     "start:docker:dev": "docker compose --env-file ../.env -f ../docker-compose.yml -f ../docker-compose.dev.yml up --build",
-    "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
-    "prepere": "husky install",
-    "prepare": "husky",
+    "lint": "eslint \"{src,apps,libs}/**/*.ts\"",
+    "lint:fix": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
     "postinstall": "prisma generate --schema prisma/schema",
     "create:local:bucket": "ts-node ./src/scripts/create-local-bucket.ts",
     "prisma:generate": "prisma generate --schema prisma/schema",
@@ -73,14 +72,14 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "prisma": {
     "schema": "prisma/schema",
     "seed": "ts-node prisma/seed.ts"
   },
   "lint-staged": {
-    "{src}/**/*/ts": "eslint --fix"
+    "src/**/*.ts": "eslint --fix"
   },
   "engines": {
     "node": ">=20.0.0"

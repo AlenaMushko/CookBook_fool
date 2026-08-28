@@ -30,7 +30,7 @@ export class MenuController {
   @Get()
   @ApiOperation({ summary: 'List user menus' })
   public async findAll(@CurrentUser() userData: IUserData) {
-    return this.menuService.findAll(userData);
+    return await this.menuService.findAll(userData);
   }
 
   @Post()
@@ -39,7 +39,7 @@ export class MenuController {
     @Body() dto: CreateMenuDto,
     @CurrentUser() userData: IUserData,
   ) {
-    return this.menuService.create(dto, userData);
+    return await this.menuService.create(dto, userData);
   }
 
   @Get(':id')
@@ -48,7 +48,7 @@ export class MenuController {
     @Param('id') id: string,
     @CurrentUser() userData: IUserData,
   ) {
-    return this.menuService.findById(id, userData);
+    return await this.menuService.findById(id, userData);
   }
 
   @Patch(':id')
@@ -58,7 +58,7 @@ export class MenuController {
     @Body() dto: UpdateMenuDto,
     @CurrentUser() userData: IUserData,
   ) {
-    return this.menuService.update(id, dto, userData);
+    return await this.menuService.update(id, dto, userData);
   }
 
   @Delete(':id')
@@ -67,7 +67,7 @@ export class MenuController {
     @Param('id') id: string,
     @CurrentUser() userData: IUserData,
   ) {
-    return this.menuService.delete(id, userData);
+    return await this.menuService.delete(id, userData);
   }
 
   @Post(':id/sections')
@@ -77,7 +77,7 @@ export class MenuController {
     @Body() dto: CreateMenuSectionDto,
     @CurrentUser() userData: IUserData,
   ) {
-    return this.menuService.createSection(id, dto, userData);
+    return await this.menuService.createSection(id, dto, userData);
   }
 
   @Patch(':id/sections/:sectionId')
@@ -88,7 +88,7 @@ export class MenuController {
     @Body() dto: UpdateMenuSectionDto,
     @CurrentUser() userData: IUserData,
   ) {
-    return this.menuService.updateSection(id, sectionId, dto, userData);
+    return await this.menuService.updateSection(id, sectionId, dto, userData);
   }
 
   @Delete(':id/sections/:sectionId')
@@ -98,7 +98,7 @@ export class MenuController {
     @Param('sectionId') sectionId: string,
     @CurrentUser() userData: IUserData,
   ) {
-    return this.menuService.deleteSection(id, sectionId, userData);
+    return await this.menuService.deleteSection(id, sectionId, userData);
   }
 
   @Post(':id/dishes')
@@ -108,7 +108,7 @@ export class MenuController {
     @Body() dto: AddMenuDishDto,
     @CurrentUser() userData: IUserData,
   ) {
-    return this.menuService.addDish(id, dto, userData);
+    return await this.menuService.addDish(id, dto, userData);
   }
 
   @Delete(':id/dishes/:dishId')
@@ -118,7 +118,7 @@ export class MenuController {
     @Param('dishId') dishId: string,
     @CurrentUser() userData: IUserData,
   ) {
-    return this.menuService.removeDish(id, dishId, userData);
+    return await this.menuService.removeDish(id, dishId, userData);
   }
 
   @Patch(':id/dishes/reorder')
@@ -128,6 +128,6 @@ export class MenuController {
     @Body() dto: ReorderMenuDishesDto,
     @CurrentUser() userData: IUserData,
   ) {
-    return this.menuService.reorderDishes(id, dto, userData);
+    return await this.menuService.reorderDishes(id, dto, userData);
   }
 }

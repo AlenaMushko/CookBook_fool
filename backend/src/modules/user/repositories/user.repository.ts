@@ -8,27 +8,27 @@ export class UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   public async create(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({ data });
+    return await this.prisma.user.create({ data });
   }
 
   public async save(
     where: Prisma.UserWhereUniqueInput,
     data: Prisma.UserUpdateInput,
   ): Promise<User> {
-    return this.prisma.user.update({ where, data });
+    return await this.prisma.user.update({ where, data });
   }
 
   public async findOne(
     where: Prisma.UserWhereInput,
     select?: Prisma.UserSelect,
   ): Promise<User | null> {
-    return this.prisma.user.findFirst({
+    return await (this.prisma.user.findFirst({
       where,
       ...(select ? { select } : {}),
-    }) as Promise<User | null>;
+    }) as Promise<User | null>);
   }
 
   public async findOneBy(where: Prisma.UserWhereInput): Promise<User | null> {
-    return this.prisma.user.findFirst({ where });
+    return await this.prisma.user.findFirst({ where });
   }
 }

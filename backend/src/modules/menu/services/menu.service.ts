@@ -43,7 +43,7 @@ export class MenuService {
 
   public async update(id: string, dto: UpdateMenuDto, userData: IUserData) {
     await this.getOwnedMenuOrThrow(id, userData.userId);
-    return this.menuRepository.update(id, {
+    return await this.menuRepository.update(id, {
       ...(dto.name !== undefined && { name: dto.name }),
       ...(dto.description !== undefined && { description: dto.description }),
     });
@@ -60,7 +60,7 @@ export class MenuService {
     userData: IUserData,
   ) {
     await this.getOwnedMenuOrThrow(menuId, userData.userId);
-    return this.menuRepository.createSection({
+    return await this.menuRepository.createSection({
       menuId,
       name: dto.name,
       order: dto.order ?? 0,
@@ -78,7 +78,7 @@ export class MenuService {
     if (!section || section.menuId !== menuId) {
       throw new AppException(ErrorCode.MENU_NOT_FOUND, 404);
     }
-    return this.menuRepository.updateSection(sectionId, {
+    return await this.menuRepository.updateSection(sectionId, {
       ...(dto.name !== undefined && { name: dto.name }),
       ...(dto.order !== undefined && { order: dto.order }),
     });
@@ -112,7 +112,7 @@ export class MenuService {
       }
     }
 
-    return this.menuRepository.addDish({
+    return await this.menuRepository.addDish({
       menuId,
       dishId: dto.dishId,
       sectionId: dto.sectionId,
@@ -120,11 +120,7 @@ export class MenuService {
     });
   }
 
-  public async removeDish(
-    menuId: string,
-    dishId: string,
-    userData: IUserData,
-  ) {
+  public async removeDish(menuId: string, dishId: string, userData: IUserData) {
     await this.getOwnedMenuOrThrow(menuId, userData.userId);
     await this.menuRepository.removeDish(menuId, dishId);
   }
@@ -154,10 +150,7 @@ export class MenuService {
     if (!dish) {
       throw new AppException(ErrorCode.DISH_NOT_FOUND, 404);
     }
-    if (
-      dish.visibility === DishVisibility.PRIVATE &&
-      dish.ownerId !== userId
-    ) {
+    if (dish.visibility === DishVisibility.PRIVATE && dish.ownerId !== userId) {
       throw new AppException(ErrorCode.DISH_PRIVATE, 404);
     }
   }

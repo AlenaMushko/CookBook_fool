@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { DishModule } from '../dish/dish.module';
 import { UserModule } from '../user/user.module';

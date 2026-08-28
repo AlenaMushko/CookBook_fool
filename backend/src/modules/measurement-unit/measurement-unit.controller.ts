@@ -16,6 +16,6 @@ export class MeasurementUnitController {
   @Get()
   @ApiOperation({ summary: 'List active measurement units' })
   public async findAll(): Promise<MeasurementUnitListResDto> {
-    return this.measurementUnitService.findAll();
+    return await this.measurementUnitService.findAll();
   }
 }

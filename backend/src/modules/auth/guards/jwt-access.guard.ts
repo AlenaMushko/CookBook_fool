@@ -35,7 +35,8 @@ export class JwtAccessGuard implements CanActivate {
     );
 
     const request = context.switchToHttp().getRequest();
-    const accessToken = this.authCookieService.getAccessTokenFromRequest(request);
+    const accessToken =
+      this.authCookieService.getAccessTokenFromRequest(request);
 
     if (!accessToken) {
       if (skipAuth || optionalAuth) return true;

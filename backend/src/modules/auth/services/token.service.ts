@@ -39,7 +39,7 @@ export class TokenService {
     try {
       const secret = this.getSecret(type);
       return await this.jwtService.verifyAsync(token, { secret });
-    } catch (e) {
+    } catch {
       throw new UnauthorizedException();
     }
   }

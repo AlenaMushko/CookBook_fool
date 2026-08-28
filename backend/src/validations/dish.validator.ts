@@ -8,7 +8,10 @@ const ingredientObject = z.object({
   measure: z.string().trim().min(1).max(50),
 });
 
-export const IngredientSchema = registry.register('Ingredient', ingredientObject);
+export const IngredientSchema = registry.register(
+  'Ingredient',
+  ingredientObject,
+);
 
 const createDishObject = z.object({
   isConfident: z.boolean(),
@@ -23,7 +26,10 @@ const createDishObject = z.object({
   categoryId: uuidSchema,
 });
 
-export const CreateDishSchema = registry.register('CreateDish', createDishObject);
+export const CreateDishSchema = registry.register(
+  'CreateDish',
+  createDishObject,
+);
 
 export const UpdateDishSchema = registry.register(
   'UpdateDish',

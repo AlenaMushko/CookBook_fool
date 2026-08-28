@@ -7,13 +7,13 @@ export class LikeRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   public async findByUserAndDish(userId: string, dishId: string) {
-    return this.prisma.like.findUnique({
+    return await this.prisma.like.findUnique({
       where: { dishId_userId: { dishId, userId } },
     });
   }
 
   public async create(userId: string, dishId: string) {
-    return this.prisma.like.create({ data: { userId, dishId } });
+    return await this.prisma.like.create({ data: { userId, dishId } });
   }
 
   public async delete(userId: string, dishId: string) {

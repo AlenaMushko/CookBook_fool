@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsUUID, Min } from 'class-validator';
+import { IsNumber, IsUUID, Min } from 'class-validator';
 
 export class ConvertRequestDto {
   @ApiProperty()
@@ -41,7 +41,8 @@ export class ConvertResponseDto {
   isOwner: boolean;
 
   @ApiPropertyOptional({
-    description: 'Id of personal rule — use for PATCH/DELETE when isOwner is true',
+    description:
+      'Id of personal rule — use for PATCH/DELETE when isOwner is true',
   })
   userRuleId?: string;
 }
@@ -89,7 +90,8 @@ export class UserConversionResDto {
   factor: number;
 
   @ApiProperty({
-    description: 'Always true — records from /user/me/conversions belong to you',
+    description:
+      'Always true — records from /user/me/conversions belong to you',
   })
   isOwner: boolean;
 }
@@ -123,11 +125,17 @@ export class EffectiveConversionResDto {
   factor: number;
 
   @ApiProperty({
-    enum: ['USER_INGREDIENT_RULE', 'GLOBAL_INGREDIENT_RULE', 'GENERIC_UNIT_RULE'],
+    enum: [
+      'USER_INGREDIENT_RULE',
+      'GLOBAL_INGREDIENT_RULE',
+      'GENERIC_UNIT_RULE',
+    ],
   })
   source: string;
 
-  @ApiProperty({ description: 'True when value comes from a personal override' })
+  @ApiProperty({
+    description: 'True when value comes from a personal override',
+  })
   isPersonal: boolean;
 
   @ApiProperty({

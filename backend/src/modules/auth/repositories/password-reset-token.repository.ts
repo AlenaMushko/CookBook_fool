@@ -12,13 +12,13 @@ export class PasswordResetTokenRepository {
     tokenHash: string;
     expiresAt: Date;
   }): Promise<PasswordResetToken> {
-    return this.prisma.passwordResetToken.create({ data });
+    return await this.prisma.passwordResetToken.create({ data });
   }
 
   public async findByTokenHash(
     tokenHash: string,
   ): Promise<PasswordResetToken | null> {
-    return this.prisma.passwordResetToken.findUnique({
+    return await this.prisma.passwordResetToken.findUnique({
       where: { tokenHash },
     });
   }

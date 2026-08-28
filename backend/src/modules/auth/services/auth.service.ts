@@ -134,7 +134,9 @@ export class AuthService {
     ]);
   }
 
-  public async forgotPassword(dto: ForgotPasswordRequestDto): Promise<{ message: string }> {
+  public async forgotPassword(
+    dto: ForgotPasswordRequestDto,
+  ): Promise<{ message: string }> {
     const user = await this.userRepository.findOne(
       { email: dto.email },
       { id: true },
@@ -142,7 +144,10 @@ export class AuthService {
 
     if (user) {
       const rawToken = crypto.randomBytes(32).toString('hex');
-      const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+      const tokenHash = crypto
+        .createHash('sha256')
+        .update(rawToken)
+        .digest('hex');
 
       await this.passwordResetRepository.invalidateUserTokens(user.id);
       await this.passwordResetRepository.create({
@@ -172,19 +177,12 @@ export class AuthService {
     const resetToken =
       await this.passwordResetRepository.findByTokenHash(tokenHash);
 
-    if (
-      !resetToken ||
-      resetToken.usedAt ||
-      resetToken.expiresAt < new Date()
-    ) {
+    if (!resetToken || resetToken.usedAt || resetToken.expiresAt < new Date()) {
       throw new AppException(ErrorCode.AUTH_TOKEN_EXPIRED, 401);
     }
 
     const password = await bcrypt.hash(dto.password, 10);
-    await this.userRepository.save(
-      { id: resetToken.userId },
-      { password },
-    );
+    await this.userRepository.save({ id: resetToken.userId }, { password });
     await this.passwordResetRepository.markUsed(resetToken.id);
     await this.invalidateAllSessions(resetToken.userId);
   }

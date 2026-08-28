@@ -12,7 +12,7 @@ export class RefreshTokenRepository {
     deviceId: string,
     token: string,
   ): Promise<RefreshToken> {
-    return this.prisma.refreshToken.create({
+    return await this.prisma.refreshToken.create({
       data: {
         userId,
         deviceId,

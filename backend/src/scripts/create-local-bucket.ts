@@ -29,7 +29,10 @@ async function createBucket() {
     );
     logger.info({ bucket: process.env.AWS_S3_BUCKET_NAME }, 'Bucket created');
   } catch {
-    logger.info({ bucket: process.env.AWS_S3_BUCKET_NAME }, 'Bucket already exists');
+    logger.info(
+      { bucket: process.env.AWS_S3_BUCKET_NAME },
+      'Bucket already exists',
+    );
   }
 }
 

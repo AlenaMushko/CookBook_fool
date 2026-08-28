@@ -59,9 +59,11 @@ function flattenValidationErrors(
   return result;
 }
 
-export function formatValidationErrors(
-  errors: ValidationError[],
-): { statusCode: 422; code: ErrorCode.VALIDATION_ERROR; errors: FieldValidationError[] } {
+export function formatValidationErrors(errors: ValidationError[]): {
+  statusCode: 422;
+  code: ErrorCode.VALIDATION_ERROR;
+  errors: FieldValidationError[];
+} {
   return {
     statusCode: 422,
     code: ErrorCode.VALIDATION_ERROR,

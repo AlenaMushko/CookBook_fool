@@ -13,7 +13,10 @@ export const CreateUserSchema = registry.register(
     image: z.string().max(3000).optional(),
     phone: z
       .string()
-      .regex(PHONE_REGEX, 'Phone number must be in E.164 format (e.g., +123456789)')
+      .regex(
+        PHONE_REGEX,
+        'Phone number must be in E.164 format (e.g., +123456789)',
+      )
       .optional(),
   }),
 );
@@ -29,7 +32,10 @@ export const UpdateUserSchema = registry.register(
     image: z.string().max(3000).optional().nullable(),
     phone: z
       .string()
-      .regex(PHONE_REGEX, 'Phone number must be in E.164 format (e.g., +123456789)')
+      .regex(
+        PHONE_REGEX,
+        'Phone number must be in E.164 format (e.g., +123456789)',
+      )
       .optional()
       .nullable(),
   }),

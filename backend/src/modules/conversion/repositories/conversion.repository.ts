@@ -13,7 +13,7 @@ export class ConversionRepository {
     fromUnitId: string,
     toUnitId: string,
   ) {
-    return this.prisma.userConversionRule.findUnique({
+    return await this.prisma.userConversionRule.findUnique({
       where: {
         userId_ingredientId_fromUnitId_toUnitId: {
           userId,
@@ -30,19 +30,19 @@ export class ConversionRepository {
     fromUnitId: string,
     toUnitId: string,
   ) {
-    return this.prisma.conversionRule.findFirst({
+    return await this.prisma.conversionRule.findFirst({
       where: { ingredientId, fromUnitId, toUnitId },
     });
   }
 
   public async findGenericUnitRule(fromUnitId: string, toUnitId: string) {
-    return this.prisma.conversionRule.findFirst({
+    return await this.prisma.conversionRule.findFirst({
       where: { ingredientId: null, fromUnitId, toUnitId },
     });
   }
 
   public async findUserRules(userId: string): Promise<UserConversionRule[]> {
-    return this.prisma.userConversionRule.findMany({
+    return await this.prisma.userConversionRule.findMany({
       where: { userId },
       orderBy: { ingredientId: 'asc' },
     });
@@ -55,7 +55,7 @@ export class ConversionRepository {
     toUnitId: string;
     factor: number;
   }): Promise<UserConversionRule> {
-    return this.prisma.userConversionRule.upsert({
+    return await this.prisma.userConversionRule.upsert({
       where: {
         userId_ingredientId_fromUnitId_toUnitId: {
           userId: data.userId,
@@ -81,7 +81,7 @@ export class ConversionRepository {
       return null;
     }
 
-    return this.prisma.userConversionRule.update({
+    return await this.prisma.userConversionRule.update({
       where: { id },
       data: { factor },
     });
@@ -98,7 +98,7 @@ export class ConversionRepository {
     id: string,
     userId: string,
   ): Promise<UserConversionRule | null> {
-    return this.prisma.userConversionRule.findFirst({
+    return await this.prisma.userConversionRule.findFirst({
       where: { id, userId },
     });
   }
