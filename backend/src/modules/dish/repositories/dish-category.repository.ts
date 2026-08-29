@@ -9,8 +9,22 @@ export class DishCategoryRepository {
   public async findAllWithSubcategories() {
     return await this.prisma.dishCategory.findMany({
       orderBy: { order: 'asc' },
-      include: {
-        subcategories: { orderBy: { order: 'asc' } },
+      select: {
+        id: true,
+        nameEn: true,
+        nameUk: true,
+        slug: true,
+        order: true,
+        subcategories: {
+          orderBy: { order: 'asc' },
+          select: {
+            id: true,
+            nameEn: true,
+            nameUk: true,
+            slug: true,
+            order: true,
+          },
+        },
       },
     });
   }

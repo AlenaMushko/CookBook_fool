@@ -14,7 +14,7 @@ export class MeasurementUnitService {
 
   public async findAll(): Promise<MeasurementUnitListResDto> {
     const units = await this.measurementUnitRepository.findAllActive();
-    return { data: units.map((u) => this.toResDto(u)) };
+    return { data: units };
   }
 
   public async findByIdOrThrow(id: string): Promise<MeasurementUnit> {
@@ -23,18 +23,5 @@ export class MeasurementUnitService {
       throw new AppException(ErrorCode.UNIT_NOT_FOUND, 404);
     }
     return unit;
-  }
-
-  private toResDto(unit: MeasurementUnit) {
-    return {
-      id: unit.id,
-      code: unit.code,
-      nameEn: unit.nameEn,
-      nameUk: unit.nameUk,
-      symbolEn: unit.symbolEn ?? undefined,
-      symbolUk: unit.symbolUk ?? undefined,
-      type: unit.type,
-      order: unit.order,
-    };
   }
 }

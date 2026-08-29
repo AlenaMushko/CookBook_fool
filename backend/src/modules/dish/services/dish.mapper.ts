@@ -12,8 +12,8 @@ import {
 
 type DishStepJson = {
   order: number;
-  instructionEn: string;
-  instructionUk: string;
+  instructionEn?: string | null;
+  instructionUk?: string | null;
   photoKey?: string | null;
 };
 
@@ -26,7 +26,7 @@ type DishPhotoJson = {
 export class DishMapper {
   public static toResponseDto(
     entity: DishListItem | DishWithRelations,
-    options?: { userId?: string; isSaved?: boolean },
+    options?: { userId?: string },
   ): DishResDto {
     const steps = (entity.steps as DishStepJson[]) ?? [];
     const photos = entity.photos
@@ -35,8 +35,9 @@ export class DishMapper {
 
     return {
       id: entity.id,
-      titleEn: entity.titleEn,
-      titleUk: entity.titleUk,
+      locale: entity.locale,
+      titleEn: entity.titleEn ?? undefined,
+      titleUk: entity.titleUk ?? undefined,
       descriptionEn: entity.descriptionEn ?? undefined,
       descriptionUk: entity.descriptionUk ?? undefined,
       noteEn: entity.noteEn ?? undefined,
@@ -48,14 +49,19 @@ export class DishMapper {
       baseServings: entity.baseServings
         ? Number(entity.baseServings)
         : undefined,
-      steps,
+      steps: steps.map((step) => ({
+        order: step.order,
+        instructionEn: step.instructionEn ?? undefined,
+        instructionUk: step.instructionUk ?? undefined,
+        photoKey: step.photoKey,
+      })),
       photos,
       categoryId: entity.categoryId,
       subcategoryId: entity.subcategoryId ?? undefined,
+      areaId: entity.areaId ?? undefined,
       originalDishId: entity.originalDishId ?? undefined,
       ownerId: entity.ownerId,
       likesCount: entity._count?.likes ?? 0,
-      isSaved: options?.isSaved,
       isOwner: options?.userId ? entity.ownerId === options.userId : undefined,
       created: entity.created,
     };
@@ -65,16 +71,10 @@ export class DishMapper {
     entities: DishListItem[],
     total: number,
     query: DishesListReqDto,
-    savedIds?: Set<string>,
     userId?: string,
   ): DishListResDto {
     return {
-      data: entities.map((entity) =>
-        this.toResponseDto(entity, {
-          userId,
-          isSaved: savedIds?.has(entity.id),
-        }),
-      ),
+      data: entities.map((entity) => this.toResponseDto(entity, { userId })),
       meta: {
         limit: query.limit ?? 12,
         offset: query.offset ?? 0,
@@ -85,7 +85,7 @@ export class DishMapper {
 
   public static toParsedResponseDto(
     entity: DishWithRelations,
-    options?: { userId?: string; isSaved?: boolean },
+    options?: { userId?: string },
   ): ParsedDishResDto {
     return {
       ...this.toResponseDto(entity, options),
@@ -108,10 +108,20 @@ export class DishMapper {
             slug: entity.subcategory.slug,
           }
         : undefined,
+      area: entity.area
+        ? {
+            id: entity.area.id,
+            code: entity.area.code,
+            nameEn: entity.area.nameEn,
+            nameUk: entity.area.nameUk,
+            flagSvg: entity.area.flagSvg,
+            flagAlt: entity.area.flagAlt,
+          }
+        : undefined,
       ingredientGroups: entity.ingredientGroups.map((g) => ({
         id: g.id,
-        nameEn: g.nameEn,
-        nameUk: g.nameUk,
+        nameEn: g.nameEn ?? undefined,
+        nameUk: g.nameUk ?? undefined,
         order: g.order,
       })),
       ingredients: entity.ingredients.map((ing) => {

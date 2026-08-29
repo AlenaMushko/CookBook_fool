@@ -1,7 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { UserConversionRule } from '@prisma/client';
+import { Prisma, UserConversionRule } from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
+
+const userConversionRuleSelect = {
+  id: true,
+  ingredientId: true,
+  fromUnitId: true,
+  toUnitId: true,
+  factor: true,
+} satisfies Prisma.UserConversionRuleSelect;
+
+export type UserConversionRuleItem = Prisma.UserConversionRuleGetPayload<{
+  select: typeof userConversionRuleSelect;
+}>;
 
 @Injectable()
 export class ConversionRepository {
@@ -22,6 +34,7 @@ export class ConversionRepository {
           toUnitId,
         },
       },
+      select: { id: true, factor: true },
     });
   }
 
@@ -32,19 +45,24 @@ export class ConversionRepository {
   ) {
     return await this.prisma.conversionRule.findFirst({
       where: { ingredientId, fromUnitId, toUnitId },
+      select: { factor: true },
     });
   }
 
   public async findGenericUnitRule(fromUnitId: string, toUnitId: string) {
     return await this.prisma.conversionRule.findFirst({
       where: { ingredientId: null, fromUnitId, toUnitId },
+      select: { factor: true },
     });
   }
 
-  public async findUserRules(userId: string): Promise<UserConversionRule[]> {
+  public async findUserRules(
+    userId: string,
+  ): Promise<UserConversionRuleItem[]> {
     return await this.prisma.userConversionRule.findMany({
       where: { userId },
       orderBy: { ingredientId: 'asc' },
+      select: userConversionRuleSelect,
     });
   }
 
@@ -54,7 +72,7 @@ export class ConversionRepository {
     fromUnitId: string;
     toUnitId: string;
     factor: number;
-  }): Promise<UserConversionRule> {
+  }): Promise<UserConversionRuleItem> {
     return await this.prisma.userConversionRule.upsert({
       where: {
         userId_ingredientId_fromUnitId_toUnitId: {
@@ -66,6 +84,7 @@ export class ConversionRepository {
       },
       create: data,
       update: { factor: data.factor },
+      select: userConversionRuleSelect,
     });
   }
 
@@ -73,9 +92,10 @@ export class ConversionRepository {
     id: string,
     userId: string,
     factor: number,
-  ): Promise<UserConversionRule | null> {
+  ): Promise<UserConversionRuleItem | null> {
     const existing = await this.prisma.userConversionRule.findFirst({
       where: { id, userId },
+      select: { id: true },
     });
     if (!existing) {
       return null;
@@ -84,6 +104,7 @@ export class ConversionRepository {
     return await this.prisma.userConversionRule.update({
       where: { id },
       data: { factor },
+      select: userConversionRuleSelect,
     });
   }
 

@@ -23,6 +23,7 @@ import {
   DishListResDto,
   ParsedDishResDto,
 } from '../models/dto/res/dish.res.dto';
+import { CountryRepository } from '../repositories/country.repository';
 import { DishRepository } from '../repositories/dish.repository';
 import { DishCategoryRepository } from '../repositories/dish-category.repository';
 import { LikeRepository } from '../repositories/like.repository';
@@ -33,6 +34,7 @@ export class DishService {
   constructor(
     private readonly dishRepository: DishRepository,
     private readonly dishCategoryRepository: DishCategoryRepository,
+    private readonly countryRepository: CountryRepository,
     private readonly likeRepository: LikeRepository,
     private readonly ingredientService: IngredientService,
     private readonly measurementUnitService: MeasurementUnitService,
@@ -48,10 +50,12 @@ export class DishService {
       dto.categoryId,
       dto.subcategoryId,
     );
+    await this.validateArea(dto.areaId);
     await this.validateIngredients(dto.ingredients);
 
     const dish = await this.dishRepository.createWithRelations(
       {
+        locale: dto.locale,
         titleEn: dto.titleEn,
         titleUk: dto.titleUk,
         descriptionEn: dto.descriptionEn,
@@ -68,6 +72,7 @@ export class DishService {
         ownerId: userData.userId,
         categoryId: dto.categoryId,
         subcategoryId: dto.subcategoryId,
+        areaId: dto.areaId,
       },
       (dto.ingredientGroups ?? []).map((g) => ({
         tempId: g.tempId,
@@ -80,7 +85,6 @@ export class DishService {
 
     return DishMapper.toParsedResponseDto(dish, {
       userId: userData.userId,
-      isSaved: false,
     });
   }
 
@@ -100,6 +104,10 @@ export class DishService {
 
     if (dto.ingredients) {
       await this.validateIngredients(dto.ingredients);
+    }
+
+    if (dto.areaId !== undefined) {
+      await this.validateArea(dto.areaId);
     }
 
     const dishData: Prisma.DishUncheckedUpdateInput = {
@@ -122,6 +130,7 @@ export class DishService {
       ...(dto.subcategoryId !== undefined && {
         subcategoryId: dto.subcategoryId,
       }),
+      ...(dto.areaId !== undefined && { areaId: dto.areaId }),
       ...(dto.steps !== undefined && {
         steps: dto.steps as unknown as Prisma.InputJsonValue,
       }),
@@ -144,10 +153,8 @@ export class DishService {
       dto.ingredients,
     );
 
-    const isSaved = await this.likeRepository.isSaved(userData.userId, id);
     return DishMapper.toParsedResponseDto(dish, {
       userId: userData.userId,
-      isSaved,
     });
   }
 
@@ -161,24 +168,22 @@ export class DishService {
       throw new UnauthorizedException();
     }
 
-    const savedDishIds = userId
-      ? await this.likeRepository.getSavedDishIds(userId)
-      : [];
+    const needsLikedIds =
+      query.scope === DishListScope.SAVED ||
+      query.scope === DishListScope.COOKBOOK;
+
+    const likedDishIds =
+      userId && needsLikedIds
+        ? await this.likeRepository.getLikedDishIds(userId)
+        : undefined;
 
     const [entities, total] = await this.dishRepository.getList(
       query,
       userId,
-      savedDishIds,
+      likedDishIds,
     );
 
-    const savedSet = new Set(savedDishIds);
-    return DishMapper.toListResponseDto(
-      entities,
-      total,
-      query,
-      savedSet,
-      userId,
-    );
+    return DishMapper.toListResponseDto(entities, total, query, userId);
   }
 
   public async getDishById(
@@ -197,11 +202,7 @@ export class DishService {
       throw new AppException(ErrorCode.DISH_PRIVATE, 404);
     }
 
-    const isSaved = userId
-      ? await this.likeRepository.isSaved(userId, id)
-      : undefined;
-
-    return DishMapper.toParsedResponseDto(dish, { userId, isSaved });
+    return DishMapper.toParsedResponseDto(dish, { userId });
   }
 
   public async deleteDish(id: string, userData: IUserData): Promise<void> {
@@ -215,14 +216,14 @@ export class DishService {
     }
   }
 
-  public async saveDish(id: string, userData: IUserData): Promise<void> {
+  public async likeDish(id: string, userData: IUserData): Promise<void> {
     const dish = await this.dishRepository.findDishById(id);
     if (!dish) {
       throw new AppException(ErrorCode.DISH_NOT_FOUND, 404);
     }
 
     if (dish.ownerId === userData.userId) {
-      throw new AppException(ErrorCode.CANNOT_SAVE_OWN_DISH, 400);
+      throw new AppException(ErrorCode.CANNOT_LIKE_OWN_DISH, 400);
     }
 
     if (dish.visibility !== DishVisibility.PUBLIC) {
@@ -238,46 +239,11 @@ export class DishService {
     }
   }
 
-  public async unsaveDish(id: string, userData: IUserData): Promise<void> {
+  public async dislikeDish(id: string, userData: IUserData): Promise<void> {
     await this.likeRepository.delete(userData.userId, id);
   }
 
-  public async duplicateDish(
-    id: string,
-    userData: IUserData,
-  ): Promise<ParsedDishResDto> {
-    const source = await this.dishRepository.findDishById(id);
-    if (!source) {
-      throw new AppException(ErrorCode.DISH_NOT_FOUND, 404);
-    }
-
-    if (
-      source.visibility === DishVisibility.PRIVATE &&
-      source.ownerId !== userData.userId
-    ) {
-      throw new AppException(ErrorCode.DISH_PRIVATE, 404);
-    }
-
-    const dish = await this.dishRepository.duplicateDish(
-      source,
-      userData.userId,
-    );
-
-    return DishMapper.toParsedResponseDto(dish, {
-      userId: userData.userId,
-      isSaved: false,
-    });
-  }
-
-  public async isDishOwnedByUser(
-    dishId: string,
-    userId: string,
-  ): Promise<boolean> {
-    const dish = await this.dishRepository.findDishById(dishId);
-    return dish?.ownerId === userId;
-  }
-
-  private async findOwnedOrThrow(id: string, userId: string) {
+  public async findOwnedOrThrow(id: string, userId: string) {
     const dish = await this.dishRepository.findDishById(id);
     if (!dish) {
       throw new AppException(ErrorCode.DISH_NOT_FOUND, 404);
@@ -307,6 +273,14 @@ export class DishService {
 
     if (subcategory.categoryId !== categoryId) {
       throw new AppException(ErrorCode.SUBCATEGORY_CATEGORY_MISMATCH, 422);
+    }
+  }
+
+  private async validateArea(areaId?: string | null): Promise<void> {
+    if (!areaId) return;
+    const country = await this.countryRepository.findById(areaId);
+    if (!country) {
+      throw new AppException(ErrorCode.AREA_NOT_FOUND, 404);
     }
   }
 

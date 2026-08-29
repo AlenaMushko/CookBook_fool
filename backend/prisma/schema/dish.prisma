@@ -29,6 +29,22 @@ model DishSubcategory {
   @@map("dish-subcategories")
 }
 
+model Country {
+  id      String   @id @default(uuid()) @db.Uuid
+  created DateTime @default(now())
+  updated DateTime @updatedAt
+  code    String   @unique
+  nameEn  String
+  nameUk  String
+  flagSvg String
+  flagAlt String
+
+  dishes Dish[]
+
+  @@index([nameEn])
+  @@map("countries")
+}
+
 model Ingredient {
   id      String   @id @default(uuid()) @db.Uuid
   created DateTime @default(now())
@@ -63,10 +79,10 @@ model MeasurementUnit {
 }
 
 model DishIngredientGroup {
-  id     String @id @default(uuid()) @db.Uuid
-  dishId String @db.Uuid
-  nameEn String
-  nameUk String
+  id     String  @id @default(uuid()) @db.Uuid
+  dishId String  @db.Uuid
+  nameEn String?
+  nameUk String?
   order  Int
 
   dish        Dish             @relation(fields: [dishId], references: [id], onDelete: Cascade)
@@ -115,8 +131,9 @@ model Dish {
   created DateTime @default(now())
   updated DateTime @updatedAt
 
-  titleEn       String
-  titleUk       String
+  locale        ContentLocale
+  titleEn       String?
+  titleUk       String?
   descriptionEn String?
   descriptionUk String?
   noteEn        String?
@@ -135,11 +152,13 @@ model Dish {
   ownerId        String  @db.Uuid
   categoryId     String  @db.Uuid
   subcategoryId  String? @db.Uuid
+  areaId         String? @db.Uuid
   originalDishId String? @db.Uuid
 
   owner         User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   category      DishCategory      @relation(fields: [categoryId], references: [id])
   subcategory   DishSubcategory?  @relation(fields: [subcategoryId], references: [id])
+  area          Country?          @relation(fields: [areaId], references: [id], onDelete: SetNull)
   originalDish  Dish?             @relation("DishVersions", fields: [originalDishId], references: [id], onDelete: SetNull)
   versions      Dish[]            @relation("DishVersions")
 
@@ -151,7 +170,9 @@ model Dish {
   @@index([ownerId])
   @@index([categoryId])
   @@index([subcategoryId])
+  @@index([areaId])
   @@index([visibility])
+  @@index([locale])
   @@index([created])
   @@map("dishes")
 }

@@ -5,42 +5,33 @@ import { ErrorCode } from '../../../common/constants/error-codes';
 import { AppException } from '../../../common/expections/app.exception';
 import { UpdateUserReqDto } from '../models/dto/req/update-user.req.dto';
 import { UserResDto } from '../models/dto/res/user.res.dto';
-import { UserRepository } from '../repositories/user.repository';
-import { UserMapper } from './user.mapper';
-
-const defaultUserSelect = {
-  id: true,
-  firstName: true,
-  lastName: true,
-  email: true,
-  phone: true,
-  image: true,
-  created: true,
-  updated: true,
-} satisfies Prisma.UserSelect;
+import {
+  publicUserSelect,
+  UserRepository,
+} from '../repositories/user.repository';
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   public async findUserById(id: string): Promise<UserResDto> {
-    const user = await this.findOne({ id }, defaultUserSelect);
+    const user = await this.findOne({ id }, publicUserSelect);
     if (!user) {
       throw new UnprocessableEntityException();
     }
-    return UserMapper.toResDto(user);
+    return user;
   }
 
   public async update(
     id: string,
     updateUserDto: UpdateUserReqDto,
   ): Promise<UserResDto> {
-    const existing = await this.findOne({ id }, defaultUserSelect);
+    const existing = await this.findOne({ id }, publicUserSelect);
     if (!existing) {
       throw new UnprocessableEntityException();
     }
 
-    const updatedUser = await this.userRepository.save(
+    return await this.userRepository.save(
       { id },
       {
         firstName: updateUserDto.firstName,
@@ -49,8 +40,6 @@ export class UserService {
         image: updateUserDto.image,
       },
     );
-
-    return UserMapper.toResDto(updatedUser);
   }
 
   public async isEmailUniqueOrThrow(email: string): Promise<void> {

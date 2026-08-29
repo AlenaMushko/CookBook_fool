@@ -13,17 +13,39 @@ const dishListInclude = {
 } satisfies Prisma.DishInclude;
 
 const dishDetailInclude = {
-  category: true,
-  subcategory: true,
+  category: {
+    select: { id: true, nameEn: true, nameUk: true, slug: true },
+  },
+  subcategory: {
+    select: { id: true, nameEn: true, nameUk: true, slug: true },
+  },
+  area: {
+    select: {
+      id: true,
+      code: true,
+      nameEn: true,
+      nameUk: true,
+      flagSvg: true,
+      flagAlt: true,
+    },
+  },
   owner: {
     select: { id: true, firstName: true, lastName: true },
   },
-  ingredientGroups: { orderBy: { order: 'asc' as const } },
+  ingredientGroups: {
+    orderBy: { order: 'asc' as const },
+    select: { id: true, nameEn: true, nameUk: true, order: true },
+  },
   ingredients: {
     orderBy: { order: 'asc' as const },
-    include: {
-      ingredient: true,
-      unit: true,
+    select: {
+      id: true,
+      ingredientId: true,
+      unitId: true,
+      quantity: true,
+      groupId: true,
+      order: true,
+      ingredient: { select: { en: true, uk: true } },
     },
   },
   _count: { select: { likes: true } },
@@ -44,13 +66,14 @@ export class DishRepository {
   public async getList(
     query: DishesListReqDto,
     userId?: string,
-    savedDishIds?: string[],
+    likedDishIds?: string[],
   ): Promise<[DishListItem[], number]> {
     const {
       limit = 12,
       offset = 0,
       categoryId,
       subcategoryId,
+      areaId,
       search,
       difficulty,
       maxCookTime,
@@ -59,21 +82,17 @@ export class DishRepository {
       sort = DishListSort.POPULARITY,
     } = query;
 
-    const matchingIngredientIds = search
-      ? await this.findIngredientIdsBySearch(search)
-      : undefined;
-
     const where = this.buildWhere({
       categoryId,
       subcategoryId,
+      areaId,
       search,
-      matchingIngredientIds,
       difficulty,
       maxCookTime,
       visibility,
       scope,
       userId,
-      savedDishIds,
+      likedDishIds,
     });
 
     const orderBy = this.buildOrderBy(sort);
@@ -127,8 +146,8 @@ export class DishRepository {
     dishData: Prisma.DishUncheckedCreateInput,
     groups: Array<{
       tempId: string;
-      nameEn: string;
-      nameUk: string;
+      nameEn?: string;
+      nameUk?: string;
       order: number;
     }>,
     ingredients: Array<{
@@ -182,8 +201,8 @@ export class DishRepository {
     dishData: Prisma.DishUncheckedUpdateInput,
     groups?: Array<{
       tempId: string;
-      nameEn: string;
-      nameUk: string;
+      nameEn?: string;
+      nameUk?: string;
       order: number;
     }>,
     ingredients?: Array<{
@@ -237,139 +256,62 @@ export class DishRepository {
     });
   }
 
-  public async duplicateDish(
-    source: DishWithRelations,
-    ownerId: string,
-  ): Promise<DishWithRelations> {
-    return await this.prisma.$transaction(async (tx) => {
-      const dish = await tx.dish.create({
-        data: {
-          titleEn: source.titleEn,
-          titleUk: source.titleUk,
-          descriptionEn: source.descriptionEn,
-          descriptionUk: source.descriptionUk,
-          noteEn: source.noteEn,
-          noteUk: source.noteUk,
-          visibility: DishVisibility.PRIVATE,
-          difficulty: source.difficulty,
-          prepTime: source.prepTime,
-          cookTime: source.cookTime,
-          baseServings: source.baseServings,
-          steps: source.steps as Prisma.InputJsonValue,
-          photos: [],
-          ownerId,
-          categoryId: source.categoryId,
-          subcategoryId: source.subcategoryId,
-          originalDishId: source.id,
-        },
-      });
-
-      const groupIdMap = new Map<string, string>();
-      for (const group of source.ingredientGroups) {
-        const created = await tx.dishIngredientGroup.create({
-          data: {
-            dishId: dish.id,
-            nameEn: group.nameEn,
-            nameUk: group.nameUk,
-            order: group.order,
-          },
-        });
-        groupIdMap.set(group.id, created.id);
-      }
-
-      for (const ing of source.ingredients) {
-        await tx.dishIngredient.create({
-          data: {
-            dishId: dish.id,
-            ingredientId: ing.ingredientId,
-            unitId: ing.unitId,
-            quantity: ing.quantity,
-            groupId: ing.groupId ? (groupIdMap.get(ing.groupId) ?? null) : null,
-            order: ing.order,
-          },
-        });
-      }
-
-      return await tx.dish.findUniqueOrThrow({
-        where: { id: dish.id },
-        include: dishDetailInclude,
-      });
-    });
-  }
-
-  private async findIngredientIdsBySearch(search: string): Promise<string[]> {
-    const rows = await this.prisma.$queryRaw<Array<{ id: string }>>`
-      SELECT id FROM "ingredients"
-      WHERE
-        (en->>'name') ILIKE ${'%' + search + '%'}
-        OR (uk->>'name') ILIKE ${'%' + search + '%'}
-    `;
-    return rows.map((row) => row.id);
-  }
-
   private buildWhere(params: {
     categoryId?: string;
     subcategoryId?: string;
+    areaId?: string;
     search?: string;
-    matchingIngredientIds?: string[];
     difficulty?: string;
     maxCookTime?: number;
     visibility?: DishVisibility;
     scope: DishListScope;
     userId?: string;
-    savedDishIds?: string[];
+    likedDishIds?: string[];
   }): Prisma.DishWhereInput {
     const {
       categoryId,
       subcategoryId,
+      areaId,
       search,
-      matchingIngredientIds,
       difficulty,
       maxCookTime,
       visibility,
       scope,
       userId,
-      savedDishIds,
+      likedDishIds,
     } = params;
 
     const and: Prisma.DishWhereInput[] = [];
 
     if (categoryId) and.push({ categoryId });
     if (subcategoryId) and.push({ subcategoryId });
+    if (areaId) and.push({ areaId });
     if (difficulty) and.push({ difficulty: difficulty as never });
     if (maxCookTime !== undefined) and.push({ cookTime: { lte: maxCookTime } });
 
     if (search) {
-      const searchConditions: Prisma.DishWhereInput[] = [
-        { titleEn: { contains: search, mode: 'insensitive' } },
-        { titleUk: { contains: search, mode: 'insensitive' } },
-        {
-          category: {
-            OR: [
-              { nameEn: { contains: search, mode: 'insensitive' } },
-              { nameUk: { contains: search, mode: 'insensitive' } },
-            ],
+      and.push({
+        OR: [
+          { titleEn: { contains: search, mode: 'insensitive' } },
+          { titleUk: { contains: search, mode: 'insensitive' } },
+          {
+            category: {
+              OR: [
+                { nameEn: { contains: search, mode: 'insensitive' } },
+                { nameUk: { contains: search, mode: 'insensitive' } },
+              ],
+            },
           },
-        },
-        {
-          subcategory: {
-            OR: [
-              { nameEn: { contains: search, mode: 'insensitive' } },
-              { nameUk: { contains: search, mode: 'insensitive' } },
-            ],
+          {
+            subcategory: {
+              OR: [
+                { nameEn: { contains: search, mode: 'insensitive' } },
+                { nameUk: { contains: search, mode: 'insensitive' } },
+              ],
+            },
           },
-        },
-      ];
-
-      if (matchingIngredientIds?.length) {
-        searchConditions.push({
-          ingredients: {
-            some: { ingredientId: { in: matchingIngredientIds } },
-          },
-        });
-      }
-
-      and.push({ OR: searchConditions });
+        ],
+      });
     }
 
     switch (scope) {
@@ -378,11 +320,11 @@ export class DishRepository {
         if (visibility) and.push({ visibility });
         break;
       case DishListScope.SAVED:
-        and.push({ id: { in: savedDishIds ?? [] } });
+        and.push({ id: { in: likedDishIds ?? [] } });
         break;
       case DishListScope.COOKBOOK:
         and.push({
-          OR: [{ ownerId: userId }, { id: { in: savedDishIds ?? [] } }],
+          OR: [{ ownerId: userId }, { id: { in: likedDishIds ?? [] } }],
         });
         break;
       default:
@@ -400,7 +342,7 @@ export class DishRepository {
       case DishListSort.OLDEST:
         return [{ created: 'asc' }, { id: 'asc' }];
       case DishListSort.ALPHABETICAL:
-        return [{ titleEn: 'asc' }, { id: 'asc' }];
+        return [{ titleUk: 'asc' }, { titleEn: 'asc' }, { id: 'asc' }];
       case DishListSort.COOK_TIME:
         return [
           { cookTime: { sort: 'asc', nulls: 'last' } },

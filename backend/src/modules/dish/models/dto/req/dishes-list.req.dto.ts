@@ -58,6 +58,11 @@ export class DishesListReqDto {
   @IsUUID()
   subcategoryId?: string;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUUID()
+  areaId?: string;
+
   @ApiPropertyOptional({ enum: DishDifficulty })
   @IsOptional()
   @IsEnum(DishDifficulty)

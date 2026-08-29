@@ -1,9 +1,10 @@
-import { PrismaClient, DishDifficulty, DishVisibility } from '@prisma/client';
+import { ContentLocale, PrismaClient, DishDifficulty, DishVisibility } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import * as fs from 'fs';
 import * as path from 'path';
 
 import { MEASUREMENT_UNITS } from './data/measurement-units';
+import { COUNTRIES } from './data/countries';
 import { TAXONOMY } from './data/taxonomy';
 
 const prisma = new PrismaClient();
@@ -46,6 +47,27 @@ function applyIngredientPatches(item: IngredientJsonItem): IngredientJsonItem {
     );
 
   return patched;
+}
+
+async function seedCountries(): Promise<void> {
+  for (const country of COUNTRIES) {
+    await prisma.country.upsert({
+      where: { code: country.code },
+      update: {
+        nameEn: country.nameEn,
+        nameUk: country.nameUk,
+        flagSvg: country.flagSvg,
+        flagAlt: country.flagAlt,
+      },
+      create: {
+        code: country.code,
+        nameEn: country.nameEn,
+        nameUk: country.nameUk,
+        flagSvg: country.flagSvg,
+        flagAlt: country.flagAlt,
+      },
+    });
+  }
 }
 
 async function seedTaxonomy(): Promise<Map<string, string>> {
@@ -309,9 +331,8 @@ async function seedDemoData(
 
   const borscht = await prisma.dish.create({
     data: {
-      titleEn: 'Borscht',
+      locale: ContentLocale.UK,
       titleUk: 'Борщ',
-      descriptionEn: 'Classic Ukrainian beet soup',
       descriptionUk: 'Класичний український буряковий суп',
       visibility: DishVisibility.PUBLIC,
       difficulty: DishDifficulty.MEDIUM,
@@ -321,13 +342,11 @@ async function seedDemoData(
       steps: [
         {
           order: 1,
-          instructionEn: 'Peel and chop vegetables.',
           instructionUk: 'Очистіть та наріжте овочі.',
           photoKey: null,
         },
         {
           order: 2,
-          instructionEn: 'Simmer beets and cabbage in broth.',
           instructionUk: 'Варіть буряк та капусту в бульйоні.',
           photoKey: null,
         },
@@ -351,9 +370,8 @@ async function seedDemoData(
 
   const honeyCake = await prisma.dish.create({
     data: {
-      titleEn: 'Honey Cake',
+      locale: ContentLocale.UK,
       titleUk: 'Медовик',
-      descriptionEn: 'Layered honey cake dessert',
       descriptionUk: 'Шаруватий медовий торт',
       visibility: DishVisibility.PUBLIC,
       difficulty: DishDifficulty.HARD,
@@ -363,7 +381,6 @@ async function seedDemoData(
       steps: [
         {
           order: 1,
-          instructionEn: 'Mix honey with flour and eggs.',
           instructionUk: 'Змішайте мед з борошном та яйцями.',
           photoKey: null,
         },
@@ -386,10 +403,9 @@ async function seedDemoData(
 
   const chicken = await prisma.dish.create({
     data: {
+      locale: ContentLocale.EN,
       titleEn: 'Herb Roast Chicken',
-      titleUk: 'Курка з травами',
       descriptionEn: 'Roasted chicken with herbs',
-      descriptionUk: 'Запечена курка з травами',
       visibility: DishVisibility.PUBLIC,
       difficulty: DishDifficulty.EASY,
       prepTime: 15,
@@ -399,7 +415,6 @@ async function seedDemoData(
         {
           order: 1,
           instructionEn: 'Season chicken and roast at 180°C.',
-          instructionUk: 'Приправте курку та запікайте при 180°C.',
           photoKey: null,
         },
       ],
@@ -469,6 +484,9 @@ async function seedDemoData(
 }
 
 async function main(): Promise<void> {
+  console.log('Seeding countries...');
+  await seedCountries();
+
   console.log('Seeding taxonomy...');
   const categoryIds = await seedTaxonomy();
 

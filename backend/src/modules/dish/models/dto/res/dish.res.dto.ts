@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { DishDifficulty, DishVisibility } from '@prisma/client';
+import { ContentLocale, DishDifficulty, DishVisibility } from '@prisma/client';
 
 export class DishIngredientResDto {
   @ApiProperty()
@@ -31,11 +31,11 @@ export class DishIngredientGroupResDto {
   @ApiProperty()
   id: string;
 
-  @ApiProperty()
-  nameEn: string;
+  @ApiPropertyOptional()
+  nameEn?: string;
 
-  @ApiProperty()
-  nameUk: string;
+  @ApiPropertyOptional()
+  nameUk?: string;
 
   @ApiProperty()
   order: number;
@@ -45,11 +45,11 @@ export class DishStepResDto {
   @ApiProperty()
   order: number;
 
-  @ApiProperty()
-  instructionEn: string;
+  @ApiPropertyOptional()
+  instructionEn?: string;
 
-  @ApiProperty()
-  instructionUk: string;
+  @ApiPropertyOptional()
+  instructionUk?: string;
 
   @ApiPropertyOptional({ nullable: true })
   photoKey?: string | null;
@@ -94,6 +94,26 @@ export class DishSubcategoryBriefDto {
   slug: string;
 }
 
+export class DishAreaBriefDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  code: string;
+
+  @ApiProperty()
+  nameEn: string;
+
+  @ApiProperty()
+  nameUk: string;
+
+  @ApiProperty()
+  flagSvg: string;
+
+  @ApiProperty()
+  flagAlt: string;
+}
+
 export class DishOwnerDto {
   @ApiProperty()
   id: string;
@@ -109,11 +129,14 @@ export class DishResDto {
   @ApiProperty()
   id: string;
 
-  @ApiProperty()
-  titleEn: string;
+  @ApiProperty({ enum: ContentLocale })
+  locale: ContentLocale;
 
-  @ApiProperty()
-  titleUk: string;
+  @ApiPropertyOptional()
+  titleEn?: string;
+
+  @ApiPropertyOptional()
+  titleUk?: string;
 
   @ApiPropertyOptional()
   descriptionEn?: string;
@@ -155,6 +178,9 @@ export class DishResDto {
   subcategoryId?: string;
 
   @ApiPropertyOptional()
+  areaId?: string;
+
+  @ApiPropertyOptional()
   originalDishId?: string;
 
   @ApiProperty()
@@ -162,9 +188,6 @@ export class DishResDto {
 
   @ApiProperty()
   likesCount: number;
-
-  @ApiPropertyOptional()
-  isSaved?: boolean;
 
   @ApiPropertyOptional()
   isOwner?: boolean;
@@ -182,6 +205,9 @@ export class ParsedDishResDto extends DishResDto {
 
   @ApiPropertyOptional({ type: DishSubcategoryBriefDto })
   subcategory?: DishSubcategoryBriefDto;
+
+  @ApiPropertyOptional({ type: DishAreaBriefDto })
+  area?: DishAreaBriefDto;
 
   @ApiProperty({ type: [DishIngredientGroupResDto] })
   ingredientGroups: DishIngredientGroupResDto[];

@@ -20,16 +20,11 @@ export class LikeRepository {
     await this.prisma.like.deleteMany({ where: { userId, dishId } });
   }
 
-  public async getSavedDishIds(userId: string): Promise<string[]> {
+  public async getLikedDishIds(userId: string): Promise<string[]> {
     const likes = await this.prisma.like.findMany({
       where: { userId },
       select: { dishId: true },
     });
     return likes.map((l) => l.dishId);
-  }
-
-  public async isSaved(userId: string, dishId: string): Promise<boolean> {
-    const like = await this.findByUserAndDish(userId, dishId);
-    return !!like;
   }
 }

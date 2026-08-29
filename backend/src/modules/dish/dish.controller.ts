@@ -18,11 +18,13 @@ import { IUserData } from '../auth/interfaces/user-data.interface';
 import { CreateDishDto } from './models/dto/req/create-dish.dto';
 import { DishesListReqDto } from './models/dto/req/dishes-list.req.dto';
 import { UpdateDishDto } from './models/dto/req/update-dish.req.dto';
+import { CountryListResDto } from './models/dto/res/country.res.dto';
 import { DishCategoryListResDto } from './models/dto/res/dish.category.res.dto';
 import {
   DishListResDto,
   ParsedDishResDto,
 } from './models/dto/res/dish.res.dto';
+import { CountryService } from './services/country.service';
 import { DishCategoryService } from './services/dish.category.service';
 import { DishService } from './services/dish.service';
 
@@ -31,6 +33,7 @@ import { DishService } from './services/dish.service';
 export class DishController {
   constructor(
     private readonly dishCategoryService: DishCategoryService,
+    private readonly countryService: CountryService,
     private readonly dishService: DishService,
   ) {}
 
@@ -39,6 +42,13 @@ export class DishController {
   @ApiOperation({ summary: 'List dish categories with subcategories' })
   public async getDishCategories(): Promise<DishCategoryListResDto> {
     return await this.dishCategoryService.getDishCategories();
+  }
+
+  @SkipAuth()
+  @Get('areas')
+  @ApiOperation({ summary: 'List countries / cuisine areas' })
+  public async getAreas(): Promise<CountryListResDto> {
+    return await this.countryService.getCountries();
   }
 
   @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
@@ -94,31 +104,21 @@ export class DishController {
 
   @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
   @Post(':id/like')
-  @ApiOperation({ summary: 'Save dish to cookbook' })
-  public async saveDish(
+  @ApiOperation({ summary: 'Like a dish' })
+  public async likeDish(
     @Param('id') id: string,
     @CurrentUser() userData: IUserData,
   ): Promise<void> {
-    return await this.dishService.saveDish(id, userData);
+    return await this.dishService.likeDish(id, userData);
   }
 
   @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
   @Delete(':id/like')
-  @ApiOperation({ summary: 'Unsave dish from cookbook' })
-  public async unsaveDish(
+  @ApiOperation({ summary: 'Remove like from a dish' })
+  public async dislikeDish(
     @Param('id') id: string,
     @CurrentUser() userData: IUserData,
   ): Promise<void> {
-    return await this.dishService.unsaveDish(id, userData);
-  }
-
-  @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
-  @Post(':id/duplicate')
-  @ApiOperation({ summary: 'Create my version of dish' })
-  public async duplicateDish(
-    @Param('id') id: string,
-    @CurrentUser() userData: IUserData,
-  ): Promise<ParsedDishResDto> {
-    return await this.dishService.duplicateDish(id, userData);
+    return await this.dishService.dislikeDish(id, userData);
   }
 }

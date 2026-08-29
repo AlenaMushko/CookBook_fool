@@ -1,12 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { Menu, MenuDish, MenuSection, Prisma } from '@prisma/client';
+import {
+  ContentLocale,
+  Menu,
+  MenuDish,
+  MenuSection,
+  Prisma,
+} from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
 export type MenuWithRelations = Menu & {
   sections: MenuSection[];
   dishes: (MenuDish & {
-    dish: { id: string; titleEn: string; titleUk: string };
+    dish: {
+      id: string;
+      locale: ContentLocale;
+      titleEn: string | null;
+      titleUk: string | null;
+    };
   })[];
 };
 
@@ -24,12 +35,33 @@ export class MenuRepository {
   public async findById(id: string): Promise<MenuWithRelations | null> {
     return await this.prisma.menu.findUnique({
       where: { id },
-      include: {
-        sections: { orderBy: { order: 'asc' } },
+      select: {
+        id: true,
+        created: true,
+        updated: true,
+        userId: true,
+        name: true,
+        description: true,
+        sections: {
+          orderBy: { order: 'asc' },
+          select: { id: true, menuId: true, name: true, order: true },
+        },
         dishes: {
           orderBy: { order: 'asc' },
-          include: {
-            dish: { select: { id: true, titleEn: true, titleUk: true } },
+          select: {
+            id: true,
+            menuId: true,
+            dishId: true,
+            sectionId: true,
+            order: true,
+            dish: {
+              select: {
+                id: true,
+                locale: true,
+                titleEn: true,
+                titleUk: true,
+              },
+            },
           },
         },
       },

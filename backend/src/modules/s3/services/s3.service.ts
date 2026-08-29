@@ -94,10 +94,8 @@ export class S3Service {
     if (isDish) {
       const dishIdMatch = key.match(/^dishes\/([^/]+)\//);
       if (dishIdMatch) {
-        hasOwnership = await this.dishService.isDishOwnedByUser(
-          dishIdMatch[1],
-          userId,
-        );
+        await this.dishService.findOwnedOrThrow(dishIdMatch[1], userId);
+        hasOwnership = true;
       } else {
         hasOwnership = true;
       }

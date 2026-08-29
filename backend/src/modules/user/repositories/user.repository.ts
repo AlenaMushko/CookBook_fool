@@ -3,6 +3,19 @@ import { Prisma, User } from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
+export const publicUserSelect = {
+  id: true,
+  firstName: true,
+  lastName: true,
+  email: true,
+  phone: true,
+  image: true,
+} satisfies Prisma.UserSelect;
+
+export type PublicUser = Prisma.UserGetPayload<{
+  select: typeof publicUserSelect;
+}>;
+
 @Injectable()
 export class UserRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -14,8 +27,12 @@ export class UserRepository {
   public async save(
     where: Prisma.UserWhereUniqueInput,
     data: Prisma.UserUpdateInput,
-  ): Promise<User> {
-    return await this.prisma.user.update({ where, data });
+  ): Promise<PublicUser> {
+    return await this.prisma.user.update({
+      where,
+      data,
+      select: publicUserSelect,
+    });
   }
 
   public async findOne(

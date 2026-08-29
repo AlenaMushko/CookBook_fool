@@ -7,10 +7,7 @@ import {
   IngredientListResDto,
   IngredientResDto,
 } from '../models/ingredient.dto';
-import {
-  IngredientJson,
-  IngredientRepository,
-} from '../repositories/ingredient.repository';
+import { IngredientRepository } from '../repositories/ingredient.repository';
 
 @Injectable()
 export class IngredientService {
@@ -31,9 +28,7 @@ export class IngredientService {
       cappedLimit,
     );
 
-    return {
-      data: ingredients.map((ing) => this.toResDto(ing)),
-    };
+    return { data: ingredients };
   }
 
   public async create(dto: CreateIngredientDto): Promise<IngredientResDto> {
@@ -50,12 +45,10 @@ export class IngredientService {
       );
     }
 
-    const ingredient = await this.ingredientRepository.create({
+    return await this.ingredientRepository.create({
       en: { name: dto.nameEn.trim() },
       uk: { name: dto.nameUk.trim() },
     });
-
-    return this.toResDto(ingredient);
   }
 
   public async findByIdOrThrow(id: string) {
@@ -64,19 +57,5 @@ export class IngredientService {
       throw new AppException(ErrorCode.INGREDIENT_NOT_FOUND, 404);
     }
     return ingredient;
-  }
-
-  private toResDto(ingredient: {
-    id: string;
-    en: unknown;
-    uk: unknown;
-  }): IngredientResDto {
-    const en = ingredient.en as IngredientJson;
-    const uk = ingredient.uk as IngredientJson;
-    return {
-      id: ingredient.id,
-      nameEn: en.name,
-      nameUk: uk.name,
-    };
   }
 }
