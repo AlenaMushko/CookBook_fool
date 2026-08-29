@@ -13,10 +13,10 @@ import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
 import {
-  AddMenuDishDto,
+  AddMenuDishesDto,
   CreateMenuDto,
   CreateMenuSectionDto,
-  ReorderMenuDishesDto,
+  UpdateMenuDishDto,
   UpdateMenuDto,
   UpdateMenuSectionDto,
 } from './models/menu.dto';
@@ -29,7 +29,7 @@ export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List user menus' })
+  @ApiOperation({ summary: 'List my menus' })
   public async findAll(@CurrentUser() userData: IUserData) {
     return await this.menuService.findAll(userData);
   }
@@ -72,7 +72,7 @@ export class MenuController {
   }
 
   @Post(':id/sections')
-  @ApiOperation({ summary: 'Create menu section' })
+  @ApiOperation({ summary: 'Create optional menu section' })
   public async createSection(
     @Param('id') id: string,
     @Body() dto: CreateMenuSectionDto,
@@ -103,32 +103,36 @@ export class MenuController {
   }
 
   @Post(':id/dishes')
-  @ApiOperation({ summary: 'Add dish to menu' })
-  public async addDish(
+  @ApiOperation({
+    summary:
+      'Add dishes to menu: existing dishIds and/or create dish, optional section',
+  })
+  public async addDishes(
     @Param('id') id: string,
-    @Body() dto: AddMenuDishDto,
+    @Body() dto: AddMenuDishesDto,
     @CurrentUser() userData: IUserData,
   ) {
-    return await this.menuService.addDish(id, dto, userData);
+    return await this.menuService.addDishes(id, dto, userData);
+  }
+
+  @Patch(':id/dishes/:dishId')
+  @ApiOperation({ summary: 'Update menu dish (section / order)' })
+  public async updateDish(
+    @Param('id') id: string,
+    @Param('dishId') dishId: string,
+    @Body() dto: UpdateMenuDishDto,
+    @CurrentUser() userData: IUserData,
+  ) {
+    return await this.menuService.updateDish(id, dishId, dto, userData);
   }
 
   @Delete(':id/dishes/:dishId')
-  @ApiOperation({ summary: 'Remove dish from menu' })
+  @ApiOperation({ summary: 'Remove dish from menu (does not delete recipe)' })
   public async removeDish(
     @Param('id') id: string,
     @Param('dishId') dishId: string,
     @CurrentUser() userData: IUserData,
   ) {
     return await this.menuService.removeDish(id, dishId, userData);
-  }
-
-  @Patch(':id/dishes/reorder')
-  @ApiOperation({ summary: 'Reorder menu dishes' })
-  public async reorderDishes(
-    @Param('id') id: string,
-    @Body() dto: ReorderMenuDishesDto,
-    @CurrentUser() userData: IUserData,
-  ) {
-    return await this.menuService.reorderDishes(id, dto, userData);
   }
 }

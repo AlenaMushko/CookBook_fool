@@ -2,15 +2,16 @@ model Menu {
   id          String   @id @default(uuid()) @db.Uuid
   created     DateTime @default(now())
   updated     DateTime @updatedAt
-  userId      String   @db.Uuid
+  ownerId     String   @db.Uuid
   name        String
   description String?
+  order       Int      @default(0)
 
-  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  owner    User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   sections MenuSection[]
   dishes   MenuDish[]
 
-  @@index([userId])
+  @@index([ownerId, order])
   @@map("menus")
 }
 
@@ -23,7 +24,8 @@ model MenuSection {
   menu   Menu       @relation(fields: [menuId], references: [id], onDelete: Cascade)
   dishes MenuDish[]
 
-  @@index([menuId])
+  @@unique([menuId, name])
+  @@index([menuId, order])
   @@map("menu-sections")
 }
 
@@ -39,5 +41,6 @@ model MenuDish {
   section MenuSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
 
   @@unique([menuId, dishId])
+  @@index([menuId, sectionId, order])
   @@map("menu-dishes")
 }

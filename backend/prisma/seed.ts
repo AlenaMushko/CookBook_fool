@@ -441,25 +441,25 @@ async function seedDemoData(
 
   const menu = await prisma.menu.create({
     data: {
-      userId: demoUser.id,
+      ownerId: demoUser.id,
       name: 'Weekend Menu',
       description: 'Demo menu with sections',
     },
   });
 
-  const starterSection = await prisma.menuSection.create({
+  const starters = await prisma.menuSection.create({
     data: { menuId: menu.id, name: 'Starters', order: 0 },
   });
 
-  const mainSection = await prisma.menuSection.create({
+  const mains = await prisma.menuSection.create({
     data: { menuId: menu.id, name: 'Main', order: 1 },
   });
 
   await prisma.menuDish.createMany({
     data: [
-      { menuId: menu.id, dishId: borscht.id, sectionId: starterSection.id, order: 0 },
-      { menuId: menu.id, dishId: chicken.id, sectionId: mainSection.id, order: 0 },
-      { menuId: menu.id, dishId: honeyCake.id, sectionId: mainSection.id, order: 1 },
+      { menuId: menu.id, dishId: borscht.id, sectionId: starters.id, order: 0 },
+      { menuId: menu.id, dishId: chicken.id, sectionId: mains.id, order: 0 },
+      { menuId: menu.id, dishId: honeyCake.id, sectionId: mains.id, order: 1 },
     ],
   });
 
