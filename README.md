@@ -87,3 +87,25 @@ npm run dev
 
 
 Cmd+Shift+P → TypeScript: Restart TS Server.
+
+
+import { useTranslation } from 'react-i18next'
+
+export const MainNavigation = () => {
+  const { t } = useTranslation()
+  return (
+    <>
+      <Link to={URLS.LOGIN}>{t('login')}</Link>
+      <Link to={URLS.REGISTER}>{t('signup')}</Link>
+    </>
+  )
+}
+
+public/locales/en/translation.json
+public/locales/uk/translation.json
+
+
+Якщо з бекенду приходить titleEn / titleUk:
+
+const { i18n } = useTranslation()
+const title = i18n.language.startsWith('uk') ? dish.titleUk : dish.titleEn

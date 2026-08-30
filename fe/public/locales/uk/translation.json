@@ -58,9 +58,15 @@
     "preparationTime": "Час приготування"
   },
   "login": "Увійти",
-  "signup": "Зареєструватися",
+  "signup": "Створити акаунт",
   "profile": "Профіль",
   "logout": "Вийти",
+  "nav": {
+    "mobile": "Мобільна навігація",
+    "myCookbook": "Моя книга",
+    "myMenus": "Моє меню",
+    "createRecipe": "Рецепт"
+  },
   "forgot_password": "Забули пароль?",
   "home": "Головна",
   "dashboard": "Панель керування",

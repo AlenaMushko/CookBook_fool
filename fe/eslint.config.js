@@ -7,7 +7,7 @@ import pluginQuery from '@tanstack/eslint-plugin-query'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'node_modules', 'build']),
   ...pluginQuery.configs['flat/recommended'],
   {
     files: ['**/*.{ts,tsx}'],

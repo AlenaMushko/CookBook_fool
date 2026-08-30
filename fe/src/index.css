@@ -13,7 +13,13 @@
     @apply border-border outline-ring/50;
   }
 
+  html,
+  body,
+  #root {
+    @apply min-h-svh;
+  }
+
   body {
-    @apply m-0 min-h-svh bg-background font-sans text-body text-foreground antialiased;
+    @apply m-0 bg-background font-sans text-body antialiased; 
   }
 }

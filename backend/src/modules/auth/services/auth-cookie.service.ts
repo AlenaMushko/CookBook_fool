@@ -35,11 +35,20 @@ export class AuthCookieService {
       ...baseOptions,
       maxAge: this.jwtConfig.refreshTokenExpiration * 1000,
     });
+
+    res.cookie(AUTH_COOKIE_NAMES.SESSION, '1', {
+      httpOnly: false,
+      secure: this.isProduction,
+      sameSite: 'strict',
+      path: '/',
+      maxAge: this.jwtConfig.refreshTokenExpiration * 1000,
+    });
   }
 
   public clearAuthCookies(res: Response): void {
     res.clearCookie(AUTH_COOKIE_NAMES.ACCESS_TOKEN, { path: '/' });
     res.clearCookie(AUTH_COOKIE_NAMES.REFRESH_TOKEN, { path: '/' });
+    res.clearCookie(AUTH_COOKIE_NAMES.SESSION, { path: '/' });
   }
 
   public getAccessTokenFromRequest(req: Request): string | undefined {

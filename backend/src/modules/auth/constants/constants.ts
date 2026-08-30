@@ -7,4 +7,5 @@ export const AUTH_CACHE = {
 export const AUTH_COOKIE_NAMES = {
   ACCESS_TOKEN: 'accessToken',
   REFRESH_TOKEN: 'refreshToken',
+  SESSION: 'hasSession',
 } as const;

@@ -41,8 +41,6 @@
       "@messages/*": ["./src/messages/*"],
       "@pages": ["./src/pages"],
       "@pages/*": ["./src/pages/*"],
-      "@stores": ["./src/stores"],
-      "@stores/*": ["./src/stores/*"],
       "@app-types": ["./src/types"],
       "@app-types/*": ["./src/types/*"]
     },

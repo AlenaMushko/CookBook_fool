@@ -28,7 +28,6 @@ export default defineConfig({
       '@lib': path.resolve(src, 'lib'),
       '@messages': path.resolve(src, 'messages'),
       '@pages': path.resolve(src, 'pages'),
-      '@stores': path.resolve(src, 'stores'),
       '@app-types': path.resolve(src, 'types'),
     },
   },

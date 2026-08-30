@@ -56,9 +56,15 @@
     "preparationTime": "Preparation Time"
   },
   "login": "Log In",
-  "signup": "Join Us",
+  "signup": "Create Account",
   "profile": "Profile",
   "logout": "Logout",
+  "nav": {
+    "mobile": "Mobile navigation",
+    "myCookbook": "My Cookbook",
+    "myMenus": "My Menus",
+    "createRecipe": "Recipe"
+  },
   "forgot_password": "Forgot password?",
   "brand": {
     "tagline": "Culinary book"
