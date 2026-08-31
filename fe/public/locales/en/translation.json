@@ -69,6 +69,13 @@
   "brand": {
     "tagline": "Culinary book"
   },
+  "hero": {
+    "eyebrow": "Personal digital cookbook",
+    "titleLine1": "Your recipes.",
+    "titleLine2": "Your memories.",
+    "titleLine3": "Your cookbook.",
+    "description": "Discover recipes, save your favourites, create your own, and keep everything you love to cook in one place."
+  },
   "home": "Home",
   "dashboard": "Dashboard",
   "update": "Update",
