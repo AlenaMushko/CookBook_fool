@@ -76,6 +76,20 @@
     "titleLine3": "Your cookbook.",
     "description": "Discover recipes, save your favourites, create your own, and keep everything you love to cook in one place."
   },
+  "notFound": {
+    "title": "We couldn't find this page.",
+    "description": "The page may have been moved, deleted, or never added to your cookbook.",
+    "goHome": "Go home",
+    "goBack": "Return to previous page"
+  },
+  "errorPage": {
+    "eyebrow": "Something went wrong",
+    "title": "We couldn't finish that.",
+    "description": "Something unexpected happened while loading this page. Your recipes and changes are safe.",
+    "hint": "Please try again in a moment.",
+    "tryAgain": "Try again",
+    "goBack": "Return to previous page"
+  },
   "home": "Home",
   "dashboard": "Dashboard",
   "update": "Update",

@@ -15,7 +15,7 @@ export const SIZES = {
   MD: 'md',
 } as const
 
-const navButtonLinkVariants = cva(
+export const navButtonLinkVariants = cva(
   [
     'inline-flex items-center justify-center whitespace-nowrap',
     'font-sans text-btn font-medium leading-[1.5]',
