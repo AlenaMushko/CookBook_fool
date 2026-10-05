@@ -8,8 +8,12 @@ export const ApiRoutes = {
     refresh: `/${ApiVersion.V1}/auth/refresh`,
     forgotPassword: `/${ApiVersion.V1}/auth/forgot-password`,
     resetPassword: `/${ApiVersion.V1}/auth/reset-password`,
-    //   currentUser: '/api/auth/me',
-  },
+    },
+    user: {
+      me: `/${ApiVersion.V1}/user/me`,
+     //   profile: '/api/user/profile',
+    //   changePassword: '/api/user/change-password',
+    },
 
    // menus: {
     //   all: '/api/menus',
@@ -26,11 +30,7 @@ export const ApiRoutes = {
     //   byId: (recipeId: string) =>
     //     `/api/recipes/${recipeId}`,
     // },
-  
-    // users: {
-    //   profile: '/api/users/profile',
-    //   changePassword: '/api/users/change-password',
-    // },
+
 } as const
 
 

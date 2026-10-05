@@ -3,6 +3,8 @@ export { formatPreparationTime } from './formatPreparationTime'
 export { groupCategories } from './groupCategories'
 export { getDeviceId } from './device'
 export { showToast, type ToastType } from './toast'
+export { resolveMediaUrl } from './media-url'
+export { getUserDisplayName, getUserInitials } from './user-display'
 export {
   AUTH_COOKIES,
   AUTH_CHANGED_EVENT,

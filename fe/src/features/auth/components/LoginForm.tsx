@@ -5,9 +5,11 @@ import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
+import { queryClient } from '@api/queryClient'
 import { Button } from '@components/ui/button'
 import { FormFieldInput } from '@components/ui/form-field-input'
 import { URLS } from '@constants/url'
+import { profileQueryKeys } from '@/features/profile/api/profile.queries'
 import { notifyAuthChanged } from '@/lib/auth-session'
 import { getDeviceId } from '@/lib/device'
 import { showToast } from '@/lib/toast'
@@ -43,12 +45,13 @@ export const LoginForm = ({ redirectTo }: LoginFormProps) => {
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      await authApi.signIn({
+      const { user } = await authApi.signIn({
         email: values.email.trim(),
         password: values.password,
         deviceId: getDeviceId(),
       })
 
+      queryClient.setQueryData(profileQueryKeys.me(), user)
       notifyAuthChanged()
       showToast(t('auth.login.success'), 'success')
 

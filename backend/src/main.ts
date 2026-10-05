@@ -39,7 +39,23 @@ async function bootstrap() {
     pinoHttp({
       logger,
       autoLogging: {
-        ignore: (req) => req.url?.startsWith('/docs') ?? false,
+        ignore: (req) => {
+          const url = req.url ?? '';
+          return (
+            url.startsWith('/docs') ||
+            url.startsWith('/v1/auth') ||
+            url.startsWith('/v1/user')
+          );
+        },
+      },
+      serializers: {
+        req: (req) => ({
+          method: req.method,
+          url: req.url,
+        }),
+        res: (res) => ({
+          statusCode: res.statusCode,
+        }),
       },
     }),
   );
