@@ -66,6 +66,73 @@
     "createRecipe": "Recipe"
   },
   "forgot_password": "Forgot password?",
+  "auth": {
+    "forgotPassword": {
+      "eyebrow": "Password recovery",
+      "title": "Forgot your password?",
+      "description": "Enter the email address connected to your account. We'll send you a link to create a new password.",
+      "submit": "Send reset link",
+      "submitting": "Sending…",
+      "success": "If an account with this email exists, reset instructions have been sent.",
+      "successTitle": "Check your email",
+      "successDescription": "If an account exists for that email, we've sent password reset instructions.",
+      "resend": "Resend email",
+      "spamHint": "Didn't receive it? Check your spam folder.",
+      "backToLogin": "Back to log in"
+    },
+    "resetPassword": {
+      "eyebrow": "Create new password",
+      "title": "Set a new password",
+      "description": "Choose a strong password you haven't used before.",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "passwordPlaceholder": "Enter a new password",
+      "confirmPasswordPlaceholder": "Repeat your new password",
+      "submit": "Set new password",
+      "submitting": "Saving…",
+      "backToLogin": "Back to log in",
+      "invalidLink": "This reset link is invalid or incomplete. Request a new one to continue.",
+      "expiredLink": "This reset link has expired. Request a new one to continue.",
+      "requestNewLink": "Request a new link",
+      "successTitle": "Password updated",
+      "successDescription": "Your password has been changed successfully.",
+      "continueToLogin": "Continue to log in"
+    },
+    "register": {
+      "eyebrow": "Join your cookbook",
+      "title": "Create your account",
+      "description": "Save recipes, build menus, and keep your favourites together.",
+      "passwordPlaceholder": "Create a password",
+      "confirmPasswordPlaceholder": "Repeat your password",
+      "passwordHint": "Use at least 8 characters.",
+      "termsPrefix": "I agree to the",
+      "terms": "Terms",
+      "termsAnd": "and",
+      "privacy": "Privacy Policy",
+      "termsRequired": "Please accept the terms to continue.",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "hasAccount": "Already have an account?",
+      "logIn": "Log in"
+    },
+    "passwordRules": {
+      "minLength": "At least 8 characters",
+      "uppercase": "One uppercase letter",
+      "number": "One number"
+    },
+    "login": {
+      "eyebrow": "Welcome back",
+      "title": "Log in to your cookbook",
+      "description": "Your recipes, menus, and memories are waiting.",
+      "emailPlaceholder": "you@example.com",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "submitting": "Signing in…",
+      "success": "Signed in successfully.",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create account"
+    }
+  },
   "brand": {
     "tagline": "Culinary book"
   },

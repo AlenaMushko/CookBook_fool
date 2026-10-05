@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { ApiRoute } from '../../common/constants/api-route.enum';
+import { ApiVersion } from '../../common/constants/api-version.enum';
 import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
@@ -28,11 +30,11 @@ import { ConversionService } from './services/conversion.service';
 
 @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
 @ApiTags('Conversions')
-@Controller()
+@Controller(ApiVersion.V1)
 export class ConversionController {
   constructor(private readonly conversionService: ConversionService) {}
 
-  @Post('conversions/convert')
+  @Post(`${ApiRoute.CONVERSIONS}/convert`)
   @ApiOperation({ summary: 'Convert ingredient quantity between units' })
   public async convert(
     @Body() dto: ConvertRequestDto,
@@ -41,7 +43,7 @@ export class ConversionController {
     return await this.conversionService.convert(dto, userData);
   }
 
-  @Get('conversions/effective')
+  @Get(`${ApiRoute.CONVERSIONS}/effective`)
   @ApiOperation({
     summary:
       'Get effective conversion factor (personal override or global default)',
@@ -53,7 +55,7 @@ export class ConversionController {
     return await this.conversionService.getEffectiveConversion(query, userData);
   }
 
-  @Get('user/me/conversions')
+  @Get(`${ApiRoute.USER}/me/${ApiRoute.CONVERSIONS}`)
   @ApiOperation({ summary: 'List personal conversion rules (only yours)' })
   public async getUserConversions(
     @CurrentUser() userData: IUserData,
@@ -61,7 +63,7 @@ export class ConversionController {
     return await this.conversionService.getUserConversions(userData);
   }
 
-  @Post('user/me/conversions')
+  @Post(`${ApiRoute.USER}/me/${ApiRoute.CONVERSIONS}`)
   @ApiOperation({
     summary:
       'Save personal conversion rule (create or update — visible only to you)',
@@ -73,7 +75,7 @@ export class ConversionController {
     return await this.conversionService.saveUserConversion(dto, userData);
   }
 
-  @Patch('user/me/conversions/:id')
+  @Patch(`${ApiRoute.USER}/me/${ApiRoute.CONVERSIONS}/:id`)
   @ApiOperation({ summary: 'Update personal conversion rule by id' })
   public async updateUserConversion(
     @Param('id') id: string,
@@ -83,7 +85,7 @@ export class ConversionController {
     return await this.conversionService.updateUserConversion(id, dto, userData);
   }
 
-  @Delete('user/me/conversions/:id')
+  @Delete(`${ApiRoute.USER}/me/${ApiRoute.CONVERSIONS}/:id`)
   @ApiOperation({
     summary: 'Delete your personal rule — falls back to global default',
   })

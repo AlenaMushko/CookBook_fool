@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 
 import { ErrorCode } from '../../../common/constants/error-codes';
 import { AppException } from '../../../common/expections/app.exception';
+import { AppConfig, Config } from '../../../config/config.type';
 import logger from '../../../logger';
 import { UserRepository } from '../../user/repositories/user.repository';
 import { UserService } from '../../user/services/user.service';
@@ -32,6 +34,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly refreshRepository: RefreshTokenRepository,
     private readonly passwordResetRepository: PasswordResetTokenRepository,
+    private readonly configService: ConfigService<Config>,
   ) {}
 
   public async signUp(dto: SignUpRequestDto): Promise<AuthSessionResult> {
@@ -145,18 +148,27 @@ export class AuthService {
         .createHash('sha256')
         .update(rawToken)
         .digest('hex');
+      const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
+      const frontendUrl =
+        this.configService.get<AppConfig>('app')?.frontendUrl ??
+        'http://localhost:5173';
+      const resetLink = `${frontendUrl}/reset-password?${new URLSearchParams({
+        token: rawToken,
+        userId: user.id,
+        expires: String(expiresAt.getTime()),
+      }).toString()}`;
 
       await this.passwordResetRepository.deleteByUserId(user.id);
       await this.passwordResetRepository.create({
         userId: user.id,
         tokenHash,
-        expiresAt: new Date(Date.now() + RESET_TOKEN_TTL_MS),
+        expiresAt,
       });
 
-      // TODO: send password-reset email with link containing rawToken
+      // TODO: send password-reset email with resetLink
       logger.info(
-        { email: dto.email, resetToken: rawToken },
-        'Password reset token generated',
+        { email: dto.email, resetLink },
+        'Password reset link generated',
       );
     }
 

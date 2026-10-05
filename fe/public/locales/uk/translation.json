@@ -68,6 +68,73 @@
     "createRecipe": "Рецепт"
   },
   "forgot_password": "Забули пароль?",
+  "auth": {
+    "forgotPassword": {
+      "eyebrow": "Відновлення пароля",
+      "title": "Забули пароль?",
+      "description": "Введіть email, прив'язаний до вашого акаунта. Надішлемо посилання для створення нового пароля.",
+      "submit": "Надіслати посилання",
+      "submitting": "Надсилання…",
+      "success": "Якщо акаунт з цим email існує, інструкції для скидання вже надіслано.",
+      "successTitle": "Перевірте email",
+      "successDescription": "Якщо акаунт з цим email існує, ми надіслали інструкції для скидання пароля.",
+      "resend": "Надіслати ще раз",
+      "spamHint": "Не отримали? Перевірте папку спам.",
+      "backToLogin": "Повернутися до входу"
+    },
+    "resetPassword": {
+      "eyebrow": "Новий пароль",
+      "title": "Встановіть новий пароль",
+      "description": "Оберіть надійний пароль, який ви ще не використовували.",
+      "newPassword": "Новий пароль",
+      "confirmPassword": "Підтвердіть пароль",
+      "passwordPlaceholder": "Введіть новий пароль",
+      "confirmPasswordPlaceholder": "Повторіть новий пароль",
+      "submit": "Зберегти пароль",
+      "submitting": "Збереження…",
+      "backToLogin": "Повернутися до входу",
+      "invalidLink": "Посилання для скидання недійсне або неповне. Запросіть нове.",
+      "expiredLink": "Термін дії посилання минув. Запросіть нове.",
+      "requestNewLink": "Запросити нове посилання",
+      "successTitle": "Пароль оновлено",
+      "successDescription": "Ваш пароль успішно змінено.",
+      "continueToLogin": "Перейти до входу"
+    },
+    "register": {
+      "eyebrow": "Приєднуйтесь",
+      "title": "Створіть акаунт",
+      "description": "Зберігайте рецепти, створюйте меню та тримайте улюблене в одному місці.",
+      "passwordPlaceholder": "Створіть пароль",
+      "confirmPasswordPlaceholder": "Повторіть пароль",
+      "passwordHint": "Щонайменше 8 символів.",
+      "termsPrefix": "Я погоджуюсь з",
+      "terms": "Умовами",
+      "termsAnd": "та",
+      "privacy": "Політикою конфіденційності",
+      "termsRequired": "Потрібно прийняти умови, щоб продовжити.",
+      "submit": "Створити акаунт",
+      "submitting": "Створення…",
+      "hasAccount": "Вже маєте акаунт?",
+      "logIn": "Увійти"
+    },
+    "passwordRules": {
+      "minLength": "Щонайменше 8 символів",
+      "uppercase": "Одна велика літера",
+      "number": "Одна цифра"
+    },
+    "login": {
+      "eyebrow": "З поверненням",
+      "title": "Увійдіть до вашої книги",
+      "description": "Ваші рецепти, меню та спогади уже чекають.",
+      "emailPlaceholder": "you@example.com",
+      "showPassword": "Показати пароль",
+      "hidePassword": "Приховати пароль",
+      "submitting": "Вхід…",
+      "success": "Ви успішно увійшли.",
+      "noAccount": "Немає акаунта?",
+      "createAccount": "Створити акаунт"
+    }
+  },
   "brand": {
     "tagline": "Кулінарна книга"
   },

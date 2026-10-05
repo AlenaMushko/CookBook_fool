@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { apiPath, ApiRoute } from '../../common/constants/api-route.enum';
 import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
@@ -24,7 +25,7 @@ import { MenuService } from './services/menu.service';
 
 @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
 @ApiTags('Menu')
-@Controller('menu')
+@Controller(apiPath(ApiRoute.MENU))
 export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 

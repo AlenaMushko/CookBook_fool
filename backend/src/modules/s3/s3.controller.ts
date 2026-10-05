@@ -10,6 +10,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { memoryStorage } from 'multer';
 
+import { apiPath, ApiRoute } from '../../common/constants/api-route.enum';
 import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
@@ -18,7 +19,7 @@ import { S3Service } from './services/s3.service';
 
 @ApiTags('S3')
 @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
-@Controller('s3')
+@Controller(apiPath(ApiRoute.S3))
 export class S3Controller {
   constructor(private readonly s3Service: S3Service) {}
 

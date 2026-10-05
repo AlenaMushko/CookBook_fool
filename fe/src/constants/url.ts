@@ -11,4 +11,8 @@ export const URLS = {
   MY_COOKBOOK: '/my-cookbook',
   MENUS: '/menus',
   RECIPE_NEW: '/recipes/new',
+  NOT_FOUND: '/not-found',
+  ERROR: '/error',
+  FORGOT_PASSWORD: '/forgot-password',
+  RESET_PASSWORD: '/reset-password',
 }

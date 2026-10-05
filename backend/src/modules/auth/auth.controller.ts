@@ -2,6 +2,7 @@ import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
+import { apiPath, ApiRoute } from '../../common/constants/api-route.enum';
 import { AUTH_COOKIE_NAMES } from './constants/constants';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { SkipAuth } from './decorators/skip-auth.decorator';
@@ -18,7 +19,7 @@ import { AuthCookieService } from './services/auth-cookie.service';
 
 @ApiTags('Auth')
 @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
-@Controller('auth')
+@Controller(apiPath(ApiRoute.AUTH))
 export class AuthController {
   constructor(
     private authService: AuthService,

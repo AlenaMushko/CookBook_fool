@@ -16,6 +16,7 @@ export default (): Config => ({
     allowedOrigins: process.env.ALLOWED_ORIGINS
       ? process.env.ALLOWED_ORIGINS.split(',').map((origin) => origin.trim())
       : DEFAULT_ALLOWED_ORIGINS,
+    frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
   },
   postgres: {
     host: process.env.POSTGRES_HOST || 'localhost',

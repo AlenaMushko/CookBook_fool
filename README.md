@@ -1,64 +1,103 @@
-# CookBook
+# Cookbook
 
-Локальний запуск інфраструктури, бекенду та фронтенду.
+A personal digital cookbook: discover recipes, save favourites, create your own, and keep everything you love to cook in one place.
 
-## Передумови
+Plan menus for events and for the week — the app automatically builds a shopping list.
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) запущений (зелений статус)
+![Cookbook landing page](fe/src/assets/images/readme.png)
+
+## Features
+
+- Recipes: browse, favourites, and create your own
+- Menus for events and for the week
+- Automatic shopping list generation
+- Authentication (log in / sign up)
+- Two UI languages: English and Ukrainian
+
+## Interface language
+
+- English (`EN`)
+- Ukrainian (`УКР`)
+
+The language switcher is available in the app header.
+
+## Tech stack
+
+| Layer | Stack |
+|---|---|
+| Frontend | React 19, TypeScript, Vite, TanStack Router, TanStack Query, Tailwind CSS, React Hook Form, Zod, i18next |
+| Backend | NestJS, TypeScript, Prisma, Zod, JWT (auth), Swagger |
+| Infrastructure | Docker Compose, PostgreSQL, Redis, MinIO (S3-compatible storage) |
+
+## Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) — must be running (green status)
 - Node.js + npm
-- Файл `.env` у корені проєкту (`cp .env.example .env` і підстав свої паролі)
-
-## 1. Docker (Postgres, Redis, MinIO)
-
-З **кореня** репозиторію:
+- A `.env` file in the project root:
 
 ```bash
-# тільки Postgres (достатньо для Prisma Studio)
+cp .env.example .env
+```
+
+Fill in your passwords/secrets in `.env`. Backend env is also loaded from `backend/environments/local.env`.
+
+---
+
+## Local setup (step by step)
+
+All Docker commands run from the **repo root**. Backend and frontend should run in separate terminals.
+
+### Step 1. Docker (Postgres, Redis, MinIO)
+
+```bash
+# Postgres only (enough for Prisma Studio)
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d db
 
-# для повного бекенду — ще Redis і MinIO
+# Full backend stack — also Redis and MinIO
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d db redis minio
 ```
 
-Перевірка:
+Check status:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.dev.yml ps
 ```
 
-Зупинити:
+Stop containers:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.dev.yml stop
 ```
 
-## 2. Backend
+### Step 2. Backend
 
 ```bash
 cd backend
 npm install
-npm run prisma:migrate:deploy   # застосувати міграції (перший раз / після pull)
-npm run prisma:seed             # опційно: демо-дані
+npm run prisma:migrate:deploy   # apply migrations (first time / after pull)
+npm run prisma:seed             # optional: demo data
 npm run start:dev
 ```
 
-- API: http://localhost:3000  
-- Swagger (документація API): http://localhost:3000/docs  
+After start:
 
-Env підхоплюється з `backend/environments/local.env` і кореневого `.env`.
+| What | URL |
+|---|---|
+| API | http://localhost:3000 |
+| Swagger | http://localhost:3000/docs |
 
-### Prisma Studio (перегляд БД у браузері)
+#### Prisma Studio (optional)
 
-Спочатку має працювати `db` у Docker, потім:
+Make sure `db` is running in Docker first:
 
 ```bash
 cd backend
 npm run prisma:studio
 ```
 
-- Prisma Studio: http://localhost:5555  
+- Prisma Studio: http://localhost:5555
 
-## 3. Frontend
+### Step 3. Frontend
 
 ```bash
 cd fe
@@ -66,46 +105,23 @@ npm install
 npm run dev
 ```
 
-Зазвичай: http://localhost:5173
+- Frontend: http://localhost:5173
 
-## Корисні посилання
+---
 
-| Що | URL |
+## Quick checklist
+
+1. Start Docker Desktop  
+2. `docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d db redis minio`  
+3. `cd backend && npm install && npm run prisma:migrate:deploy && npm run start:dev` → http://localhost:3000/docs  
+4. `cd fe && npm install && npm run dev` → http://localhost:5173  
+5. (optional) `cd backend && npm run prisma:studio` → http://localhost:5555  
+
+## Useful links
+
+| What | URL |
 |---|---|
+| Frontend | http://localhost:5173 |
+| API | http://localhost:3000 |
 | Swagger | http://localhost:3000/docs |
 | Prisma Studio | http://localhost:5555 |
-| API | http://localhost:3000 |
-| Frontend (Vite) | http://localhost:5173 |
-
-## Швидкий чеклист
-
-1. Запустити Docker Desktop  
-2. `docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d db redis minio`  
-3. `cd backend && npm run start:dev` → http://localhost:3000/docs  
-4. `cd fe && npm run dev`  
-5. (опційно) `cd backend && npm run prisma:studio` → http://localhost:5555  
-
-
-Cmd+Shift+P → TypeScript: Restart TS Server.
-
-
-import { useTranslation } from 'react-i18next'
-
-export const MainNavigation = () => {
-  const { t } = useTranslation()
-  return (
-    <>
-      <Link to={URLS.LOGIN}>{t('login')}</Link>
-      <Link to={URLS.REGISTER}>{t('signup')}</Link>
-    </>
-  )
-}
-
-public/locales/en/translation.json
-public/locales/uk/translation.json
-
-
-Якщо з бекенду приходить titleEn / titleUk:
-
-const { i18n } = useTranslation()
-const title = i18n.language.startsWith('uk') ? dish.titleUk : dish.titleEn

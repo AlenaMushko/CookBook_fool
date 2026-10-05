@@ -11,6 +11,7 @@ export type AppConfig = {
   host: string;
   nodeEnv: string;
   allowedOrigins: string[];
+  frontendUrl: string;
 };
 
 export type PostgresConfig = {

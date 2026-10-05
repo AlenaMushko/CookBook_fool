@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { apiPath, ApiRoute } from '../../common/constants/api-route.enum';
 import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { OptionalAuth } from '../auth/decorators/optional-auth.decorator';
@@ -29,7 +30,7 @@ import { DishCategoryService } from './services/dish.category.service';
 import { DishService } from './services/dish.service';
 
 @ApiTags('Dish')
-@Controller('dish')
+@Controller(apiPath(ApiRoute.DISH))
 export class DishController {
   constructor(
     private readonly dishCategoryService: DishCategoryService,

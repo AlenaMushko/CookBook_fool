@@ -10,11 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
-import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
 import { Route as publicIndexRouteImport } from './routes/(public)/index'
+import { Route as publicErrorRouteImport } from './routes/(public)/error'
+import { Route as publicForgotPasswordRouteImport } from './routes/(public)/forgot-password'
+import { Route as publicNotFoundRouteImport } from './routes/(public)/not-found'
+import { Route as publicResetPasswordRouteImport } from './routes/(public)/reset-password'
 import { Route as AuthenticatedChangePasswordRouteImport } from './routes/_authenticated/change-password'
 import { Route as AuthenticatedMyCookbookRouteImport } from './routes/_authenticated/my-cookbook'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -31,11 +33,6 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
-  id: '/(auth)/forgot-password',
-  path: '/forgot-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const authLoginRoute = authLoginRouteImport.update({
   id: '/(auth)/login',
   path: '/login',
@@ -46,14 +43,29 @@ const authRegisterRoute = authRegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
-const authResetPasswordRoute = authResetPasswordRouteImport.update({
-  id: '/(auth)/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const publicIndexRoute = publicIndexRouteImport.update({
   id: '/(public)/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicErrorRoute = publicErrorRouteImport.update({
+  id: '/(public)/error',
+  path: '/error',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicForgotPasswordRoute = publicForgotPasswordRouteImport.update({
+  id: '/(public)/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicNotFoundRoute = publicNotFoundRouteImport.update({
+  id: '/(public)/not-found',
+  path: '/not-found',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicResetPasswordRoute = publicResetPasswordRouteImport.update({
+  id: '/(public)/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedChangePasswordRoute =
@@ -118,10 +130,12 @@ const AuthenticatedRecipesRecipeIdEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof publicIndexRoute
-  '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
-  '/reset-password': typeof authResetPasswordRoute
+  '/error': typeof publicErrorRoute
+  '/forgot-password': typeof publicForgotPasswordRoute
+  '/not-found': typeof publicNotFoundRoute
+  '/reset-password': typeof publicResetPasswordRoute
   '/change-password': typeof AuthenticatedChangePasswordRoute
   '/my-cookbook': typeof AuthenticatedMyCookbookRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -136,10 +150,12 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof publicIndexRoute
-  '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
-  '/reset-password': typeof authResetPasswordRoute
+  '/error': typeof publicErrorRoute
+  '/forgot-password': typeof publicForgotPasswordRoute
+  '/not-found': typeof publicNotFoundRoute
+  '/reset-password': typeof publicResetPasswordRoute
   '/change-password': typeof AuthenticatedChangePasswordRoute
   '/my-cookbook': typeof AuthenticatedMyCookbookRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -155,10 +171,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
-  '/(auth)/reset-password': typeof authResetPasswordRoute
+  '/(public)/error': typeof publicErrorRoute
+  '/(public)/forgot-password': typeof publicForgotPasswordRoute
+  '/(public)/not-found': typeof publicNotFoundRoute
+  '/(public)/reset-password': typeof publicResetPasswordRoute
   '/_authenticated/change-password': typeof AuthenticatedChangePasswordRoute
   '/_authenticated/my-cookbook': typeof AuthenticatedMyCookbookRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -176,9 +194,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/forgot-password'
     | '/login'
     | '/register'
+    | '/error'
+    | '/forgot-password'
+    | '/not-found'
     | '/reset-password'
     | '/change-password'
     | '/my-cookbook'
@@ -194,9 +214,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/forgot-password'
     | '/login'
     | '/register'
+    | '/error'
+    | '/forgot-password'
+    | '/not-found'
     | '/reset-password'
     | '/change-password'
     | '/my-cookbook'
@@ -212,10 +234,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_authenticated'
-    | '/(auth)/forgot-password'
     | '/(auth)/login'
     | '/(auth)/register'
-    | '/(auth)/reset-password'
+    | '/(public)/error'
+    | '/(public)/forgot-password'
+    | '/(public)/not-found'
+    | '/(public)/reset-password'
     | '/_authenticated/change-password'
     | '/_authenticated/my-cookbook'
     | '/_authenticated/profile'
@@ -232,10 +256,12 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  authForgotPasswordRoute: typeof authForgotPasswordRoute
   authLoginRoute: typeof authLoginRoute
   authRegisterRoute: typeof authRegisterRoute
-  authResetPasswordRoute: typeof authResetPasswordRoute
+  publicErrorRoute: typeof publicErrorRoute
+  publicForgotPasswordRoute: typeof publicForgotPasswordRoute
+  publicNotFoundRoute: typeof publicNotFoundRoute
+  publicResetPasswordRoute: typeof publicResetPasswordRoute
   publicIndexRoute: typeof publicIndexRoute
   publicRecipesRecipeIdRoute: typeof publicRecipesRecipeIdRoute
   publicRecipesIndexRoute: typeof publicRecipesIndexRoute
@@ -248,13 +274,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/forgot-password': {
-      id: '/(auth)/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof authForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/login': {
@@ -271,18 +290,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authRegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(auth)/reset-password': {
-      id: '/(auth)/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof authResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(public)/': {
       id: '/(public)/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof publicIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/error': {
+      id: '/(public)/error'
+      path: '/error'
+      fullPath: '/error'
+      preLoaderRoute: typeof publicErrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/forgot-password': {
+      id: '/(public)/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof publicForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/not-found': {
+      id: '/(public)/not-found'
+      path: '/not-found'
+      fullPath: '/not-found'
+      preLoaderRoute: typeof publicNotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/reset-password': {
+      id: '/(public)/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof publicResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/change-password': {
@@ -395,10 +435,12 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  authForgotPasswordRoute: authForgotPasswordRoute,
   authLoginRoute: authLoginRoute,
   authRegisterRoute: authRegisterRoute,
-  authResetPasswordRoute: authResetPasswordRoute,
+  publicErrorRoute: publicErrorRoute,
+  publicForgotPasswordRoute: publicForgotPasswordRoute,
+  publicNotFoundRoute: publicNotFoundRoute,
+  publicResetPasswordRoute: publicResetPasswordRoute,
   publicIndexRoute: publicIndexRoute,
   publicRecipesRecipeIdRoute: publicRecipesRecipeIdRoute,
   publicRecipesIndexRoute: publicRecipesIndexRoute,

@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { apiPath, ApiRoute } from '../../common/constants/api-route.enum';
 import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 import {
@@ -12,7 +13,7 @@ import {
 import { IngredientService } from './services/ingredient.service';
 
 @ApiTags('Ingredients')
-@Controller('ingredients')
+@Controller(apiPath(ApiRoute.INGREDIENTS))
 export class IngredientController {
   constructor(private readonly ingredientService: IngredientService) {}
 

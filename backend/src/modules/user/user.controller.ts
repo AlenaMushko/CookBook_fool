@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Patch } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { apiPath, ApiRoute } from '../../common/constants/api-route.enum';
 import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
@@ -10,7 +11,7 @@ import { UserService } from './services/user.service';
 
 @ApiTags('User')
 @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
-@Controller('user')
+@Controller(apiPath(ApiRoute.USER))
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
