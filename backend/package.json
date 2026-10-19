@@ -17,7 +17,6 @@
     "lint": "eslint \"{src,apps,libs}/**/*.ts\"",
     "lint:fix": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
     "postinstall": "prisma generate --schema prisma/schema",
-    "create:local:bucket": "ts-node ./src/scripts/create-local-bucket.ts",
     "prisma:generate": "prisma generate --schema prisma/schema",
     "prisma:migrate": "prisma migrate dev --schema prisma/schema",
     "prisma:migrate:deploy": "prisma migrate deploy --schema prisma/schema",
@@ -28,6 +27,7 @@
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^9.1.0",
     "@aws-sdk/client-s3": "^3.787.0",
+    "@aws-sdk/client-sesv2": "^3.1153.0",
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.0",

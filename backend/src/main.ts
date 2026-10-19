@@ -1,3 +1,5 @@
+import './config/load-env';
+
 import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';

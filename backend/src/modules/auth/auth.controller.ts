@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
@@ -10,8 +18,10 @@ import { ForgotPasswordRequestDto } from './dto/request/forgot-password.request.
 import { ResetPasswordRequestDto } from './dto/request/reset-password.request.dto';
 import { SignInRequestDto } from './dto/request/sign-in.request.dto';
 import { SignUpRequestDto } from './dto/request/sign-up.request.dto';
+import { ValidateResetTokenRequestDto } from './dto/request/validate-reset-token.request.dto';
 import { AuthSessionResponseDto } from './dto/response/auth-session.response.dto';
 import { RefreshSessionResponseDto } from './dto/response/refresh-session.response.dto';
+import { ValidateResetTokenResponseDto } from './dto/response/validate-reset-token.response.dto';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { IUserData } from './interfaces/user-data.interface';
 import { AuthService } from './services/auth.service';
@@ -57,6 +67,15 @@ export class AuthController {
     @Body() dto: ForgotPasswordRequestDto,
   ): Promise<{ message: string }> {
     return await this.authService.forgotPassword(dto);
+  }
+
+  @SkipAuth()
+  @ApiOperation({ summary: 'Validate password reset link' })
+  @Get('reset-password/validate')
+  public async validateResetToken(
+    @Query() query: ValidateResetTokenRequestDto,
+  ): Promise<ValidateResetTokenResponseDto> {
+    return await this.authService.validateResetToken(query.token);
   }
 
   @SkipAuth()

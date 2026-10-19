@@ -4,6 +4,7 @@ export type Config = {
   redis: RedisConfig;
   jwt: JWTConfig;
   aws: AWSConfig;
+  ses: SesConfig;
 };
 
 export type AppConfig = {
@@ -33,6 +34,7 @@ export type JWTConfig = {
   accessTokenExpiration: number;
   refreshTokenSecret: string;
   refreshTokenExpiration: number;
+  passwordResetTokenExpiration: number;
 };
 
 export type AWSConfig = {
@@ -40,5 +42,9 @@ export type AWSConfig = {
   secretAccessKey: string;
   region: string;
   bucketName: string;
-  endpoint: string;
+};
+
+export type SesConfig = {
+  fromEmail: string;
+  fromName: string;
 };

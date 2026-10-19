@@ -38,12 +38,17 @@ export default (): Config => ({
       process.env.AUTH_REFRESH_TOKEN_SECRET || 'refresh secret',
     refreshTokenExpiration:
       parseInt(process.env.JWT_REFRESH_TOKEN_EXPIRATION, 10) || 86400,
+    passwordResetTokenExpiration:
+      parseInt(process.env.AUTH_PASSWORD_RESET_TOKEN_EXPIRATION, 10) || 3600,
   },
   aws: {
-    accessKeyId: process.env.AWS_S3_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_S3_SECRET_KEY,
-    region: process.env.AWS_S3_REGION,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION,
     bucketName: process.env.AWS_S3_BUCKET_NAME,
-    endpoint: process.env.AWS_S3_ENDPOINT,
+  },
+  ses: {
+    fromEmail: process.env.SES_FROM_EMAIL || '',
+    fromName: process.env.SES_FROM_NAME || 'Cookbook',
   },
 });

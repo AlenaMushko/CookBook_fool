@@ -8,7 +8,8 @@ export const ApiRoutes = {
     refresh: `/${ApiVersion.V1}/auth/refresh`,
     forgotPassword: `/${ApiVersion.V1}/auth/forgot-password`,
     resetPassword: `/${ApiVersion.V1}/auth/reset-password`,
-    },
+    validateResetPassword: `/${ApiVersion.V1}/auth/reset-password/validate`,
+  },
     user: {
       me: `/${ApiVersion.V1}/user/me`,
      //   profile: '/api/user/profile',

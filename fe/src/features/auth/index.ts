@@ -1,6 +1,9 @@
 export { LoginForm } from './components/LoginForm'
 export { RegisterForm } from './components/RegisterForm'
-export { ForgotPasswordForm } from './components/ForgotPasswordForm'
+export {
+  ForgotPasswordBackLink,
+  ForgotPasswordForm,
+} from './components/ForgotPasswordForm'
 export { ResetPasswordForm } from './components/ResetPasswordForm'
 export { authApi } from './api/auth.api'
 export { authQueries } from './api/auth.queries'

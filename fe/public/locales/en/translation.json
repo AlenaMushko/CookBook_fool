@@ -93,9 +93,11 @@
       "backToLogin": "Back to log in",
       "invalidLink": "This reset link is invalid or incomplete. Request a new one to continue.",
       "expiredLink": "This reset link has expired. Request a new one to continue.",
+      "usedLink": "This reset link is no longer valid or has already been used. Request a new one to continue.",
+      "checkingLink": "Checking your reset link…",
       "requestNewLink": "Request a new link",
       "successTitle": "Password updated",
-      "successDescription": "Your password has been changed successfully.",
+      "successDescription": "Your password has been changed successfully. This link can no longer be used.",
       "continueToLogin": "Continue to log in"
     },
     "register": {

@@ -5,8 +5,10 @@ import * as crypto from 'crypto';
 
 import { ErrorCode } from '../../../common/constants/error-codes';
 import { AppException } from '../../../common/expections/app.exception';
-import { AppConfig, Config } from '../../../config/config.type';
+import { AppConfig, Config, JWTConfig } from '../../../config/config.type';
 import logger from '../../../logger';
+import { EmailTemplate } from '../../email/constants/email-template.enum';
+import { EmailService } from '../../email/email.service';
 import { UserRepository } from '../../user/repositories/user.repository';
 import { UserService } from '../../user/services/user.service';
 import { ForgotPasswordRequestDto } from '../dto/request/forgot-password.request.dto';
@@ -14,6 +16,7 @@ import { ResetPasswordRequestDto } from '../dto/request/reset-password.request.d
 import { SignInRequestDto } from '../dto/request/sign-in.request.dto';
 import { SignUpRequestDto } from '../dto/request/sign-up.request.dto';
 import { TokenResponseDto } from '../dto/response/token.response.dto';
+import { ValidateResetTokenResponseDto } from '../dto/response/validate-reset-token.response.dto';
 import { IUserData } from '../interfaces/user-data.interface';
 import { PasswordResetTokenRepository } from '../repositories/password-reset-token.repository';
 import { RefreshTokenRepository } from '../repositories/refresh-token.repository';
@@ -23,7 +26,21 @@ import { TokenService } from './token.service';
 
 type AuthSessionResult = AuthSessionWithTokens;
 
-const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
+function formatDuration(totalSeconds: number): string {
+  const seconds = Math.max(totalSeconds, 60);
+
+  if (seconds % 3600 === 0) {
+    const hours = seconds / 3600;
+    return hours === 1 ? '1 hour' : `${hours} hours`;
+  }
+
+  if (seconds % 60 === 0) {
+    const minutes = seconds / 60;
+    return minutes === 1 ? '1 minute' : `${minutes} minutes`;
+  }
+
+  return `${seconds} seconds`;
+}
 
 @Injectable()
 export class AuthService {
@@ -34,18 +51,20 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly refreshRepository: RefreshTokenRepository,
     private readonly passwordResetRepository: PasswordResetTokenRepository,
+    private readonly emailService: EmailService,
     private readonly configService: ConfigService<Config>,
   ) {}
 
   public async signUp(dto: SignUpRequestDto): Promise<AuthSessionResult> {
-    await this.userService.isEmailUniqueOrThrow(dto.email);
+    const email = dto.email.trim().toLowerCase();
+    await this.userService.isEmailUniqueOrThrow(email);
 
     const password = await bcrypt.hash(dto.password, 10);
 
     const user = await this.userRepository.create({
       firstName: dto.firstName,
       lastName: dto.lastName,
-      email: dto.email,
+      email,
       password,
     });
 
@@ -72,7 +91,7 @@ export class AuthService {
 
   public async signIn(dto: SignInRequestDto): Promise<AuthSessionResult> {
     const userEntity = await this.userRepository.findOne(
-      { email: dto.email },
+      { email: dto.email.trim().toLowerCase() },
       { id: true, password: true },
     );
     if (!userEntity) {
@@ -137,27 +156,35 @@ export class AuthService {
   public async forgotPassword(
     dto: ForgotPasswordRequestDto,
   ): Promise<{ message: string }> {
+    const email = dto.email.trim().toLowerCase();
+    const genericResponse = {
+      message:
+        'If an account with this email exists, reset instructions have been sent.',
+    };
+
     const user = await this.userRepository.findOne(
-      { email: dto.email },
-      { id: true },
+      { email },
+      { id: true, firstName: true, email: true },
     );
 
-    if (user) {
-      const rawToken = crypto.randomBytes(32).toString('hex');
-      const tokenHash = crypto
-        .createHash('sha256')
-        .update(rawToken)
-        .digest('hex');
-      const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
-      const frontendUrl =
-        this.configService.get<AppConfig>('app')?.frontendUrl ??
-        'http://localhost:5173';
-      const resetLink = `${frontendUrl}/reset-password?${new URLSearchParams({
-        token: rawToken,
-        userId: user.id,
-        expires: String(expiresAt.getTime()),
-      }).toString()}`;
+    if (!user) {
+      return genericResponse;
+    }
 
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const tokenHash = crypto
+      .createHash('sha256')
+      .update(rawToken)
+      .digest('hex');
+    const resetTokenTtlSeconds = this.getPasswordResetTokenTtlSeconds();
+    const expiresAt = new Date(Date.now() + resetTokenTtlSeconds * 1000);
+    const resetLink = this.buildPasswordResetLink({
+      token: rawToken,
+      userId: user.id,
+      expiresAt,
+    });
+
+    try {
       await this.passwordResetRepository.deleteByUserId(user.id);
       await this.passwordResetRepository.create({
         userId: user.id,
@@ -165,41 +192,106 @@ export class AuthService {
         expiresAt,
       });
 
-      // TODO: send password-reset email with resetLink
-      logger.info(
-        { email: dto.email, resetLink },
-        'Password reset link generated',
+      await this.emailService.sendTemplate(EmailTemplate.FORGOT_PASSWORD, {
+        to: user.email,
+        context: {
+          firstName: user.firstName,
+          resetLink,
+          expiresIn: formatDuration(resetTokenTtlSeconds),
+        },
+      });
+
+      logger.info({ email }, 'Password reset email queued');
+    } catch (error) {
+      await this.passwordResetRepository
+        .deleteByUserId(user.id)
+        .catch(() => undefined);
+      logger.error(
+        { err: error, email },
+        'Failed to process password reset request',
       );
     }
 
-    return {
-      message:
-        'If an account with this email exists, reset instructions have been sent.',
-    };
+    return genericResponse;
   }
 
-  public async resetPassword(dto: ResetPasswordRequestDto): Promise<void> {
-    const tokenHash = crypto
-      .createHash('sha256')
-      .update(dto.token)
-      .digest('hex');
+  private getPasswordResetTokenTtlSeconds(): number {
+    const seconds =
+      this.configService.get<JWTConfig>('jwt')?.passwordResetTokenExpiration ??
+      3600;
 
-    const resetToken =
-      await this.passwordResetRepository.findByTokenHash(tokenHash);
+    return Math.max(seconds, 60);
+  }
+
+  private buildPasswordResetLink(params: {
+    token: string;
+    userId: string;
+    expiresAt: Date;
+  }): string {
+    const frontendUrl = (
+      this.configService.get<AppConfig>('app')?.frontendUrl ??
+      'http://localhost:5173'
+    ).replace(/\/$/, '');
+
+    const search = new URLSearchParams({
+      token: params.token,
+      userId: params.userId,
+      expires: String(params.expiresAt.getTime()),
+    });
+
+    return `${frontendUrl}/reset-password?${search.toString()}`;
+  }
+
+  public async validateResetToken(
+    token: string,
+  ): Promise<ValidateResetTokenResponseDto> {
+    const resetToken = await this.findPasswordResetToken(token);
 
     if (!resetToken) {
-      throw new AppException(ErrorCode.AUTH_TOKEN_EXPIRED, 401);
+      return { status: 'invalid' };
     }
 
     if (resetToken.expiresAt < new Date()) {
       await this.passwordResetRepository.deleteById(resetToken.id);
-      throw new AppException(ErrorCode.AUTH_TOKEN_EXPIRED, 401);
+      return { status: 'expired' };
+    }
+
+    return { status: 'valid' };
+  }
+
+  public async resetPassword(dto: ResetPasswordRequestDto): Promise<void> {
+    const resetToken = await this.findPasswordResetToken(dto.token);
+
+    if (!resetToken) {
+      throw new AppException(
+        ErrorCode.AUTH_RESET_LINK_INVALID,
+        400,
+        'Reset link is invalid or has already been used',
+      );
+    }
+
+    if (resetToken.expiresAt < new Date()) {
+      await this.passwordResetRepository.deleteById(resetToken.id);
+      throw new AppException(
+        ErrorCode.AUTH_TOKEN_EXPIRED,
+        401,
+        'Reset link has expired',
+      );
     }
 
     const password = await bcrypt.hash(dto.password, 10);
     await this.userRepository.save({ id: resetToken.userId }, { password });
     await this.passwordResetRepository.deleteById(resetToken.id);
     await this.invalidateAllSessions(resetToken.userId);
+  }
+
+  private async findPasswordResetToken(rawToken: string) {
+    const tokenHash = crypto
+      .createHash('sha256')
+      .update(rawToken)
+      .digest('hex');
+
+    return await this.passwordResetRepository.findByTokenHash(tokenHash);
   }
 
   public async refreshToken(userData: IUserData): Promise<TokenResponseDto> {

@@ -21,10 +21,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      minio:
-        condition: service_healthy
-      minio-init:
-        condition: service_completed_successfully
 
   web:
     profiles:
@@ -37,11 +33,6 @@ services:
   redis:
     ports:
       - "${REDIS_PORT:-6379}:6379"
-
-  minio:
-    ports:
-      - "${MINIO_API_PORT:-9000}:9000"
-      - "${MINIO_CONSOLE_PORT:-9001}:9001"
 
 volumes:
   backend_node_modules:

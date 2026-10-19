@@ -5,15 +5,18 @@ import { clearAuthSessionCookie } from '@/lib/auth-session'
 type ApiErrorBody = {
   message?: string | string[]
   errorCode?: string
+  code?: string
 }
 
 export class ApiError extends Error {
   status: number
+  code?: string
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, code?: string) {
     super(message)
     this.name = 'ApiError'
     this.status = status
+    this.code = code
   }
 }
 
@@ -31,7 +34,11 @@ async function readError(response: Response): Promise<ApiError> {
   } catch {
     // ignore
   }
-  return new ApiError(response.status, parseErrorMessage(body, 'Request failed'))
+  return new ApiError(
+    response.status,
+    parseErrorMessage(body, 'Request failed'),
+    body?.code ?? body?.errorCode,
+  )
 }
 
 let refreshPromise: Promise<boolean> | null = null

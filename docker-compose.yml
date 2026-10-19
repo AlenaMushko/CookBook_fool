@@ -17,16 +17,11 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-cookbook}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-cookbook}?schema=public
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      AWS_S3_ENDPOINT: http://minio:9000
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
-      minio:
-        condition: service_healthy
-      minio-init:
-        condition: service_completed_successfully
     expose:
       - "3000"
     networks:
@@ -38,15 +33,13 @@ services:
       dockerfile: fe/Dockerfile
       args:
         VITE_API_URL: /api
-        VITE_AWS_S3_ENDPOINT: /storage
         VITE_AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-cookbook}
+        VITE_AWS_S3_REGION: ${AWS_REGION:-eu-west-1}
     restart: unless-stopped
     ports:
       - "${WEB_PORT:-80}:80"
     depends_on:
       app:
-        condition: service_healthy
-      minio:
         condition: service_healthy
     networks:
       - cookbook
@@ -86,50 +79,6 @@ services:
     networks:
       - cookbook
 
-  minio:
-    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
-    restart: unless-stopped
-    command: server /data --console-address ":9001"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
-    volumes:
-      - s3-data:/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 15s
-    # Console optional for ops; API stays internal (nginx /storage)
-    ports:
-      - "${MINIO_CONSOLE_PORT:-9001}:9001"
-    networks:
-      - cookbook
-
-  minio-init:
-    image: minio/mc:RELEASE.2025-04-16T18-13-26Z
-    depends_on:
-      minio:
-        condition: service_healthy
-    env_file:
-      - .env
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
-      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-cookbook}
-    entrypoint: >
-      /bin/sh -c "
-      set -e;
-      mc alias set local http://minio:9000 \"$$MINIO_ROOT_USER\" \"$$MINIO_ROOT_PASSWORD\";
-      mc mb --ignore-existing local/$$AWS_S3_BUCKET_NAME;
-      mc anonymous set download local/$$AWS_S3_BUCKET_NAME;
-      echo 'MinIO bucket ready';
-      "
-    networks:
-      - cookbook
-    restart: "no"
-
 networks:
   cookbook:
     driver: bridge
@@ -137,4 +86,3 @@ networks:
 volumes:
   db-data:
   redis-data:
-  s3-data:

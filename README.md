@@ -27,7 +27,7 @@ The language switcher is available in the app header.
 |---|---|
 | Frontend | React 19, TypeScript, Vite, TanStack Router, TanStack Query, Tailwind CSS, React Hook Form, Zod, i18next |
 | Backend | NestJS, TypeScript, Prisma, Zod, JWT (auth), Swagger |
-| Infrastructure | Docker Compose, PostgreSQL, Redis, MinIO (S3-compatible storage) |
+| Infrastructure | Docker Compose, PostgreSQL, Redis, AWS S3 |
 
 ## Prerequisites
 
@@ -47,15 +47,17 @@ Fill in your passwords/secrets in `.env`. Backend env is also loaded from `backe
 
 All Docker commands run from the **repo root**. Backend and frontend should run in separate terminals.
 
-### Step 1. Docker (Postgres, Redis, MinIO)
+### Step 1. Docker (Postgres, Redis)
 
 ```bash
 # Postgres only (enough for Prisma Studio)
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d db
 
-# Full backend stack — also Redis and MinIO
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d db redis minio
+# Full backend stack — Postgres + Redis
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d db redis
 ```
+
+File uploads use a real **AWS S3** bucket (configure keys in `.env`).
 
 Check status:
 
@@ -112,7 +114,7 @@ npm run dev
 ## Quick checklist
 
 1. Start Docker Desktop  
-2. `docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d db redis minio`  
+2. `docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d db redis`  
 3. `cd backend && npm install && npm run prisma:migrate:deploy && npm run start:dev` → http://localhost:3000/docs  
 4. `cd fe && npm install && npm run dev` → http://localhost:5173  
 5. (optional) `cd backend && npm run prisma:studio` → http://localhost:5555  
