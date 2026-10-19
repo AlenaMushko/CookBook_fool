@@ -16,7 +16,7 @@ export class UserMapper {
       firstName: user.firstName,
       lastName: user.lastName,
       phone: user.phone,
-      image: user.image,
+      image: user.image ?? undefined,
     };
   }
 }

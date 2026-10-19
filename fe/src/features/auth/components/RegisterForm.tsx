@@ -56,6 +56,7 @@ export const RegisterForm = () => {
       })
 
       queryClient.setQueryData(profileQueryKeys.me(), user)
+      await queryClient.invalidateQueries({ queryKey: profileQueryKeys.me() })
       notifyAuthChanged()
       void navigate({ to: URLS.MY_COOKBOOK })
     } catch (error) {

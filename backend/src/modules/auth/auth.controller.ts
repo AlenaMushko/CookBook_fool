@@ -69,6 +69,17 @@ export class AuthController {
     return await this.authService.forgotPassword(dto);
   }
 
+  @ApiOperation({
+    summary:
+      'Request password change email for the current user (invalidates sessions after reset link is used)',
+  })
+  @Post('request-password-change')
+  public async requestPasswordChange(
+    @CurrentUser() userData: IUserData,
+  ): Promise<{ message: string }> {
+    return await this.authService.requestPasswordChange(userData.userId);
+  }
+
   @SkipAuth()
   @ApiOperation({ summary: 'Validate password reset link' })
   @Get('reset-password/validate')

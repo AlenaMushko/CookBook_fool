@@ -171,32 +171,8 @@ export class AuthService {
       return genericResponse;
     }
 
-    const rawToken = crypto.randomBytes(32).toString('hex');
-    const tokenHash = crypto
-      .createHash('sha256')
-      .update(rawToken)
-      .digest('hex');
-    const resetTokenTtlSeconds = this.getPasswordResetTokenTtlSeconds();
-    const expiresAt = new Date(Date.now() + resetTokenTtlSeconds * 1000);
-    const resetLink = this.buildPasswordResetLink(rawToken);
-
     try {
-      await this.passwordResetRepository.deleteByUserId(user.id);
-      await this.passwordResetRepository.create({
-        userId: user.id,
-        tokenHash,
-        expiresAt,
-      });
-
-      await this.emailService.sendTemplate(EmailTemplate.FORGOT_PASSWORD, {
-        to: user.email,
-        context: {
-          firstName: user.firstName,
-          resetLink,
-          expiresIn: formatDuration(resetTokenTtlSeconds),
-        },
-      });
-
+      await this.createAndSendPasswordReset(user);
       logger.info({ email }, 'Password reset email queued');
     } catch (error) {
       await this.passwordResetRepository
@@ -209,6 +185,61 @@ export class AuthService {
     }
 
     return genericResponse;
+  }
+
+  public async requestPasswordChange(
+    userId: string,
+  ): Promise<{ message: string }> {
+    const user = await this.userRepository.findOne(
+      { id: userId },
+      { id: true, firstName: true, email: true },
+    );
+
+    if (!user) {
+      throw new AppException(
+        ErrorCode.AUTH_INVALID_CREDENTIALS,
+        401,
+        'User not found',
+      );
+    }
+
+    await this.createAndSendPasswordReset(user);
+
+    return {
+      message:
+        'Password reset instructions have been sent to your email address.',
+    };
+  }
+
+  private async createAndSendPasswordReset(user: {
+    id: string;
+    firstName: string;
+    email: string;
+  }): Promise<void> {
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const tokenHash = crypto
+      .createHash('sha256')
+      .update(rawToken)
+      .digest('hex');
+    const resetTokenTtlSeconds = this.getPasswordResetTokenTtlSeconds();
+    const expiresAt = new Date(Date.now() + resetTokenTtlSeconds * 1000);
+    const resetLink = this.buildPasswordResetLink(rawToken);
+
+    await this.passwordResetRepository.deleteByUserId(user.id);
+    await this.passwordResetRepository.create({
+      userId: user.id,
+      tokenHash,
+      expiresAt,
+    });
+
+    await this.emailService.sendTemplate(EmailTemplate.FORGOT_PASSWORD, {
+      to: user.email,
+      context: {
+        firstName: user.firstName,
+        resetLink,
+        expiresIn: formatDuration(resetTokenTtlSeconds),
+      },
+    });
   }
 
   private getPasswordResetTokenTtlSeconds(): number {

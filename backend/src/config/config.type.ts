@@ -41,6 +41,7 @@ export type AWSConfig = {
   accessKeyId: string;
   secretAccessKey: string;
   region: string;
+  s3Region: string;
   bucketName: string;
 };
 

@@ -10,6 +10,7 @@ export const profileQueryKeys = {
 export const currentUserQueryOptions = queryOptions({
   queryKey: profileQueryKeys.me(),
   queryFn: () => profileApi.getMe(),
+  staleTime: 0,
 })
 
 export const profileQueries = {

@@ -36,10 +36,24 @@ export class UserService {
       {
         firstName: updateUserDto.firstName,
         lastName: updateUserDto.lastName,
-        phone: updateUserDto.phone,
-        image: updateUserDto.image,
+        phone:
+          updateUserDto.phone === undefined
+            ? undefined
+            : updateUserDto.phone?.trim()
+              ? updateUserDto.phone.trim()
+              : null,
+        image:
+          updateUserDto.image === undefined
+            ? undefined
+            : updateUserDto.image?.trim()
+              ? updateUserDto.image.trim()
+              : null,
       },
     );
+  }
+
+  public async clearImage(id: string): Promise<UserResDto> {
+    return await this.userRepository.save({ id }, { image: null });
   }
 
   public async isEmailUniqueOrThrow(email: string): Promise<void> {

@@ -9,12 +9,15 @@ export const ApiRoutes = {
     forgotPassword: `/${ApiVersion.V1}/auth/forgot-password`,
     resetPassword: `/${ApiVersion.V1}/auth/reset-password`,
     validateResetPassword: `/${ApiVersion.V1}/auth/reset-password/validate`,
+    requestPasswordChange: `/${ApiVersion.V1}/auth/request-password-change`,
   },
-    user: {
-      me: `/${ApiVersion.V1}/user/me`,
-     //   profile: '/api/user/profile',
-    //   changePassword: '/api/user/change-password',
-    },
+  user: {
+    me: `/${ApiVersion.V1}/user/me`,
+  },
+  s3: {
+    uploadFile: `/${ApiVersion.V1}/s3/upload-file`,
+    deleteFile: `/${ApiVersion.V1}/s3/delete-file`,
+  },
 
    // menus: {
     //   all: '/api/menus',

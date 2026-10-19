@@ -1,1 +1,1 @@
-export const changePasswordSchema = {}
+export const changePasswordSchema = null

@@ -78,10 +78,7 @@ export async function apiFetch(
   const response = await fetch(`${CONFIG.API_URL}${path}`, {
     ...init,
     credentials: 'include',
-    headers: {
-      ...(init.body ? { 'Content-Type': 'application/json' } : {}),
-      ...init.headers,
-    },
+    headers: buildHeaders(init),
   })
 
   if (response.status !== 401 || skipAuthRefresh) {
@@ -97,11 +94,18 @@ export async function apiFetch(
   return fetch(`${CONFIG.API_URL}${path}`, {
     ...init,
     credentials: 'include',
-    headers: {
-      ...(init.body ? { 'Content-Type': 'application/json' } : {}),
-      ...init.headers,
-    },
+    headers: buildHeaders(init),
   })
+}
+
+function buildHeaders(init: RequestInit): HeadersInit {
+  const isFormData =
+    typeof FormData !== 'undefined' && init.body instanceof FormData
+
+  return {
+    ...(!isFormData && init.body ? { 'Content-Type': 'application/json' } : {}),
+    ...init.headers,
+  }
 }
 
 export async function apiJson<T>(

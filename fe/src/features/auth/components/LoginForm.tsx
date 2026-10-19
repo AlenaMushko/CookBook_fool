@@ -52,6 +52,8 @@ export const LoginForm = ({ redirectTo }: LoginFormProps) => {
       })
 
       queryClient.setQueryData(profileQueryKeys.me(), user)
+      // Refetch /user/me so private avatars include a signed imageUrl
+      await queryClient.invalidateQueries({ queryKey: profileQueryKeys.me() })
       notifyAuthChanged()
       showToast(t('auth.login.success'), 'success')
 

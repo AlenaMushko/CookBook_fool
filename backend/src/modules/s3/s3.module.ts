@@ -7,7 +7,7 @@ import { S3Service } from './services/s3.service';
 
 @Module({
   controllers: [S3Controller],
-  imports: [UserModule, forwardRef(() => DishModule)],
+  imports: [forwardRef(() => UserModule), forwardRef(() => DishModule)],
   providers: [S3Service],
   exports: [S3Service],
 })
