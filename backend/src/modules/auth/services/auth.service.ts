@@ -178,11 +178,7 @@ export class AuthService {
       .digest('hex');
     const resetTokenTtlSeconds = this.getPasswordResetTokenTtlSeconds();
     const expiresAt = new Date(Date.now() + resetTokenTtlSeconds * 1000);
-    const resetLink = this.buildPasswordResetLink({
-      token: rawToken,
-      userId: user.id,
-      expiresAt,
-    });
+    const resetLink = this.buildPasswordResetLink(rawToken);
 
     try {
       await this.passwordResetRepository.deleteByUserId(user.id);
@@ -223,22 +219,13 @@ export class AuthService {
     return Math.max(seconds, 60);
   }
 
-  private buildPasswordResetLink(params: {
-    token: string;
-    userId: string;
-    expiresAt: Date;
-  }): string {
+  private buildPasswordResetLink(token: string): string {
     const frontendUrl = (
       this.configService.get<AppConfig>('app')?.frontendUrl ??
       'http://localhost:5173'
     ).replace(/\/$/, '');
 
-    const search = new URLSearchParams({
-      token: params.token,
-      userId: params.userId,
-      expires: String(params.expiresAt.getTime()),
-    });
-
+    const search = new URLSearchParams({ token });
     return `${frontendUrl}/reset-password?${search.toString()}`;
   }
 

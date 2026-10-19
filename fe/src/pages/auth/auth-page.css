@@ -1,0 +1,25 @@
+.auth-page__illustration {
+  display: flex;
+  width: 100%;
+  max-width: 34rem;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background);
+}
+
+.auth-page__illustration img {
+  height: auto;
+  width: 100%;
+  max-height: 13rem;
+  object-fit: contain;
+}
+
+@media (min-width: 768px) {
+  .auth-page__illustration {
+    max-width: none;
+  }
+
+  .auth-page__illustration img {
+    max-height: none;
+  }
+}
