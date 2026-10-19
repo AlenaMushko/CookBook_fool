@@ -7,7 +7,7 @@ export const CreateUserSchema = registry.register(
   'CreateUser',
   z.object({
     firstName: z.string().trim().min(3).max(50),
-    lastName: z.string().trim().min(3).max(50).optional(),
+    lastName: z.string().trim().min(3).max(50),
     email: emailSchema,
     password: passwordSchema,
     image: z.string().max(3000).optional(),

@@ -1,4 +1,4 @@
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
   IsEmail,
   IsOptional,
@@ -16,14 +16,12 @@ import {
 export class CreateUserDto {
   @IsString()
   @Length(3, 20)
-  @Transform(({ value }) => value.toString().trim())
   @Type(() => String)
   firstName: string;
 
   @IsOptional()
   @IsString()
   @Length(3, 20)
-  @Transform(({ value }) => value?.toString().trim())
   @Type(() => String)
   lastName?: string;
 
@@ -36,7 +34,6 @@ export class CreateUserDto {
   email: string;
 
   @IsString()
-  @Transform(({ value }) => value.toString().trim())
   @Matches(PASSWORD_REGEX, {
     message:
       'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character (@$!%*?&) and be at least 8 characters long',
@@ -46,11 +43,9 @@ export class CreateUserDto {
 
   @IsOptional()
   @Type(() => String)
-  @Type(() => String)
   image?: string;
 
   @IsOptional()
-  @Type(() => String)
   @Type(() => String)
   @Matches(PHONE_REGEX, {
     message: 'Phone number must be in E.164 format (e.g., +123456789)',

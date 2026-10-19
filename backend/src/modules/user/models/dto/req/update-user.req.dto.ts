@@ -1,8 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { IsOptional, IsString, Length, Matches } from 'class-validator';
 
-import { TransformHelper } from '../../../../../common/helpers/transform.helper';
 import { PHONE_REGEX } from '../../constants/user.constants';
 
 export class UpdateUserReqDto {
@@ -10,7 +9,6 @@ export class UpdateUserReqDto {
   @IsOptional()
   @IsString()
   @Length(3, 50)
-  @Transform(({ value }) => TransformHelper.trim(value))
   @Type(() => String)
   firstName?: string;
 
@@ -18,7 +16,6 @@ export class UpdateUserReqDto {
   @IsOptional()
   @IsString()
   @Length(3, 50)
-  @Transform(({ value }) => TransformHelper.trim(value))
   @Type(() => String)
   lastName?: string;
 

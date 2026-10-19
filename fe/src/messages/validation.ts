@@ -7,5 +7,6 @@ export const TEXT = {
     },
     INVALID_PHONE: "error.invalid_phone",
     REQUIRED_FIELD: "error.required_field",
+    NAME_LENGTH: "error.name_length",
   },
 };

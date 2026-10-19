@@ -5,13 +5,19 @@ import { emailSchema, passwordSchema } from './common';
 
 export const RegisterSchema = registry.register(
   'Register',
-  z.object({
-    firstName: z.string().trim().min(3).max(50),
-    lastName: z.string().trim().min(3).max(50).optional(),
-    email: emailSchema,
-    password: passwordSchema,
-    deviceId: z.string().min(1),
-  }),
+  z
+    .object({
+      firstName: z.string().trim().min(3).max(50),
+      lastName: z.string().trim().min(3).max(50),
+      email: emailSchema,
+      password: passwordSchema,
+      confirmPassword: z.string().min(1),
+      deviceId: z.string().min(1),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: 'Passwords do not match',
+      path: ['confirmPassword'],
+    }),
 );
 
 export const LoginSchema = registry.register(

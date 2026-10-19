@@ -8,6 +8,7 @@ import { pinoHttp } from 'pino-http';
 import { GlobalExceptionFilter } from './common/expections/global-exception.filter';
 import { SwaggerHelper } from './common/helpers/swagger.helper';
 import { formatValidationErrors } from './common/helpers/validation-error.helper';
+import { TrimPipe } from './common/pipes/trim.pipe';
 import { AppConfig, Config } from './config/config.type';
 import logger from './logger';
 import { AppModule } from './modules/app.module';
@@ -86,6 +87,7 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalExceptionFilter());
 
   app.useGlobalPipes(
+    new TrimPipe(),
     new ValidationPipe({
       transform: true,
       whitelist: true,

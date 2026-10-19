@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import {
   Field,
   FieldContent,
+  FieldDescription,
   FieldError,
   FieldLabel,
 } from '@/components/ui/field'
@@ -19,6 +20,7 @@ import {
 export type FormFieldInputProps = {
   label: React.ReactNode
   error?: string
+  description?: React.ReactNode
   id?: string
   labelClassName?: string
   className?: string
@@ -33,6 +35,7 @@ export type FormFieldInputProps = {
 export function FormFieldInput({
   label,
   error,
+  description,
   id: idProp,
   labelClassName,
   className,
@@ -108,6 +111,11 @@ export function FormFieldInput({
         )}
       </FieldContent>
 
+      {description && !error ? (
+        <FieldDescription className="text-ring">
+          {description}
+        </FieldDescription>
+      ) : null}
       {error ? <FieldError>{error}</FieldError> : null}
       {footer}
     </Field>
