@@ -70,12 +70,12 @@ export class JwtAccessGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    const findTokenInRedis = await this.authCacheService.isAccessTokenExist(
+    const isActiveSession = await this.authCacheService.isAccessTokenExist(
       payload.userId,
       payload.deviceId,
       accessToken,
     );
-    if (!findTokenInRedis) {
+    if (!isActiveSession) {
       throw new UnauthorizedException();
     }
 

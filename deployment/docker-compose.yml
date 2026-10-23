@@ -1,0 +1,43 @@
+# Elastic Beanstalk (Docker Compose) — zip this file and upload
+# (Application code → Local file). Secrets live in EB Environment properties,
+# not in this file.
+#
+# Set in EB (or substitute before zip):
+#   ECR_REGISTRY=ACCOUNT_ID.dkr.ecr.AWS_REGION.amazonaws.com
+#   IMAGE_TAG=git-short-sha (or a release tag)
+
+services:
+  web:
+    image: ${ECR_REGISTRY}/cookbook-web:${IMAGE_TAG:-latest}
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    restart: unless-stopped
+
+  app:
+    image: ${ECR_REGISTRY}/cookbook-api:${IMAGE_TAG:-latest}
+    expose:
+      - "3000"
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      # false until ALB has HTTPS (Secure cookies require TLS). Switch to "true" after ACM.
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      APP_HOST: 0.0.0.0
+      APP_PORT: "3000"
+      DATABASE_URL: ${DATABASE_URL}
+      AUTH_ACCESS_TOKEN_SECRET: ${AUTH_ACCESS_TOKEN_SECRET}
+      AUTH_REFRESH_TOKEN_SECRET: ${AUTH_REFRESH_TOKEN_SECRET}
+      JWT_ACCESS_TOKEN_EXPIRATION: ${JWT_ACCESS_TOKEN_EXPIRATION:-3600}
+      JWT_REFRESH_TOKEN_EXPIRATION: ${JWT_REFRESH_TOKEN_EXPIRATION:-86400}
+      AUTH_PASSWORD_RESET_TOKEN_EXPIRATION: ${AUTH_PASSWORD_RESET_TOKEN_EXPIRATION:-3600}
+      FRONTEND_URL: ${FRONTEND_URL}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      AWS_REGION: ${AWS_REGION:-eu-west-1}
+      AWS_S3_REGION: ${AWS_S3_REGION:-eu-west-1}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+      SES_FROM_EMAIL: ${SES_FROM_EMAIL}
+      SES_FROM_NAME: ${SES_FROM_NAME:-CookBook}
+      # Do not set AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY here.
+      # Empty values break the default provider chain; on EB use the EC2 instance role.

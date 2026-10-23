@@ -42,6 +42,10 @@ lerna-debug.log*
 .env.production.local
 .env.local
 
+# Elastic Beanstalk upload artifacts (generated locally; do not commit)
+deployment/*.zip
+deployment/eb-*/
+
 # temp directory
 .temp
 .tmp

@@ -9,19 +9,33 @@ import { TokenResponseDto } from '../dto/response/token.response.dto';
 @Injectable()
 export class AuthCookieService {
   private readonly jwtConfig: JWTConfig;
-  private readonly isProduction: boolean;
+  private readonly secureCookies: boolean;
 
   constructor(private readonly configService: ConfigService<Config>) {
     this.jwtConfig = this.configService.get<JWTConfig>('jwt', { infer: true });
-    this.isProduction =
+
+    const isProduction =
       this.configService.get<AppConfig>('app', { infer: true }).nodeEnv ===
       'production';
+
+    const cookieSecure = process.env.COOKIE_SECURE;
+
+    if (
+      cookieSecure !== undefined &&
+      cookieSecure !== 'true' &&
+      cookieSecure !== 'false'
+    ) {
+      throw new Error('COOKIE_SECURE must be "true" or "false"');
+    }
+
+    this.secureCookies =
+      cookieSecure === undefined ? isProduction : cookieSecure === 'true';
   }
 
   public setAuthCookies(res: Response, tokens: TokenResponseDto): void {
     const baseOptions = {
       httpOnly: true,
-      secure: this.isProduction,
+      secure: this.secureCookies,
       sameSite: 'strict' as const,
       path: '/',
     };
@@ -37,18 +51,22 @@ export class AuthCookieService {
     });
 
     res.cookie(AUTH_COOKIE_NAMES.SESSION, '1', {
+      ...baseOptions,
       httpOnly: false,
-      secure: this.isProduction,
-      sameSite: 'strict',
-      path: '/',
       maxAge: this.jwtConfig.refreshTokenExpiration * 1000,
     });
   }
 
   public clearAuthCookies(res: Response): void {
-    res.clearCookie(AUTH_COOKIE_NAMES.ACCESS_TOKEN, { path: '/' });
-    res.clearCookie(AUTH_COOKIE_NAMES.REFRESH_TOKEN, { path: '/' });
-    res.clearCookie(AUTH_COOKIE_NAMES.SESSION, { path: '/' });
+    const options = {
+      secure: this.secureCookies,
+      sameSite: 'strict' as const,
+      path: '/',
+    };
+
+    res.clearCookie(AUTH_COOKIE_NAMES.ACCESS_TOKEN, options);
+    res.clearCookie(AUTH_COOKIE_NAMES.REFRESH_TOKEN, options);
+    res.clearCookie(AUTH_COOKIE_NAMES.SESSION, options);
   }
 
   public getAccessTokenFromRequest(req: Request): string | undefined {

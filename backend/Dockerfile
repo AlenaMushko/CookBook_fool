@@ -10,6 +10,9 @@ RUN npm ci
 FROM deps AS build
 COPY . .
 RUN npm run build \
+  && npx tsc -p prisma/tsconfig.seed.json \
+  && mkdir -p dist/prisma/data \
+  && cp prisma/data/*.json dist/prisma/data/ \
   && npm prune --omit=dev
 
 FROM node:22-alpine AS production
@@ -31,4 +34,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
   CMD node -e "require('http').get('http://127.0.0.1:'+(process.env.APP_PORT||3000)+'/health',r=>{r.resume();process.exit(r.statusCode===200?0:1)}).on('error',()=>process.exit(1))"
 
-CMD ["sh", "-c", "npx prisma migrate deploy --schema prisma/schema && node dist/main.js"]
+CMD ["node", "dist/main.js"]

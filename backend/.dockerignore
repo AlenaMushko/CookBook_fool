@@ -7,8 +7,14 @@ test
 *.md
 .env
 .env.*
+**/*.env
+**/*.env.*
+!**/*.env.example
 environments/local.env
 environments/prod.env
+**/*.pem
+**/credentials
+**/.aws
 .husky
 .idea
 .vscode

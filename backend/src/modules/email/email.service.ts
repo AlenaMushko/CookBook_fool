@@ -34,24 +34,16 @@ export class EmailService implements OnModuleInit {
   }
 
   onModuleInit(): void {
-    if (
-      !this.ses.fromEmail ||
-      !this.aws.accessKeyId ||
-      !this.aws.secretAccessKey ||
-      !this.aws.region
-    ) {
+    if (!this.ses.fromEmail?.trim() || !this.aws.region?.trim()) {
       logger.warn(
-        'Amazon SES is not configured (SES_FROM_EMAIL / AWS credentials / region). Email sending is disabled.',
+        'Amazon SES is not configured (SES_FROM_EMAIL / AWS_REGION). Email sending is disabled.',
       );
       return;
     }
 
+    // Default credential provider chain: env/profile locally, EC2 instance role on EB.
     this.client = new SESv2Client({
       region: this.aws.region,
-      credentials: {
-        accessKeyId: this.aws.accessKeyId,
-        secretAccessKey: this.aws.secretAccessKey,
-      },
     });
     this.ready = true;
     logger.info(

@@ -2,15 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { Config, JWTConfig } from '../../../config/config.type';
-import { RedisService } from '../../redis/redis.service';
-import { AUTH_CACHE } from '../constants/constants';
+import { AccessTokenRepository } from '../repositories/access-token.repository';
 
 @Injectable()
 export class AuthCacheService {
   private jwtConfig: JWTConfig;
 
   constructor(
-    private readonly redisService: RedisService,
+    private readonly accessTokenRepository: AccessTokenRepository,
     private readonly configService: ConfigService<Config>,
   ) {
     this.jwtConfig = this.configService.get<JWTConfig>('jwt', { infer: true });
@@ -21,17 +20,19 @@ export class AuthCacheService {
     deviceId: string,
     accessToken: string,
   ): Promise<void> {
-    const key = `${AUTH_CACHE.ACCESS_TOKEN}:${userId}:${deviceId}`;
-
-    await this.redisService.deleteByKey(key);
-    await this.redisService.addOneToSet(key, accessToken);
-    await this.redisService.expire(key, this.jwtConfig.accessTokenExpiration);
+    const expiresAt = new Date(
+      Date.now() + this.jwtConfig.accessTokenExpiration * 1000,
+    );
+    await this.accessTokenRepository.saveToken(
+      userId,
+      deviceId,
+      accessToken,
+      expiresAt,
+    );
   }
 
   public async removeToken(userId: string, deviceId: string): Promise<void> {
-    await this.redisService.deleteByKey(
-      `${AUTH_CACHE.ACCESS_TOKEN}:${userId}:${deviceId}`,
-    );
+    await this.accessTokenRepository.deleteByUserAndDevice(userId, deviceId);
   }
 
   public async isAccessTokenExist(
@@ -39,17 +40,14 @@ export class AuthCacheService {
     deviceId: string,
     accessToken: string,
   ): Promise<boolean> {
-    const userAccessTokens = await this.redisService.sMembers(
-      `${AUTH_CACHE.ACCESS_TOKEN}:${userId}:${deviceId}`,
+    return await this.accessTokenRepository.isActiveToken(
+      userId,
+      deviceId,
+      accessToken,
     );
-    return userAccessTokens.some((token: string) => token === accessToken);
   }
 
   public async invalidateAllUserSessions(userId: string): Promise<void> {
-    const pattern = `${AUTH_CACHE.ACCESS_TOKEN}:${userId}:*`;
-    const keys = await this.redisService.keys(pattern);
-    if (keys.length > 0) {
-      await Promise.all(keys.map((key) => this.redisService.deleteByKey(key)));
-    }
+    await this.accessTokenRepository.deleteAllByUserId(userId);
   }
 }

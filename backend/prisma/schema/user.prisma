@@ -11,6 +11,7 @@ model User {
 
   dishes              Dish[]
   refreshTokens       RefreshToken[]
+  accessTokens        AccessToken[]
   likes               Like[]
   menus               Menu[]
   passwordResetTokens PasswordResetToken[]
@@ -19,17 +20,34 @@ model User {
   @@map("users")
 }
 
-model RefreshToken {
-  id           String   @id @default(uuid()) @db.Uuid
-  created      DateTime @default(now())
-  updated      DateTime @updatedAt
-  refreshToken String   @unique
-  deviceId     String
-  userId       String   @db.Uuid
+model AccessToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  created   DateTime @default(now())
+  expiresAt DateTime
+  tokenHash String   @unique
+  deviceId  String
+  userId    String   @db.Uuid
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, deviceId])
+  @@index([expiresAt])
+  @@map("access-tokens")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  created   DateTime @default(now())
+  updated   DateTime @updatedAt
+  expiresAt DateTime
+  tokenHash String   @unique
+  deviceId  String
+  userId    String   @db.Uuid
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, deviceId])
+  @@index([expiresAt])
   @@map("refresh-tokens")
 }
 

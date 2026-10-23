@@ -1,294 +1,20 @@
-import { ContentLocale, PrismaClient, DishDifficulty, DishVisibility } from '@prisma/client';
+/**
+ * Local/dev seed entry.
+ * Always seeds catalogs (idempotent). Demo users/recipes only when SEED_DEMO=true.
+ *
+ * Production / EB: use `node dist/prisma/seed-catalogs.js` (no demos).
+ */
+import {
+  ContentLocale,
+  DishDifficulty,
+  DishVisibility,
+  PrismaClient,
+} from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
-import * as fs from 'fs';
-import * as path from 'path';
 
-import { MEASUREMENT_UNITS } from './data/measurement-units';
-import { COUNTRIES } from './data/countries';
-import { TAXONOMY } from './data/taxonomy';
+import { seedCatalogs } from './seed-catalogs';
 
 const prisma = new PrismaClient();
-
-interface IngredientJsonItem {
-  en: { name: string; desc?: string };
-  uk: { name: string; desc?: string };
-  img?: string;
-}
-
-interface IngredientDensityItem {
-  slug: string;
-  name: { en: string; uk: string };
-  category: string;
-  grams_per_us_cup: number;
-  aliases: string[];
-}
-
-/** Maps density slugs to ingredient names in ingredients.json when they differ. */
-const DENSITY_INGREDIENT_FALLBACKS: Record<string, string> = {
-  'all-purpose-flour': 'Flour',
-};
-
-function applyIngredientPatches(item: IngredientJsonItem): IngredientJsonItem {
-  const patched = {
-    ...item,
-    en: { ...item.en },
-    uk: { ...item.uk },
-  };
-
-  if (patched.en.name === 'Suet' && patched.uk.name === 'Нирковий жир') {
-    patched.uk.name = 'Яловичий жир (сало)';
-  }
-
-  patched.uk.desc = (patched.uk.desc ?? '')
-    .replace(/бруккела/g, 'бруква')
-    .replace(
-      'також відома як зелена цибуля або цибуля-порей',
-      'також відома як зелена цибуля',
-    );
-
-  return patched;
-}
-
-async function seedCountries(): Promise<void> {
-  for (const country of COUNTRIES) {
-    await prisma.country.upsert({
-      where: { code: country.code },
-      update: {
-        nameEn: country.nameEn,
-        nameUk: country.nameUk,
-        flagSvg: country.flagSvg,
-        flagAlt: country.flagAlt,
-      },
-      create: {
-        code: country.code,
-        nameEn: country.nameEn,
-        nameUk: country.nameUk,
-        flagSvg: country.flagSvg,
-        flagAlt: country.flagAlt,
-      },
-    });
-  }
-}
-
-async function seedTaxonomy(): Promise<Map<string, string>> {
-  const categoryIdBySlug = new Map<string, string>();
-
-  for (let i = 0; i < TAXONOMY.length; i++) {
-    const cat = TAXONOMY[i];
-    const category = await prisma.dishCategory.upsert({
-      where: { slug: cat.slug },
-      update: {
-        nameEn: cat.nameEn,
-        nameUk: cat.nameUk,
-        order: i,
-      },
-      create: {
-        nameEn: cat.nameEn,
-        nameUk: cat.nameUk,
-        slug: cat.slug,
-        order: i,
-      },
-    });
-    categoryIdBySlug.set(cat.slug, category.id);
-
-    for (let j = 0; j < cat.subcategories.length; j++) {
-      const sub = cat.subcategories[j];
-      await prisma.dishSubcategory.upsert({
-        where: {
-          categoryId_slug: { categoryId: category.id, slug: sub.slug },
-        },
-        update: {
-          nameEn: sub.nameEn,
-          nameUk: sub.nameUk,
-          order: j,
-        },
-        create: {
-          categoryId: category.id,
-          nameEn: sub.nameEn,
-          nameUk: sub.nameUk,
-          slug: sub.slug,
-          order: j,
-        },
-      });
-    }
-  }
-
-  return categoryIdBySlug;
-}
-
-async function seedMeasurementUnits(): Promise<Map<string, string>> {
-  const unitIdByCode = new Map<string, string>();
-
-  for (const unit of MEASUREMENT_UNITS) {
-    const created = await prisma.measurementUnit.upsert({
-      where: { code: unit.code },
-      update: {
-        nameEn: unit.nameEn,
-        nameUk: unit.nameUk,
-        symbolEn: unit.symbolEn,
-        symbolUk: unit.symbolUk,
-        type: unit.type,
-        order: unit.order,
-        isActive: true,
-      },
-      create: {
-        code: unit.code,
-        nameEn: unit.nameEn,
-        nameUk: unit.nameUk,
-        symbolEn: unit.symbolEn,
-        symbolUk: unit.symbolUk,
-        type: unit.type,
-        order: unit.order,
-      },
-    });
-    unitIdByCode.set(unit.code, created.id);
-  }
-
-  return unitIdByCode;
-}
-
-async function seedIngredients(): Promise<Map<string, string>> {
-  const ingredientIdByName = new Map<string, string>();
-  const filePath = path.join(__dirname, 'data', 'ingredients.json');
-
-  if (!fs.existsSync(filePath)) {
-    console.warn(
-      'Skip ingredients seed: missing prisma/data/ingredients.json',
-    );
-    return ingredientIdByName;
-  }
-
-  console.log('Seeding ingredients from ingredients.json...');
-  const raw = fs.readFileSync(filePath, 'utf-8');
-  const items: IngredientJsonItem[] = JSON.parse(raw).map(applyIngredientPatches);
-
-  for (const item of items) {
-    const existing = await prisma.ingredient.findFirst({
-      where: {
-        en: { path: ['name'], equals: item.en.name },
-      },
-    });
-
-    if (existing) {
-      await prisma.ingredient.update({
-        where: { id: existing.id },
-        data: {
-          en: item.en,
-          uk: item.uk,
-          image: item.img ?? null,
-        },
-      });
-      ingredientIdByName.set(item.en.name.toLowerCase(), existing.id);
-      continue;
-    }
-
-    const created = await prisma.ingredient.create({
-      data: {
-        en: item.en,
-        uk: item.uk,
-        image: item.img ?? null,
-      },
-    });
-    ingredientIdByName.set(item.en.name.toLowerCase(), created.id);
-  }
-
-  return ingredientIdByName;
-}
-
-async function resolveIngredientForDensity(
-  item: IngredientDensityItem,
-  ingredientIds: Map<string, string>,
-): Promise<string> {
-  const lookupNames = [
-    item.name.en,
-    DENSITY_INGREDIENT_FALLBACKS[item.slug],
-    ...item.aliases,
-  ].filter((name): name is string => Boolean(name));
-
-  for (const name of lookupNames) {
-    const cachedId = ingredientIds.get(name.toLowerCase());
-    if (cachedId) {
-      return cachedId;
-    }
-  }
-
-  for (const name of lookupNames) {
-    const existing = await prisma.ingredient.findFirst({
-      where: { en: { path: ['name'], equals: name } },
-    });
-    if (existing) {
-      ingredientIds.set(name.toLowerCase(), existing.id);
-      return existing.id;
-    }
-  }
-
-  const created = await prisma.ingredient.create({
-    data: {
-      en: { name: item.name.en },
-      uk: { name: item.name.uk },
-    },
-  });
-  ingredientIds.set(item.name.en.toLowerCase(), created.id);
-  return created.id;
-}
-
-async function seedConversionRules(
-  ingredientIds: Map<string, string>,
-  unitIds: Map<string, string>,
-): Promise<void> {
-  const filePath = path.join(__dirname, 'data', 'ingredient-density-uk-en.json');
-
-  if (!fs.existsSync(filePath)) {
-    console.warn(
-      'Skip conversion rules seed: missing prisma/data/ingredient-density-uk-en.json',
-    );
-    return;
-  }
-
-  const cupId = unitIds.get('cup');
-  const gId = unitIds.get('g');
-  if (!cupId || !gId) {
-    console.warn('Skip conversion rules seed: cup or g unit missing');
-    return;
-  }
-
-  console.log('Seeding conversion rules from ingredient-density-uk-en.json...');
-  const items: IngredientDensityItem[] = JSON.parse(
-    fs.readFileSync(filePath, 'utf-8'),
-  );
-
-  let upserted = 0;
-  for (const item of items) {
-    const ingredientId = await resolveIngredientForDensity(item, ingredientIds);
-    const existing = await prisma.conversionRule.findFirst({
-      where: {
-        ingredientId,
-        fromUnitId: cupId,
-        toUnitId: gId,
-      },
-    });
-
-    if (existing) {
-      await prisma.conversionRule.update({
-        where: { id: existing.id },
-        data: { factor: item.grams_per_us_cup },
-      });
-    } else {
-      await prisma.conversionRule.create({
-        data: {
-          ingredientId,
-          fromUnitId: cupId,
-          toUnitId: gId,
-          factor: item.grams_per_us_cup,
-        },
-      });
-    }
-
-    upserted++;
-  }
-
-  console.log(`Conversion rules upserted: ${upserted}`);
-}
 
 async function seedDemoData(
   categoryIds: Map<string, string>,
@@ -329,6 +55,14 @@ async function seedDemoData(
   const flourId = ingredientIds.get('flour');
   const honeyId = ingredientIds.get('honey');
 
+  const existingDemoDish = await prisma.dish.findFirst({
+    where: { ownerId: demoUser.id, titleUk: 'Борщ' },
+  });
+  if (existingDemoDish) {
+    console.log('Demo dishes already present — skipping demo seed.');
+    return;
+  }
+
   const borscht = await prisma.dish.create({
     data: {
       locale: ContentLocale.UK,
@@ -361,9 +95,27 @@ async function seedDemoData(
   if (beetId && cabbageId && potatoId) {
     await prisma.dishIngredient.createMany({
       data: [
-        { dishId: borscht.id, ingredientId: beetId, unitId: gUnitId, quantity: 300, order: 0 },
-        { dishId: borscht.id, ingredientId: cabbageId, unitId: gUnitId, quantity: 200, order: 1 },
-        { dishId: borscht.id, ingredientId: potatoId, unitId: gUnitId, quantity: 250, order: 2 },
+        {
+          dishId: borscht.id,
+          ingredientId: beetId,
+          unitId: gUnitId,
+          quantity: 300,
+          order: 0,
+        },
+        {
+          dishId: borscht.id,
+          ingredientId: cabbageId,
+          unitId: gUnitId,
+          quantity: 200,
+          order: 1,
+        },
+        {
+          dishId: borscht.id,
+          ingredientId: potatoId,
+          unitId: gUnitId,
+          quantity: 250,
+          order: 2,
+        },
       ],
     });
   }
@@ -395,8 +147,20 @@ async function seedDemoData(
   if (flourId && honeyId) {
     await prisma.dishIngredient.createMany({
       data: [
-        { dishId: honeyCake.id, ingredientId: flourId, unitId: gUnitId, quantity: 400, order: 0 },
-        { dishId: honeyCake.id, ingredientId: honeyId, unitId: mlUnitId, quantity: 150, order: 1 },
+        {
+          dishId: honeyCake.id,
+          ingredientId: flourId,
+          unitId: gUnitId,
+          quantity: 400,
+          order: 0,
+        },
+        {
+          dishId: honeyCake.id,
+          ingredientId: honeyId,
+          unitId: mlUnitId,
+          quantity: 150,
+          order: 1,
+        },
       ],
     });
   }
@@ -484,25 +248,13 @@ async function seedDemoData(
 }
 
 async function main(): Promise<void> {
-  console.log('Seeding countries...');
-  await seedCountries();
+  const { categoryIds, unitIds, ingredientIds } = await seedCatalogs(prisma);
 
-  console.log('Seeding taxonomy...');
-  const categoryIds = await seedTaxonomy();
-
-  console.log('Seeding measurement units...');
-  const unitIds = await seedMeasurementUnits();
-
-  console.log('Seeding ingredients...');
-  const ingredientIds = await seedIngredients();
-
-  console.log('Seeding conversion rules...');
-  await seedConversionRules(ingredientIds, unitIds);
-
-  console.log('Seeding demo data...');
-  const dishCount = await prisma.dish.count();
-  if (dishCount === 0) {
+  if (process.env.SEED_DEMO === 'true') {
+    console.log('Seeding demo data (SEED_DEMO=true)...');
     await seedDemoData(categoryIds, unitIds, ingredientIds);
+  } else {
+    console.log('Skipping demo users/recipes (set SEED_DEMO=true to enable).');
   }
 
   console.log('Seed completed.');

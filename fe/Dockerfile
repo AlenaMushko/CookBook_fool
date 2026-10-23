@@ -8,13 +8,10 @@ RUN npm ci
 
 COPY fe/ ./
 
+# Relative /api is proxied by Nginx to Nest — no secrets in VITE_*.
 ARG VITE_API_URL=/api
-ARG VITE_AWS_S3_BUCKET_NAME=cookbook
-ARG VITE_AWS_S3_REGION=eu-west-1
 
 ENV VITE_API_URL=$VITE_API_URL \
-    VITE_AWS_S3_BUCKET_NAME=$VITE_AWS_S3_BUCKET_NAME \
-    VITE_AWS_S3_REGION=$VITE_AWS_S3_REGION \
     VITE_BUILD_PATH=dist
 
 RUN npm run build

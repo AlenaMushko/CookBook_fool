@@ -6,6 +6,9 @@ export {
   profileQueryKeys,
   currentUserQueryOptions,
 } from './api/profile.queries'
-export { profileSchema } from './schemas/profile.schema'
+export {
+  createProfileSchema,
+  type ProfileFormValues,
+} from './schemas/profile.schema'
 export { changePasswordSchema } from './schemas/change-password.schema'
 export type { Profile } from './types/profile.types'

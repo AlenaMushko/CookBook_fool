@@ -11,13 +11,13 @@ import { IngredientModule } from './ingredient/ingredient.module';
 import { MeasurementUnitModule } from './measurement-unit/measurement-unit.module';
 import { MenuModule } from './menu/menu.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { RedisModule } from './redis/redis.module';
 import { S3Module } from './s3/s3.module';
 import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      ignoreEnvFile: process.env.NODE_ENV === 'production',
       envFilePath: ['./environments/local.env', './.env', '../.env'],
       load: [configuration],
       isGlobal: true,
@@ -26,7 +26,6 @@ import { UserModule } from './user/user.module';
     EmailModule,
     UserModule,
     HealthModule,
-    RedisModule,
     AuthModule,
     IngredientModule,
     MeasurementUnitModule,

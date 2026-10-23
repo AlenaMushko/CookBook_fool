@@ -158,10 +158,6 @@ export class S3Service {
   private createS3Client(): S3Client {
     return new S3Client({
       region: this.awsConfig.s3Region,
-      credentials: {
-        accessKeyId: this.awsConfig.accessKeyId,
-        secretAccessKey: this.awsConfig.secretAccessKey,
-      },
     });
   }
 }

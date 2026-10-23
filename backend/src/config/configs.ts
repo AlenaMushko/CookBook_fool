@@ -25,11 +25,6 @@ export default (): Config => ({
     password: process.env.POSTGRES_PASSWORD,
     dbName: process.env.POSTGRES_DB,
   },
-  redis: {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT, 10) || 6379,
-    password: process.env.REDIS_PASSWORD,
-  },
   jwt: {
     accessTokenSecret: process.env.AUTH_ACCESS_TOKEN_SECRET || 'access secret',
     accessTokenExpiration:
@@ -42,14 +37,15 @@ export default (): Config => ({
       parseInt(process.env.AUTH_PASSWORD_RESET_TOKEN_EXPIRATION, 10) || 3600,
   },
   aws: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_REGION,
-    s3Region: process.env.AWS_S3_REGION || process.env.AWS_REGION,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || undefined,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || undefined,
+    region: process.env.AWS_REGION || 'eu-west-1',
+    s3Region:
+      process.env.AWS_S3_REGION || process.env.AWS_REGION || 'eu-west-1',
     bucketName: process.env.AWS_S3_BUCKET_NAME,
   },
   ses: {
     fromEmail: process.env.SES_FROM_EMAIL || '',
-    fromName: process.env.SES_FROM_NAME || 'Cookbook',
+    fromName: process.env.SES_FROM_NAME || 'CookBook',
   },
 });

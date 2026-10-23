@@ -12,15 +12,20 @@ import { SwaggerHelper } from './common/helpers/swagger.helper';
 import { formatValidationErrors } from './common/helpers/validation-error.helper';
 import { TrimPipe } from './common/pipes/trim.pipe';
 import { AppConfig, Config } from './config/config.type';
+import { assertProductionConfig } from './config/validate-production-config';
 import logger from './logger';
 import { AppModule } from './modules/app.module';
 import { AUTH_COOKIE_NAMES } from './modules/auth/constants/constants';
 
 async function bootstrap() {
+  assertProductionConfig();
+
   const app = await NestFactory.create(AppModule, { logger: false });
 
   const configService = app.get(ConfigService<Config>);
   const appConfig = configService.get<AppConfig>('app');
+
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
 
   app.use(cookieParser());
 

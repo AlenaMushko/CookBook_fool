@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RefreshToken } from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
+import { hashToken } from '../utils/token-hash.util';
 
 @Injectable()
 export class RefreshTokenRepository {
@@ -10,22 +11,34 @@ export class RefreshTokenRepository {
   public async saveToken(
     userId: string,
     deviceId: string,
-    token: string,
+    rawRefreshToken: string,
+    expiresAt: Date,
   ): Promise<RefreshToken> {
+    const tokenHash = hashToken(rawRefreshToken);
+
     return await this.prisma.refreshToken.create({
       data: {
         userId,
         deviceId,
-        refreshToken: token,
+        tokenHash,
+        expiresAt,
       },
     });
   }
 
-  public async isTokenExist(token: string): Promise<boolean> {
-    const existingToken = await this.prisma.refreshToken.findFirst({
-      where: { refreshToken: token },
+  public async isActiveToken(rawRefreshToken: string): Promise<boolean> {
+    const tokenHash = hashToken(rawRefreshToken);
+    const now = new Date();
+
+    const existing = await this.prisma.refreshToken.findFirst({
+      where: {
+        tokenHash,
+        expiresAt: { gt: now },
+      },
+      select: { id: true },
     });
-    return !!existingToken;
+
+    return Boolean(existing);
   }
 
   public async deleteByUserAndDevice(

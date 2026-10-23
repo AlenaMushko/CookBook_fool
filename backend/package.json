@@ -22,7 +22,9 @@
     "prisma:migrate:deploy": "prisma migrate deploy --schema prisma/schema",
     "prisma:migrate:reset": "prisma migrate reset --schema prisma/schema",
     "prisma:studio": "prisma studio --schema prisma/schema",
-    "prisma:seed": "ts-node prisma/seed.ts"
+    "prisma:seed": "TS_NODE_PROJECT=prisma/tsconfig.seed.json ts-node --transpile-only prisma/seed.ts",
+    "prisma:seed:catalogs": "TS_NODE_PROJECT=prisma/tsconfig.seed.json ts-node --transpile-only prisma/seed-catalogs.ts",
+    "prisma:seed:catalogs:prod": "node dist/prisma/seed-catalogs.js"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^9.1.0",
@@ -42,7 +44,6 @@
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
-    "ioredis": "^5.6.0",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
     "prisma": "^6.6.0",

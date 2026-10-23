@@ -73,18 +73,7 @@ export class AuthService {
       deviceId: dto.deviceId,
     });
 
-    await Promise.all([
-      this.refreshRepository.saveToken(
-        user.id,
-        dto.deviceId,
-        tokens.refreshToken,
-      ),
-      this.authCacheService.saveToken(
-        user.id,
-        dto.deviceId,
-        tokens.accessToken,
-      ),
-    ]);
+    await this.persistSession(user.id, dto.deviceId, tokens);
 
     return AuthMapper.toSessionWithTokens(user, tokens);
   }
@@ -127,18 +116,7 @@ export class AuthService {
       this.authCacheService.removeToken(user.id, dto.deviceId),
     ]);
 
-    await Promise.all([
-      this.refreshRepository.saveToken(
-        user.id,
-        dto.deviceId,
-        tokens.refreshToken,
-      ),
-      this.authCacheService.saveToken(
-        user.id,
-        dto.deviceId,
-        tokens.accessToken,
-      ),
-    ]);
+    await this.persistSession(user.id, dto.deviceId, tokens);
 
     return AuthMapper.toSessionWithTokens(user, tokens);
   }
@@ -327,18 +305,7 @@ export class AuthService {
       deviceId: userData.deviceId,
     });
 
-    await Promise.all([
-      this.refreshRepository.saveToken(
-        user.id,
-        userData.deviceId,
-        tokens.refreshToken,
-      ),
-      this.authCacheService.saveToken(
-        user.id,
-        userData.deviceId,
-        tokens.accessToken,
-      ),
-    ]);
+    await this.persistSession(user.id, userData.deviceId, tokens);
     return tokens;
   }
 
@@ -346,6 +313,27 @@ export class AuthService {
     await Promise.all([
       this.refreshRepository.deleteAllByUserId(userId),
       this.authCacheService.invalidateAllUserSessions(userId),
+    ]);
+  }
+
+  private async persistSession(
+    userId: string,
+    deviceId: string,
+    tokens: TokenResponseDto,
+  ): Promise<void> {
+    const jwt = this.configService.get<JWTConfig>('jwt');
+    const refreshExpiresAt = new Date(
+      Date.now() + (jwt?.refreshTokenExpiration ?? 86400) * 1000,
+    );
+
+    await Promise.all([
+      this.refreshRepository.saveToken(
+        userId,
+        deviceId,
+        tokens.refreshToken,
+        refreshExpiresAt,
+      ),
+      this.authCacheService.saveToken(userId, deviceId, tokens.accessToken),
     ]);
   }
 }
