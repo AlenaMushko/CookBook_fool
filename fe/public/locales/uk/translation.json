@@ -86,9 +86,15 @@
   },
   "nav": {
     "mobile": "Мобільна навігація",
+    "sidebar": "Основна навігація",
+    "home": "Головна",
     "myCookbook": "Моя книга",
     "myMenus": "Моє меню",
-    "createRecipe": "Рецепт"
+    "createRecipe": "Рецепт",
+    "createRecipeDesktop": "Створити рецепт",
+    "tagline": "Кулінарна книга",
+    "collapse": "Згорнути навігацію",
+    "expand": "Розгорнути навігацію"
   },
   "forgot_password": "Забули пароль?",
   "auth": {

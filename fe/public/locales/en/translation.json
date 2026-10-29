@@ -84,9 +84,15 @@
   },
   "nav": {
     "mobile": "Mobile navigation",
+    "sidebar": "Main navigation",
+    "home": "Home",
     "myCookbook": "My Cookbook",
     "myMenus": "My Menus",
-    "createRecipe": "Recipe"
+    "createRecipe": "Recipe",
+    "createRecipeDesktop": "Create Recipe",
+    "tagline": "Culinary book",
+    "collapse": "Collapse navigation",
+    "expand": "Expand navigation"
   },
   "forgot_password": "Forgot password?",
   "auth": {

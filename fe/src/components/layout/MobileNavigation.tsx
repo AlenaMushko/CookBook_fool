@@ -1,35 +1,12 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { BookOpen, CirclePlus, LayoutList, LogOut } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import type { LucideIcon } from 'lucide-react'
 
-import { Routes } from '@constants/routes'
 import { signOut } from '@/features/auth/lib/sign-out'
 import { useAuthSession } from '@/hooks/useAuthSession'
 import { cn } from '@/lib/utils'
 
-type NavItem = {
-  to: string
-  labelKey: string
-  icon: LucideIcon
-  exact?: boolean
-}
-
-const navItems: NavItem[] = [
-  { to: Routes.MY_COOKBOOK, labelKey: 'nav.myCookbook', icon: BookOpen },
-  { to: Routes.MENUS, labelKey: 'nav.myMenus', icon: LayoutList },
-  {
-    to: Routes.RECIPE_NEW,
-    labelKey: 'nav.createRecipe',
-    icon: CirclePlus,
-    exact: true,
-  },
-]
-
-function isPathActive(pathname: string, to: string, exact?: boolean) {
-  if (exact) return pathname === to
-  return pathname === to || pathname.startsWith(`${to}/`)
-}
+import { isPathActive, mobileNavItems } from './nav-items'
 
 const navItemClassName = (isActive: boolean, isDisabled: boolean) =>
   cn(
@@ -55,7 +32,7 @@ export const MobileNavigation = () => {
         className="fixed inset-x-0 bottom-0 z-40 border-t-[0.75px] border-secondary-border bg-background md:hidden"
       >
         <ul className="mx-auto flex max-w-page items-center justify-around gap-1 px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
-          {navItems.map(({ to, labelKey, icon: Icon, exact }) => {
+          {mobileNavItems.map(({ to, labelKey, icon: Icon, exact }) => {
             const isActive = isAuthenticated && isPathActive(pathname, to, exact)
 
             return (

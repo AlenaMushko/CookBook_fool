@@ -13,9 +13,9 @@ export const Header = () => {
   const { isAuthenticated, user, isLoading } = useCurrentUser()
 
   return (
-    <nav className="flex items-center justify-between gap-4 border-b-[0.75px] border-secondary-border bg-card px-7 py-2.5">
+    <nav className="flex w-full items-center justify-between gap-4 border-b-[0.75px] border-secondary-border bg-card px-7 py-2.5">
       <Logo />
-      <ul className="flex items-center gap-2">
+      <ul className="flex shrink-0 items-center gap-2">
         <li>
           <LanguageSwitcher />
         </li>
