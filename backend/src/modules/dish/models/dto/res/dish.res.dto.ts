@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ContentLocale, DishDifficulty, DishVisibility } from '@prisma/client';
+import { DishDifficulty, DishVisibility } from '@prisma/client';
 
 export class DishIngredientResDto {
   @ApiProperty()
@@ -13,6 +13,9 @@ export class DishIngredientResDto {
 
   @ApiProperty()
   nameUk: string;
+
+  @ApiPropertyOptional({ nullable: true })
+  image?: string | null;
 
   @ApiProperty()
   unitId: string;
@@ -32,10 +35,15 @@ export class DishIngredientGroupResDto {
   id: string;
 
   @ApiPropertyOptional()
-  nameEn?: string;
+  name?: string;
 
-  @ApiPropertyOptional()
-  nameUk?: string;
+  @ApiProperty()
+  order: number;
+}
+
+export class DishPhotoResDto {
+  @ApiProperty()
+  key: string;
 
   @ApiProperty()
   order: number;
@@ -46,24 +54,16 @@ export class DishStepResDto {
   order: number;
 
   @ApiPropertyOptional()
-  instructionEn?: string;
+  title?: string;
 
   @ApiPropertyOptional()
-  instructionUk?: string;
+  description?: string;
 
   @ApiPropertyOptional({ nullable: true })
   photoKey?: string | null;
-}
 
-export class DishPhotoResDto {
-  @ApiProperty()
-  key: string;
-
-  @ApiProperty()
-  type: string;
-
-  @ApiProperty()
-  order: number;
+  @ApiPropertyOptional({ type: [DishPhotoResDto] })
+  photos?: DishPhotoResDto[];
 }
 
 export class DishCategoryBriefDto {
@@ -129,26 +129,11 @@ export class DishResDto {
   @ApiProperty()
   id: string;
 
-  @ApiProperty({ enum: ContentLocale })
-  locale: ContentLocale;
+  @ApiProperty()
+  title: string;
 
   @ApiPropertyOptional()
-  titleEn?: string;
-
-  @ApiPropertyOptional()
-  titleUk?: string;
-
-  @ApiPropertyOptional()
-  descriptionEn?: string;
-
-  @ApiPropertyOptional()
-  descriptionUk?: string;
-
-  @ApiPropertyOptional()
-  noteEn?: string;
-
-  @ApiPropertyOptional()
-  noteUk?: string;
+  description?: string;
 
   @ApiProperty({ enum: DishVisibility })
   visibility: DishVisibility;

@@ -1,10 +1,5 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-  OmitType,
-  PartialType,
-} from '@nestjs/swagger';
-import { ContentLocale, DishDifficulty, DishVisibility } from '@prisma/client';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { DishDifficulty, DishVisibility } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -15,10 +10,20 @@ import {
   IsString,
   IsUUID,
   Min,
+  MinLength,
   ValidateNested,
 } from 'class-validator';
 
-import { AtLeastOneOf } from '../../../../../common/decorators/at-least-one-of.decorator';
+export class DishPhotoDto {
+  @ApiProperty()
+  @IsString()
+  key: string;
+
+  @ApiProperty()
+  @IsInt()
+  @Min(0)
+  order: number;
+}
 
 export class DishStepDto {
   @ApiProperty()
@@ -27,37 +32,26 @@ export class DishStepDto {
   order: number;
 
   @ApiPropertyOptional()
-  @AtLeastOneOf(['instructionEn', 'instructionUk'], {
-    message: 'At least one of instructionEn or instructionUk must be provided',
-  })
   @IsOptional()
   @IsString()
-  instructionEn?: string;
+  title?: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsString()
-  instructionUk?: string;
+  @MinLength(1)
+  description: string;
 
   @ApiPropertyOptional({ nullable: true })
   @IsOptional()
   @IsString()
   photoKey?: string | null;
-}
 
-export class DishPhotoDto {
-  @ApiProperty()
-  @IsString()
-  key: string;
-
-  @ApiProperty({ enum: ['MAIN', 'GALLERY'] })
-  @IsString()
-  type: 'MAIN' | 'GALLERY';
-
-  @ApiProperty()
-  @IsInt()
-  @Min(0)
-  order: number;
+  @ApiPropertyOptional({ type: [DishPhotoDto] })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DishPhotoDto)
+  photos?: DishPhotoDto[];
 }
 
 export class DishIngredientGroupDto {
@@ -66,17 +60,9 @@ export class DishIngredientGroupDto {
   tempId: string;
 
   @ApiPropertyOptional()
-  @AtLeastOneOf(['nameEn', 'nameUk'], {
-    message: 'At least one of nameEn or nameUk must be provided',
-  })
   @IsOptional()
   @IsString()
-  nameEn?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  nameUk?: string;
+  name?: string;
 
   @ApiProperty()
   @IsInt()
@@ -109,45 +95,17 @@ export class DishIngredientInputDto {
   order: number;
 }
 
-/** Shared writable fields (title pair constraint only on Create). */
+/** Shared writable fields. */
 export class DishWritableDto {
-  @ApiProperty({
-    enum: ContentLocale,
-    example: ContentLocale.UK,
-    description: 'Primary language of this dish content (which side to fill)',
-  })
-  @IsEnum(ContentLocale)
-  locale: ContentLocale;
-
-  @ApiPropertyOptional({ example: 'Borscht' })
-  @IsOptional()
+  @ApiProperty({ example: 'Борщ' })
   @IsString()
-  titleEn?: string;
-
-  @ApiPropertyOptional({ example: 'Борщ' })
-  @IsOptional()
-  @IsString()
-  titleUk?: string;
+  @MinLength(1)
+  title: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  descriptionEn?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  descriptionUk?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  noteEn?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  noteUk?: string;
+  description?: string;
 
   @ApiProperty({ enum: DishVisibility })
   @IsEnum(DishVisibility)
@@ -204,11 +162,16 @@ export class DishWritableDto {
   @Type(() => DishIngredientInputDto)
   ingredients: DishIngredientInputDto[];
 
-  @ApiProperty({ type: [DishStepDto] })
+  @ApiPropertyOptional({
+    type: [DishStepDto],
+    description:
+      'Optional. Omit the field or send an empty list. A step that is present requires a description. Its title and photo are optional.',
+  })
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => DishStepDto)
-  steps: DishStepDto[];
+  steps?: DishStepDto[];
 
   @ApiPropertyOptional({ type: [DishPhotoDto] })
   @IsOptional()
@@ -218,16 +181,6 @@ export class DishWritableDto {
   photos?: DishPhotoDto[];
 }
 
-export class CreateDishDto extends DishWritableDto {
-  @ApiPropertyOptional({ example: 'Borscht' })
-  @AtLeastOneOf(['titleEn', 'titleUk'], {
-    message: 'At least one of titleEn or titleUk must be provided',
-  })
-  @IsOptional()
-  @IsString()
-  declare titleEn?: string;
-}
+export class CreateDishDto extends DishWritableDto {}
 
-export class UpdateDishDto extends PartialType(
-  OmitType(DishWritableDto, ['locale'] as const),
-) {}
+export class UpdateDishDto extends PartialType(DishWritableDto) {}

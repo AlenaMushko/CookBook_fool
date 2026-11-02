@@ -32,9 +32,7 @@ const menuDetailSelect = {
       dish: {
         select: {
           id: true,
-          locale: true,
-          titleEn: true,
-          titleUk: true,
+          title: true,
           visibility: true,
         },
       },
@@ -65,9 +63,7 @@ export type MenuWithRelations = MenuListItem & {
     order: number;
     dish: {
       id: string;
-      locale: string;
-      titleEn: string | null;
-      titleUk: string | null;
+      title: string;
       visibility: string;
     };
   }>;

@@ -9,6 +9,7 @@ export type IngredientListItem = {
   id: string;
   nameEn: string;
   nameUk: string;
+  image: string | null;
 };
 
 @Injectable()
@@ -23,7 +24,8 @@ export class IngredientRepository {
       SELECT
         id,
         en->>'name' AS "nameEn",
-        uk->>'name' AS "nameUk"
+        uk->>'name' AS "nameUk",
+        image
       FROM "ingredients"
       WHERE
         (en->>'name') ILIKE ${'%' + search + '%'}
@@ -60,7 +62,7 @@ export class IngredientRepository {
   ): Promise<IngredientListItem> {
     const ingredient = await this.prisma.ingredient.create({
       data,
-      select: { id: true, en: true, uk: true },
+      select: { id: true, en: true, uk: true, image: true },
     });
     const en = ingredient.en as IngredientJson;
     const uk = ingredient.uk as IngredientJson;
@@ -68,6 +70,7 @@ export class IngredientRepository {
       id: ingredient.id,
       nameEn: en.name,
       nameUk: uk.name,
+      image: ingredient.image,
     };
   }
 }

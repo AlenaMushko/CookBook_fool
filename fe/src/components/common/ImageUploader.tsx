@@ -12,10 +12,16 @@ type ImageUploaderProps = {
   accept?: string
   maxSizeMb?: number
   disabled?: boolean
+  multiple?: boolean
   title?: string
+  titleClassName?: string
   hint?: string
+  hintClassName?: string
   browseLabel?: string
+  showBrowse?: boolean
+  icon?: React.ReactNode
   onFileSelect?: (file: File | null) => void
+  onFilesSelect?: (files: File[]) => void
 }
 
 function ImageUploader({
@@ -23,48 +29,63 @@ function ImageUploader({
   accept = ACCEPT,
   maxSizeMb = MAX_SIZE_MB,
   disabled = false,
+  multiple = false,
   title = "Drop your photo here",
+  titleClassName,
   hint,
+  hintClassName,
   browseLabel = "Browse Files",
+  showBrowse = true,
+  icon,
   onFileSelect,
+  onFilesSelect,
 }: ImageUploaderProps) {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const hintText = hint ?? `PNG, JPG up to ${maxSizeMb} MB`
 
-  const validateAndSelect = (file: File | null) => {
-    setError(null)
-    if (!file) {
-      onFileSelect?.(null)
-      return
-    }
-
+  const isAllowed = (file: File) => {
     const allowed = accept.split(",").map((t) => t.trim())
-    const typeOk =
+    return (
       allowed.includes(file.type) ||
       allowed.some(
         (t) => t.startsWith(".") && file.name.toLowerCase().endsWith(t)
       )
+    )
+  }
 
-    if (!typeOk) {
-      setError("Use PNG or JPG")
+  const acceptFiles = (files: File[]) => {
+    setError(null)
+    if (files.length === 0) {
       onFileSelect?.(null)
+      onFilesSelect?.([])
       return
     }
 
-    if (file.size > maxSizeMb * 1024 * 1024) {
-      setError(`Max size is ${maxSizeMb} MB`)
-      onFileSelect?.(null)
+    const valid: File[] = []
+    for (const file of files) {
+      if (!isAllowed(file)) {
+        setError("Use PNG or JPG")
+        continue
+      }
+      if (file.size > maxSizeMb * 1024 * 1024) {
+        setError(`Max size is ${maxSizeMb} MB`)
+        continue
+      }
+      valid.push(file)
+    }
+
+    if (multiple) {
+      onFilesSelect?.(valid)
       return
     }
 
-    onFileSelect?.(file)
+    onFileSelect?.(valid[0] ?? null)
   }
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null
-    validateAndSelect(file)
+    acceptFiles(Array.from(e.target.files ?? []))
     e.target.value = ""
   }
 
@@ -73,8 +94,12 @@ function ImageUploader({
     e.stopPropagation()
     setIsDragging(false)
     if (disabled) return
-    const file = e.dataTransfer.files?.[0] ?? null
-    validateAndSelect(file)
+    const files = Array.from(e.dataTransfer.files ?? [])
+    acceptFiles(multiple ? files : files.slice(0, 1))
+  }
+
+  const openPicker = () => {
+    if (!disabled) inputRef.current?.click()
   }
 
   return (
@@ -95,6 +120,19 @@ function ImageUploader({
         setIsDragging(false)
       }}
       onDrop={onDrop}
+      onClick={showBrowse ? undefined : openPicker}
+      onKeyDown={
+        showBrowse
+          ? undefined
+          : (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                openPicker()
+              }
+            }
+      }
+      role={showBrowse ? undefined : "button"}
+      tabIndex={showBrowse || disabled ? undefined : 0}
       className={cn(
         "flex w-full max-w-[280px] flex-col items-center",
         "rounded-lg border-2 border-dashed border-border bg-input-bg",
@@ -105,17 +143,29 @@ function ImageUploader({
         className
       )}
     >
-      <Upload
-        strokeWidth={1.5}
-        aria-hidden
-        className="size-[22px] shrink-0 text-subtle"
-      />
+      {icon ?? (
+        <Upload
+          strokeWidth={1.5}
+          aria-hidden
+          className="size-[22px] shrink-0 text-subtle"
+        />
+      )}
 
-      <div className="flex flex-col items-center gap-1">
-        <p className="font-sans text-btn font-semibold text-foreground">
+      <div className="flex w-full flex-col items-center gap-1">
+        <p
+          className={cn(
+            "font-sans text-btn font-semibold text-foreground",
+            titleClassName
+          )}
+        >
           {title}
         </p>
-        <p className="font-sans text-[12px] leading-[18px] font-normal text-muted-foreground">
+        <p
+          className={cn(
+            "font-sans text-[12px] leading-[18px] font-normal text-muted-foreground",
+            hintClassName
+          )}
+        >
           {hintText}
         </p>
         {error ? (
@@ -125,20 +175,26 @@ function ImageUploader({
         ) : null}
       </div>
 
-      <Button
-        type="button"
-        variant="secondary"
-        size="sm"
-        disabled={disabled}
-        onClick={() => inputRef.current?.click()}
-      >
-        {browseLabel}
-      </Button>
+      {showBrowse ? (
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          disabled={disabled}
+          onClick={(e) => {
+            e.stopPropagation()
+            openPicker()
+          }}
+        >
+          {browseLabel}
+        </Button>
+      ) : null}
 
       <input
         ref={inputRef}
         type="file"
         accept={accept}
+        multiple={multiple}
         className="sr-only"
         tabIndex={-1}
         disabled={disabled}

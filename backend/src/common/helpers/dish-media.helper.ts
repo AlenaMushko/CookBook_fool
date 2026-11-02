@@ -1,5 +1,6 @@
 type DishStepJson = {
   photoKey?: string | null;
+  photos?: DishPhotoJson[] | null;
 };
 
 type DishPhotoJson = {
@@ -16,6 +17,11 @@ export function extractDishMediaKeys(
     for (const step of steps as DishStepJson[]) {
       if (step?.photoKey) {
         keys.add(step.photoKey);
+      }
+      for (const photo of step?.photos ?? []) {
+        if (photo?.key) {
+          keys.add(photo.key);
+        }
       }
     }
   }

@@ -1,0 +1,681 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
+import { Broom, Globe, Lock, Plus, Save, Send, X } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+
+import { ConfirmationDialog } from '@components/common/ConfirmationDialog'
+import { Button } from '@components/ui/button'
+import { Field, FieldError, FieldLabel } from '@components/ui/field'
+import { FormFieldInput } from '@components/ui/form-field-input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@components/ui/select'
+import { Textarea } from '@components/ui/textarea'
+import { Routes } from '@constants/routes'
+import { showToast } from '@/lib/toast'
+
+import { recipesApi } from '../api/recipes.api'
+import { recipeQueryKeys } from '../api/recipes.queries'
+import { toCreateDishPayload } from '../lib/create-dish-payload'
+import { localizedName, unitSymbol } from '../lib/recipe-locale'
+import { createRecipeSchema } from '../schemas/recipe.schema'
+import type {
+  CreateRecipeFormValues,
+  DishDifficulty,
+  DishVisibility,
+  RecipeIngredientDraft,
+} from '../types/recipe.types'
+import { IngredientCombobox } from './IngredientCombobox'
+import { PrepTimeField } from './PrepTimeField'
+import { QuantityField } from './QuantityField'
+import { RecipePhotosField } from './RecipePhotosField'
+import { SectionCard } from './SectionCard'
+import { SegmentedChoice } from './SegmentedChoice'
+
+const formLabelClass = 'text-label uppercase tracking-[0.12em]'
+
+const emptyIngredient = (): RecipeIngredientDraft => ({
+  ingredient: null,
+  unitId: '',
+  quantity: '1',
+})
+
+const emptyStep = () => ({
+  title: '',
+  description: '',
+  photos: [] as CreateRecipeFormValues['photos'],
+})
+
+const emptyForm = (): CreateRecipeFormValues => ({
+  title: '',
+  description: '',
+  prepTime: '',
+  categoryId: '',
+  difficulty: 'EASY',
+  visibility: 'PUBLIC',
+  photos: [],
+  ingredients: [emptyIngredient()],
+  steps: [emptyStep()],
+})
+
+function isRecipeStarted(values: CreateRecipeFormValues) {
+  if (
+    values.title.trim() ||
+    values.description.trim() ||
+    values.prepTime.trim() ||
+    values.categoryId ||
+    values.difficulty !== 'EASY' ||
+    values.visibility !== 'PUBLIC' ||
+    values.photos.length > 0 ||
+    values.ingredients.length > 1 ||
+    values.steps.length > 1
+  ) {
+    return true
+  }
+
+  const ingredient = values.ingredients[0]
+  if (
+    ingredient?.ingredient ||
+    ingredient?.unitId ||
+    ingredient?.quantity.trim() !== '1'
+  ) {
+    return true
+  }
+
+  const step = values.steps[0]
+  return Boolean(
+    step?.title.trim() || step?.description.trim() || step?.photos.length,
+  )
+}
+
+export function CreateRecipeForm() {
+  const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
+  const [clearOpen, setClearOpen] = useState(false)
+
+  const schema = useMemo(() => createRecipeSchema(t), [t])
+  const {
+    register,
+    control,
+    handleSubmit,
+    setValue,
+    getValues,
+    reset,
+    watch,
+    trigger,
+    formState: { errors, isSubmitting, isSubmitted },
+  } = useForm<CreateRecipeFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: emptyForm(),
+  })
+
+  const galleryPhotos = watch('photos')
+  const stepValues = watch('steps')
+
+  useEffect(() => {
+    if (!isSubmitted) return
+    void trigger()
+  }, [i18n.language, isSubmitted, trigger])
+
+  const ingredients = useFieldArray({ control, name: 'ingredients' })
+  const steps = useFieldArray({ control, name: 'steps' })
+
+  const categoriesQuery = useQuery({
+    queryKey: recipeQueryKeys.categories(),
+    queryFn: () => recipesApi.listCategories(),
+  })
+  const unitsQuery = useQuery({
+    queryKey: recipeQueryKeys.units(),
+    queryFn: () => recipesApi.listUnits(),
+  })
+
+  const categories = categoriesQuery.data?.data ?? []
+  const units = [...(unitsQuery.data?.data ?? [])].sort(
+    (a, b) => a.order - b.order,
+  )
+
+  const deleteStoredFiles = (keys: string[]) =>
+    Promise.all(
+      keys.map((key) => recipesApi.deleteFile(key).catch(() => undefined)),
+    )
+
+  const uploadPhotos = async (files: File[]) => {
+    if (files.length === 0) return []
+    const uploaded: { key: string; url: string }[] = []
+
+    try {
+      for (const file of files) {
+        uploaded.push(await recipesApi.uploadPhoto(file))
+      }
+      return uploaded
+    } catch (error) {
+      await deleteStoredFiles(uploaded.map((photo) => photo.key))
+      showToast(
+        error instanceof Error ? error.message : t('error.serverError'),
+        'error',
+      )
+      return null
+    }
+  }
+
+  const addPhotos = async (files: File[]) => {
+    const uploaded = await uploadPhotos(files)
+    if (!uploaded?.length) return
+    setValue(
+      'photos',
+      [...getValues('photos'), ...uploaded].map((photo, order) => ({
+        ...photo,
+        order,
+      })),
+      { shouldDirty: true, shouldValidate: isSubmitted },
+    )
+  }
+
+  const removePhoto = (key: string) => {
+    setValue(
+      'photos',
+      getValues('photos')
+        .filter((photo) => photo.key !== key)
+        .map((photo, order) => ({ ...photo, order })),
+      { shouldDirty: true, shouldValidate: isSubmitted },
+    )
+    void recipesApi.deleteFile(key).catch(() => undefined)
+  }
+
+  const addStepPhotos = async (index: number, files: File[]) => {
+    const uploaded = await uploadPhotos(files)
+    if (!uploaded?.length) return
+    setValue(
+      `steps.${index}.photos`,
+      [...getValues(`steps.${index}.photos`), ...uploaded].map((photo, order) => ({
+        ...photo,
+        order,
+      })),
+      { shouldDirty: true, shouldValidate: isSubmitted },
+    )
+  }
+
+  const removeStepPhoto = (index: number, key: string) => {
+    setValue(
+      `steps.${index}.photos`,
+      getValues(`steps.${index}.photos`)
+        .filter((photo) => photo.key !== key)
+        .map((photo, order) => ({ ...photo, order })),
+      { shouldDirty: true, shouldValidate: isSubmitted },
+    )
+    void recipesApi.deleteFile(key).catch(() => undefined)
+  }
+
+  const removeStep = (index: number) => {
+    void deleteStoredFiles(
+      getValues(`steps.${index}.photos`).map((photo) => photo.key),
+    )
+    if (steps.fields.length === 1) {
+      setValue('steps.0', emptyStep(), { shouldDirty: true })
+      return
+    }
+    steps.remove(index)
+  }
+
+  const clearRecipe = async () => {
+    const values = getValues()
+    const keys = [
+      ...values.photos.map((photo) => photo.key),
+      ...values.steps.flatMap((step) => step.photos.map((photo) => photo.key)),
+    ]
+    reset(emptyForm())
+    await deleteStoredFiles(keys)
+  }
+
+  const requestClear = () => {
+    if (!isRecipeStarted(getValues())) {
+      void clearRecipe()
+      return
+    }
+    setClearOpen(true)
+  }
+
+  const handleSaveDraft = async () => {
+    try {
+      const values = getValues()
+      const dish = toCreateDishPayload(values);
+      // TODO: Save draft to local storage
+      console.log({dish})
+
+      void navigate({
+        to: Routes.RECIPES,      
+      })
+    } catch (error) {
+    showToast(
+      error instanceof Error ? error.message : t('error.serverError'),
+      'error',
+    )
+    }
+  }
+
+  const onSubmit = handleSubmit(async (values) => {
+    try {
+      const dish = await recipesApi.create(toCreateDishPayload(values))
+
+      showToast(t('recipe.create.published'), 'success')
+      void navigate({
+        to: Routes.RECIPE,
+        params: { recipeId: dish.id },
+      })
+    } catch (error) {
+      showToast(
+        error instanceof Error ? error.message : t('error.serverError'),
+        'error',
+      )
+    }
+  })
+
+  return (
+    <>
+    <form className="flex flex-col" onSubmit={onSubmit} noValidate>
+      <h1 className="font-serif text-[28px] leading-[42px] font-normal text-foreground italic">
+        {t('recipe.create.title')}
+      </h1>
+
+      <div className="mt-7 flex flex-col gap-[18px]">
+        <SectionCard>
+          <div className="flex flex-col gap-6">
+            <FormFieldInput
+              id="recipe-title"
+              label={t('recipe.create.name')}
+              placeholder={t('recipe.create.namePlaceholder')}
+              maxLength={30}
+              error={errors.title?.message}
+              disabled={isSubmitting}
+              required
+              {...register('title')}
+            />
+
+            <Field data-invalid={Boolean(errors.description)}>
+              <FieldLabel htmlFor="recipe-description" className={formLabelClass}>
+                {t('recipe.create.description')}
+              </FieldLabel>
+              <Textarea
+                id="recipe-description"
+                placeholder={t('recipe.create.descriptionPlaceholder')}
+                maxLength={1000}
+                aria-invalid={Boolean(errors.description)}
+                disabled={isSubmitting}
+                {...register('description')}
+              />
+              {errors.description?.message ? (
+                <FieldError>{errors.description.message}</FieldError>
+              ) : null}
+            </Field>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <Controller
+                name="prepTime"
+                control={control}
+                render={({ field }) => (
+                  <PrepTimeField
+                    value={field.value}
+                    onChange={field.onChange}
+                    invalid={Boolean(errors.prepTime)}
+                    error={errors.prepTime?.message}
+                  />
+                )}
+              />
+
+              <Field data-invalid={Boolean(errors.categoryId)}>
+                <FieldLabel className={formLabelClass}>
+                  {t('recipe.create.category')}
+                </FieldLabel>
+                <Controller
+                  name="categoryId"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || null}
+                      items={categories.map((category) => ({
+                        value: category.id,
+                        label: localizedName(i18n.language, category),
+                      }))}
+                      onValueChange={(value) => field.onChange(value ?? '')}
+                      disabled={isSubmitting}
+                    >
+                      <SelectTrigger aria-invalid={Boolean(errors.categoryId)}>
+                        <SelectValue
+                          placeholder={t('recipe.create.categoryPlaceholder')}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {localizedName(i18n.language, category)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.categoryId?.message ? (
+                  <FieldError>{errors.categoryId.message}</FieldError>
+                ) : null}
+              </Field>
+
+              <Field>
+                <FieldLabel className={formLabelClass}>
+                  {t('recipe.create.difficulty')}
+                </FieldLabel>
+                <Controller
+                  name="difficulty"
+                  control={control}
+                  render={({ field }) => (
+                    <SegmentedChoice<DishDifficulty>
+                      value={field.value}
+                      onChange={field.onChange}
+                      options={[
+                        { value: 'EASY', label: t('recipe.create.easy') },
+                        { value: 'MEDIUM', label: t('recipe.create.medium') },
+                        { value: 'HARD', label: t('recipe.create.hard') },
+                      ]}
+                    />
+                  )}
+                />
+              </Field>
+
+              <Field>
+                <FieldLabel className={formLabelClass}>
+                  {t('recipe.create.visibility')}
+                </FieldLabel>
+                <Controller
+                  name="visibility"
+                  control={control}
+                  render={({ field }) => (
+                    <SegmentedChoice<DishVisibility>
+                      value={field.value}
+                      onChange={field.onChange}
+                      options={[
+                        {
+                          value: 'PUBLIC',
+                          label: t('recipe.create.public'),
+                          icon: <Globe strokeWidth={1.5} />,
+                        },
+                        {
+                          value: 'PRIVATE',
+                          label: t('recipe.create.private'),
+                          icon: <Lock strokeWidth={1.5} />,
+                        },
+                      ]}
+                    />
+                  )}
+                />
+              </Field>
+            </div>
+          </div>
+        </SectionCard>
+
+        <SectionCard title={t('recipe.create.photos')}>
+          <div className="pt-1">
+            <RecipePhotosField
+              multiple
+              hint={t('recipe.create.photoHint')}
+              photos={galleryPhotos}
+              error={errors.photos?.message}
+              disabled={isSubmitting}
+              onSelect={(files) => void addPhotos(files)}
+              onRemove={removePhoto}
+            />
+          </div>
+        </SectionCard>
+
+        <SectionCard title={t('recipe.create.ingredients')}>
+          <div className="hidden grid-cols-[minmax(0,1fr)_112px_76px_28px] gap-x-[7px] pt-1.5 pl-0.5 md:grid">
+            <span className="font-sans text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
+              {t('recipe.create.ingredient')}
+            </span>
+            <span className="font-sans text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
+              {t('recipe.create.qty')}
+            </span>
+            <span className="font-sans text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
+              {t('recipe.create.unit')}
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-2 pt-2">
+            {ingredients.fields.map((field, index) => (
+              <div
+                key={field.id}
+                className="grid grid-cols-[1fr_1fr_28px] items-start gap-x-[7px] gap-y-2 md:grid-cols-[minmax(0,1fr)_112px_76px_28px]"
+              >
+                <div className="col-span-3 md:col-span-1">
+                  <Controller
+                    name={`ingredients.${index}.ingredient`}
+                    control={control}
+                    render={({ field: ingredientField }) => (
+                      <IngredientCombobox
+                        value={ingredientField.value}
+                        onChange={ingredientField.onChange}
+                        invalid={Boolean(
+                          errors.ingredients?.[index]?.ingredient,
+                        )}
+                      />
+                    )}
+                  />
+                  {errors.ingredients?.[index]?.ingredient?.message ? (
+                    <FieldError className="mt-1">
+                      {errors.ingredients[index]?.ingredient?.message}
+                    </FieldError>
+                  ) : null}
+                </div>
+
+                <Controller
+                  name={`ingredients.${index}.quantity`}
+                  control={control}
+                  render={({ field: quantityField }) => (
+                    <QuantityField
+                      value={quantityField.value}
+                      onChange={quantityField.onChange}
+                      onBlur={quantityField.onBlur}
+                      disabled={isSubmitting}
+                      error={errors.ingredients?.[index]?.quantity?.message}
+                    />
+                  )}
+                />
+
+                <div>
+                  <Controller
+                    name={`ingredients.${index}.unitId`}
+                    control={control}
+                    render={({ field: unitField }) => (
+                      <Select
+                        value={unitField.value || null}
+                        items={units.map((unit) => ({
+                          value: unit.id,
+                          label: unitSymbol(i18n.language, unit),
+                        }))}
+                        onValueChange={(value) => unitField.onChange(value ?? '')}
+                        disabled={isSubmitting}
+                      >
+                        <SelectTrigger
+                          aria-invalid={Boolean(
+                            errors.ingredients?.[index]?.unitId,
+                          )}
+                          aria-label={t('recipe.create.unit')}
+                        >
+                          <SelectValue
+                            placeholder={t('recipe.create.unitPlaceholder')}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {units.map((unit) => (
+                            <SelectItem key={unit.id} value={unit.id}>
+                              {unitSymbol(i18n.language, unit)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.ingredients?.[index]?.unitId?.message ? (
+                    <FieldError className="mt-1">
+                      {errors.ingredients[index]?.unitId?.message}
+                    </FieldError>
+                  ) : null}
+                </div>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label={t('recipe.create.removeIngredient')}
+                  disabled={isSubmitting}
+                  onClick={() => {
+                    if (ingredients.fields.length === 1) {
+                      setValue('ingredients.0', emptyIngredient(), {
+                        shouldDirty: true,
+                      })
+                      return
+                    }
+                    ingredients.remove(index)
+                  }}
+                >
+                  <X strokeWidth={1.5} />
+                </Button>
+              </div>
+            ))}
+          </div>
+
+          <Button
+            type="button"
+            variant="secondary"
+            className="mt-6 w-full"
+            disabled={isSubmitting}
+            onClick={() => ingredients.append(emptyIngredient())}
+          >
+            <Plus strokeWidth={1.5} />
+            {t('recipe.create.addIngredient')}
+          </Button>
+        </SectionCard>
+
+        <SectionCard title={t('recipe.create.instructions')}>
+          <div className="flex flex-col gap-4 pt-1.5">
+            {steps.fields.map((field, index) => (
+                <div key={field.id} className="flex items-start gap-3">
+                  <span className="w-[30px] pt-1.5 font-serif text-2xl leading-none font-normal text-brand italic">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <div className="flex min-w-0 flex-1 flex-col gap-6">
+                    <FormFieldInput
+                      label={t('recipe.create.stepTitle')}
+                      placeholder={t('recipe.create.stepTitlePlaceholder')}
+                      disabled={isSubmitting}
+                      {...register(`steps.${index}.title`)}
+                    />
+                    <Field data-invalid={Boolean(errors.steps?.[index]?.description)}>
+                      <FieldLabel className={formLabelClass}>
+                        {t('recipe.create.stepDescription')}
+                      </FieldLabel>
+                      <Textarea
+                        placeholder={t('recipe.create.stepDescriptionPlaceholder')}
+                        aria-invalid={Boolean(errors.steps?.[index]?.description)}
+                        disabled={isSubmitting}
+                        {...register(`steps.${index}.description`)}
+                      />
+                      {errors.steps?.[index]?.description?.message ? (
+                        <FieldError>
+                          {errors.steps[index]?.description?.message}
+                        </FieldError>
+                      ) : null}
+                    </Field>
+                    <RecipePhotosField
+                      multiple
+                      label={t('recipe.create.stepPhoto')}
+                      hint={t('recipe.create.stepPhotoHint')}
+                      photos={stepValues[index]?.photos ?? []}
+                      disabled={isSubmitting}
+                      onSelect={(files) => void addStepPhotos(index, files)}
+                      onRemove={(key) => removeStepPhoto(index, key)}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={t('recipe.create.removeStep')}
+                    disabled={isSubmitting}
+                    onClick={() => removeStep(index)}
+                  >
+                    <X strokeWidth={1.5} />
+                  </Button>
+                </div>
+              ))}
+          </div>
+          <Button
+            type="button"
+            variant="secondary"
+            className="mt-6 w-full"
+            disabled={isSubmitting}
+            onClick={() => steps.append(emptyStep())}
+          >
+            <Plus strokeWidth={1.5} />
+            {t('recipe.create.addStep')}
+          </Button>
+        </SectionCard>
+      </div>
+
+      <div className="flex flex-col gap-3 pt-[26px]">
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            type="button"
+            variant="secondary"
+            size="lg"
+            disabled={isSubmitting}
+            onClick={requestClear}
+          >
+            <Broom strokeWidth={1.5} className="size-4" />
+            {t('recipe.create.clear')}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="lg"
+            disabled={isSubmitting}
+            onClick={handleSaveDraft}
+          >
+            <Save strokeWidth={1.5} className="size-4" />
+            {t('recipe.create.saveDraft')}
+          </Button>
+        </div>
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          className="w-full"
+          isLoading={isSubmitting}
+          loadingText={t('recipe.create.publishing')}
+        >
+          <Send strokeWidth={1.5} className="size-4" />
+          {t('recipe.create.publish')}
+        </Button>
+      </div>
+    </form>
+    <ConfirmationDialog
+      open={clearOpen}
+      onOpenChange={setClearOpen}
+      title={t('recipe.create.clearConfirmTitle')}
+      cancelLabel={t('recipe.create.clearConfirmNo')}
+      confirmLabel={t('recipe.create.clearConfirmYes')}
+      onConfirm={() => {
+        setClearOpen(false)
+        void clearRecipe()
+      }}
+    >
+      {t('recipe.create.clearConfirmDescription')}
+    </ConfirmationDialog>
+    </>
+  )
+}

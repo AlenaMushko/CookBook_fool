@@ -35,6 +35,9 @@ export class IngredientResDto {
 
   @ApiProperty()
   nameUk: string;
+
+  @ApiPropertyOptional({ nullable: true })
+  image?: string | null;
 }
 
 export class IngredientListResDto {

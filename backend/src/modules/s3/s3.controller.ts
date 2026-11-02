@@ -41,7 +41,7 @@ export class S3Controller {
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Body('folderName') folderName: string,
-  ): Promise<{ key: string }> {
+  ): Promise<{ key: string; url: string }> {
     if (!folderName) {
       throw new BadRequestException('Folder name is required');
     }

@@ -18,6 +18,17 @@ export const ApiRoutes = {
     uploadFile: `/${ApiVersion.V1}/s3/upload-file`,
     deleteFile: `/${ApiVersion.V1}/s3/delete-file`,
   },
+  dish: {
+    collection: `/${ApiVersion.V1}/dish`,
+    categories: `/${ApiVersion.V1}/dish/categories`,
+    byId: (dishId: string) => `/${ApiVersion.V1}/dish/${dishId}`,
+  },
+  ingredients: {
+    search: `/${ApiVersion.V1}/ingredients`,
+  },
+  measurementUnits: {
+    list: `/${ApiVersion.V1}/measurement-units`,
+  },
 
    // menus: {
     //   all: '/api/menus',

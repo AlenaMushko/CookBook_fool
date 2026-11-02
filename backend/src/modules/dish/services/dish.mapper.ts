@@ -12,14 +12,18 @@ import {
 
 type DishStepJson = {
   order: number;
+  title?: string | null;
+  description?: string | null;
   instructionEn?: string | null;
   instructionUk?: string | null;
+  titleEn?: string | null;
+  titleUk?: string | null;
   photoKey?: string | null;
+  photos?: DishPhotoJson[] | null;
 };
 
 type DishPhotoJson = {
   key: string;
-  type: string;
   order: number;
 };
 
@@ -29,19 +33,17 @@ export class DishMapper {
     options?: { userId?: string },
   ): DishResDto {
     const steps = (entity.steps as DishStepJson[]) ?? [];
-    const photos = entity.photos
-      ? ((entity.photos as DishPhotoJson[]) ?? undefined)
+    const photos = Array.isArray(entity.photos)
+      ? (entity.photos as DishPhotoJson[]).map((photo) => ({
+          key: photo.key,
+          order: photo.order,
+        }))
       : undefined;
 
     return {
       id: entity.id,
-      locale: entity.locale,
-      titleEn: entity.titleEn ?? undefined,
-      titleUk: entity.titleUk ?? undefined,
-      descriptionEn: entity.descriptionEn ?? undefined,
-      descriptionUk: entity.descriptionUk ?? undefined,
-      noteEn: entity.noteEn ?? undefined,
-      noteUk: entity.noteUk ?? undefined,
+      title: entity.title,
+      description: entity.description ?? undefined,
       visibility: entity.visibility,
       difficulty: entity.difficulty,
       prepTime: entity.prepTime ?? undefined,
@@ -51,9 +53,16 @@ export class DishMapper {
         : undefined,
       steps: steps.map((step) => ({
         order: step.order,
-        instructionEn: step.instructionEn ?? undefined,
-        instructionUk: step.instructionUk ?? undefined,
-        photoKey: step.photoKey,
+        title: step.title ?? step.titleUk ?? step.titleEn ?? undefined,
+        description:
+          step.description ??
+          step.instructionUk ??
+          step.instructionEn ??
+          undefined,
+        photoKey: step.photoKey ?? step.photos?.[0]?.key ?? null,
+        photos:
+          step.photos ??
+          (step.photoKey ? [{ key: step.photoKey, order: 0 }] : undefined),
       })),
       photos,
       categoryId: entity.categoryId,
@@ -120,8 +129,7 @@ export class DishMapper {
         : undefined,
       ingredientGroups: entity.ingredientGroups.map((g) => ({
         id: g.id,
-        nameEn: g.nameEn ?? undefined,
-        nameUk: g.nameUk ?? undefined,
+        name: g.name ?? undefined,
         order: g.order,
       })),
       ingredients: entity.ingredients.map((ing) => {
@@ -132,6 +140,7 @@ export class DishMapper {
           ingredientId: ing.ingredientId,
           nameEn: en.name,
           nameUk: uk.name,
+          image: ing.ingredient.image,
           unitId: ing.unitId,
           quantity: Number(ing.quantity),
           groupId: ing.groupId ?? undefined,

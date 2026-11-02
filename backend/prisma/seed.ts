@@ -5,7 +5,6 @@
  * Production / EB: use `node dist/prisma/seed-catalogs.js` (no demos).
  */
 import {
-  ContentLocale,
   DishDifficulty,
   DishVisibility,
   PrismaClient,
@@ -56,7 +55,7 @@ async function seedDemoData(
   const honeyId = ingredientIds.get('honey');
 
   const existingDemoDish = await prisma.dish.findFirst({
-    where: { ownerId: demoUser.id, titleUk: 'Борщ' },
+    where: { ownerId: demoUser.id, title: 'Борщ' },
   });
   if (existingDemoDish) {
     console.log('Demo dishes already present — skipping demo seed.');
@@ -65,9 +64,8 @@ async function seedDemoData(
 
   const borscht = await prisma.dish.create({
     data: {
-      locale: ContentLocale.UK,
-      titleUk: 'Борщ',
-      descriptionUk: 'Класичний український буряковий суп',
+      title: 'Борщ',
+      description: 'Класичний український буряковий суп',
       visibility: DishVisibility.PUBLIC,
       difficulty: DishDifficulty.MEDIUM,
       prepTime: 30,
@@ -76,12 +74,12 @@ async function seedDemoData(
       steps: [
         {
           order: 1,
-          instructionUk: 'Очистіть та наріжте овочі.',
+          description: 'Очистіть та наріжте овочі.',
           photoKey: null,
         },
         {
           order: 2,
-          instructionUk: 'Варіть буряк та капусту в бульйоні.',
+          description: 'Варіть буряк та капусту в бульйоні.',
           photoKey: null,
         },
       ],
@@ -122,9 +120,8 @@ async function seedDemoData(
 
   const honeyCake = await prisma.dish.create({
     data: {
-      locale: ContentLocale.UK,
-      titleUk: 'Медовик',
-      descriptionUk: 'Шаруватий медовий торт',
+      title: 'Медовик',
+      description: 'Шаруватий медовий торт',
       visibility: DishVisibility.PUBLIC,
       difficulty: DishDifficulty.HARD,
       prepTime: 60,
@@ -133,7 +130,7 @@ async function seedDemoData(
       steps: [
         {
           order: 1,
-          instructionUk: 'Змішайте мед з борошном та яйцями.',
+          description: 'Змішайте мед з борошном та яйцями.',
           photoKey: null,
         },
       ],
@@ -167,9 +164,8 @@ async function seedDemoData(
 
   const chicken = await prisma.dish.create({
     data: {
-      locale: ContentLocale.EN,
-      titleEn: 'Herb Roast Chicken',
-      descriptionEn: 'Roasted chicken with herbs',
+      title: 'Herb Roast Chicken',
+      description: 'Roasted chicken with herbs',
       visibility: DishVisibility.PUBLIC,
       difficulty: DishDifficulty.EASY,
       prepTime: 15,
@@ -178,7 +174,7 @@ async function seedDemoData(
       steps: [
         {
           order: 1,
-          instructionEn: 'Season chicken and roast at 180°C.',
+          description: 'Season chicken and roast at 180°C.',
           photoKey: null,
         },
       ],

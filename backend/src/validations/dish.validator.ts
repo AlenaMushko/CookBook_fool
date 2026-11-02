@@ -4,8 +4,15 @@ import { registry } from '../docs/openapi';
 import { uuidSchema } from './common';
 
 const ingredientObject = z.object({
-  ingredientName: z.string().trim().min(1).max(50),
-  measure: z.string().trim().min(1).max(50),
+  ingredientId: uuidSchema,
+  quantity: z.number().positive(),
+  unitId: uuidSchema,
+});
+
+const instructionObject = z.object({
+  title: z.string().trim().min(1).optional(),
+  description: z.string().trim().min(1),
+  photo: z.string().optional(),
 });
 
 export const IngredientSchema = registry.register(
@@ -13,17 +20,21 @@ export const IngredientSchema = registry.register(
   ingredientObject,
 );
 
+export const InstructionSchema = registry.register(
+  'Instruction',
+  instructionObject,
+);
+
 const createDishObject = z.object({
-  isConfident: z.boolean(),
   title: z.string().trim().min(3).max(30),
-  subtitle: z.string().trim().min(3).max(200).optional(),
   image: z.string().optional(),
-  description: z.string().trim().min(3).max(1000),
-  note: z.string().trim().min(5).max(200).optional(),
+  description: z.string().trim().min(3).max(1000).or(z.literal('')).optional(),
   preparationTime: z.number().int().positive().optional(),
-  difficulty: z.number().int().min(1).max(5).optional(),
-  ingredient: z.array(ingredientObject).min(1),
+  difficulty: z.number().int().min(1).max(5),
   categoryId: uuidSchema,
+  isConfident: z.boolean(),
+  ingredient: z.array(ingredientObject).optional(),
+  instructions: z.array(instructionObject).optional(),
 });
 
 export const CreateDishSchema = registry.register(

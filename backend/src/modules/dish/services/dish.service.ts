@@ -55,19 +55,14 @@ export class DishService {
 
     const dish = await this.dishRepository.createWithRelations(
       {
-        locale: dto.locale,
-        titleEn: dto.titleEn,
-        titleUk: dto.titleUk,
-        descriptionEn: dto.descriptionEn,
-        descriptionUk: dto.descriptionUk,
-        noteEn: dto.noteEn,
-        noteUk: dto.noteUk,
+        title: dto.title,
+        description: dto.description,
         visibility: dto.visibility,
         difficulty: dto.difficulty,
         prepTime: dto.prepTime,
         cookTime: dto.cookTime,
         baseServings: dto.baseServings,
-        steps: dto.steps as unknown as Prisma.InputJsonValue,
+        steps: (dto.steps ?? []) as unknown as Prisma.InputJsonValue,
         photos: (dto.photos ?? []) as unknown as Prisma.InputJsonValue,
         ownerId: userData.userId,
         categoryId: dto.categoryId,
@@ -76,8 +71,7 @@ export class DishService {
       },
       (dto.ingredientGroups ?? []).map((g) => ({
         tempId: g.tempId,
-        nameEn: g.nameEn,
-        nameUk: g.nameUk,
+        name: g.name,
         order: g.order,
       })),
       dto.ingredients,
@@ -111,16 +105,8 @@ export class DishService {
     }
 
     const dishData: Prisma.DishUncheckedUpdateInput = {
-      ...(dto.titleEn !== undefined && { titleEn: dto.titleEn }),
-      ...(dto.titleUk !== undefined && { titleUk: dto.titleUk }),
-      ...(dto.descriptionEn !== undefined && {
-        descriptionEn: dto.descriptionEn,
-      }),
-      ...(dto.descriptionUk !== undefined && {
-        descriptionUk: dto.descriptionUk,
-      }),
-      ...(dto.noteEn !== undefined && { noteEn: dto.noteEn }),
-      ...(dto.noteUk !== undefined && { noteUk: dto.noteUk }),
+      ...(dto.title !== undefined && { title: dto.title }),
+      ...(dto.description !== undefined && { description: dto.description }),
       ...(dto.visibility !== undefined && { visibility: dto.visibility }),
       ...(dto.difficulty !== undefined && { difficulty: dto.difficulty }),
       ...(dto.prepTime !== undefined && { prepTime: dto.prepTime }),
@@ -145,8 +131,7 @@ export class DishService {
       dto.ingredients
         ? (dto.ingredientGroups ?? []).map((g) => ({
             tempId: g.tempId,
-            nameEn: g.nameEn,
-            nameUk: g.nameUk,
+            name: g.name,
             order: g.order,
           }))
         : undefined,

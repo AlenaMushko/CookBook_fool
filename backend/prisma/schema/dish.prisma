@@ -81,8 +81,7 @@ model MeasurementUnit {
 model DishIngredientGroup {
   id     String  @id @default(uuid()) @db.Uuid
   dishId String  @db.Uuid
-  nameEn String?
-  nameUk String?
+  name   String?
   order  Int
 
   dish        Dish             @relation(fields: [dishId], references: [id], onDelete: Cascade)
@@ -131,13 +130,8 @@ model Dish {
   created DateTime @default(now())
   updated DateTime @updatedAt
 
-  locale        ContentLocale
-  titleEn       String?
-  titleUk       String?
-  descriptionEn String?
-  descriptionUk String?
-  noteEn        String?
-  noteUk        String?
+  title       String
+  description String?
 
   visibility DishVisibility
   difficulty DishDifficulty
@@ -172,7 +166,6 @@ model Dish {
   @@index([subcategoryId])
   @@index([areaId])
   @@index([visibility])
-  @@index([locale])
   @@index([created])
   @@map("dishes")
 }

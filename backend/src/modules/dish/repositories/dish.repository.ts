@@ -34,7 +34,7 @@ const dishDetailInclude = {
   },
   ingredientGroups: {
     orderBy: { order: 'asc' as const },
-    select: { id: true, nameEn: true, nameUk: true, order: true },
+    select: { id: true, name: true, order: true },
   },
   ingredients: {
     orderBy: { order: 'asc' as const },
@@ -45,7 +45,7 @@ const dishDetailInclude = {
       quantity: true,
       groupId: true,
       order: true,
-      ingredient: { select: { en: true, uk: true } },
+      ingredient: { select: { en: true, uk: true, image: true } },
     },
   },
   _count: { select: { likes: true } },
@@ -146,8 +146,7 @@ export class DishRepository {
     dishData: Prisma.DishUncheckedCreateInput,
     groups: Array<{
       tempId: string;
-      nameEn?: string;
-      nameUk?: string;
+      name?: string;
       order: number;
     }>,
     ingredients: Array<{
@@ -166,8 +165,7 @@ export class DishRepository {
         const created = await tx.dishIngredientGroup.create({
           data: {
             dishId: dish.id,
-            nameEn: group.nameEn,
-            nameUk: group.nameUk,
+            name: group.name,
             order: group.order,
           },
         });
@@ -201,8 +199,7 @@ export class DishRepository {
     dishData: Prisma.DishUncheckedUpdateInput,
     groups?: Array<{
       tempId: string;
-      nameEn?: string;
-      nameUk?: string;
+      name?: string;
       order: number;
     }>,
     ingredients?: Array<{
@@ -225,8 +222,7 @@ export class DishRepository {
           const created = await tx.dishIngredientGroup.create({
             data: {
               dishId: id,
-              nameEn: group.nameEn,
-              nameUk: group.nameUk,
+              name: group.name,
               order: group.order,
             },
           });
@@ -292,8 +288,7 @@ export class DishRepository {
     if (search) {
       and.push({
         OR: [
-          { titleEn: { contains: search, mode: 'insensitive' } },
-          { titleUk: { contains: search, mode: 'insensitive' } },
+          { title: { contains: search, mode: 'insensitive' } },
           {
             category: {
               OR: [
@@ -342,7 +337,7 @@ export class DishRepository {
       case DishListSort.OLDEST:
         return [{ created: 'asc' }, { id: 'asc' }];
       case DishListSort.ALPHABETICAL:
-        return [{ titleUk: 'asc' }, { titleEn: 'asc' }, { id: 'asc' }];
+        return [{ title: 'asc' }, { id: 'asc' }];
       case DishListSort.COOK_TIME:
         return [
           { cookTime: { sort: 'asc', nulls: 'last' } },

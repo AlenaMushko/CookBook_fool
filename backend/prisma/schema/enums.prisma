@@ -14,8 +14,3 @@ enum MeasurementUnitType {
   VOLUME
   COUNT
 }
-
-enum ContentLocale {
-  UK
-  EN
-}

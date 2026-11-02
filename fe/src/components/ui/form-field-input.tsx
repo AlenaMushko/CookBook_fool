@@ -23,6 +23,7 @@ export type FormFieldInputProps = {
   description?: React.ReactNode
   id?: string
   labelClassName?: string
+  inputClassName?: string
   className?: string
   footer?: React.ReactNode
   required?: boolean
@@ -38,6 +39,7 @@ export function FormFieldInput({
   description,
   id: idProp,
   labelClassName,
+  inputClassName,
   className,
   footer,
   required,
@@ -107,7 +109,7 @@ export function FormFieldInput({
             </InputGroupAddon>
           </InputGroup>
         ) : (
-          <Input {...controlProps} />
+          <Input className={inputClassName} {...controlProps} />
         )}
       </FieldContent>
 

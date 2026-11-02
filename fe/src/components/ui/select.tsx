@@ -39,7 +39,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex w-full items-center justify-between gap-2",
+        "flex w-full cursor-pointer items-center justify-between gap-2",
         "rounded-[7px] border-2 border-border bg-input-bg",
         "font-sans text-btn font-normal text-foreground whitespace-nowrap",
         "transition-colors outline-none",
@@ -144,7 +144,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-default items-center gap-2",
+        "relative flex w-full cursor-pointer items-center gap-2",
         "rounded-[6px] py-2 pr-8 pl-3",
         "font-sans text-btn font-normal text-foreground outline-hidden select-none",
         "focus:bg-secondary focus:text-foreground",

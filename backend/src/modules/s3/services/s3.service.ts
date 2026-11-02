@@ -42,7 +42,7 @@ export class S3Service {
   async uploadSingleFile(
     file: Express.Multer.File,
     folderName: string,
-  ): Promise<{ key: string }> {
+  ): Promise<{ key: string; url: string }> {
     if (!S3_FOLDERS.includes(folderName as S3Folder)) {
       throw new ForbiddenException('Invalid folder name');
     }
@@ -63,7 +63,7 @@ export class S3Service {
       }),
     );
 
-    return { key };
+    return { key, url: await this.getSignedGetUrl(key) };
   }
 
   async getSignedGetUrl(
