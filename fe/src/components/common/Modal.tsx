@@ -20,8 +20,9 @@ type ModalProps = {
   onSubmit?: () => void | Promise<void>
   onClose?: () => void
   cancelLabel?: string
+  cancelVariant?: "primary" | "secondary" | "destructive"
   submitLabel?: string
-  submitVariant?: "primary" | "destructive"
+  submitVariant?: "primary" | "secondary" | "destructive"
   isSubmitting?: boolean
   showCloseButton?: boolean
   className?: string
@@ -35,6 +36,7 @@ export function Modal({
   onSubmit,
   onClose,
   cancelLabel = "Cancel",
+  cancelVariant = "secondary",
   submitLabel = "Save",
   submitVariant = "primary",
   isSubmitting = false,
@@ -70,7 +72,7 @@ export function Modal({
               render={
                 <Button
                   type="button"
-                  variant="secondary"
+                  variant={cancelVariant}
                   size="modal"
                   disabled={isSubmitting}
                 />

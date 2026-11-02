@@ -11,28 +11,38 @@ const emptyIngredient = {
   quantity: '1',
 }
 
-export function createRecipeSchema(t: TFunction) {
+export function createRecipeSchema(
+  t: TFunction,
+  mode: 'publish' | 'draft' = 'publish',
+) {
+  const draft = mode === 'draft'
+  const title = z
+    .string()
+    .trim()
+    .max(30, { message: t('recipe.create.titleLength') })
+  const photos = z.array(
+    z.object({
+      key: z.string().min(1),
+      url: z.string().min(1),
+      order: z.number().int().nonnegative(),
+    }),
+  )
+
   return z
     .object({
-      title: z
-        .string()
-        .trim()
-        .min(3, { message: t('recipe.create.titleLength') })
-        .max(30, { message: t('recipe.create.titleLength') }),
+      title: draft
+        ? title
+        : title.min(3, { message: t('recipe.create.titleLength') }),
       description: z.string(),
       prepTime: z.string(),
-      categoryId: z.string().min(1, { message: t(TEXT.ERROR.REQUIRED_FIELD) }),
+      categoryId: draft
+        ? z.string()
+        : z.string().min(1, { message: t(TEXT.ERROR.REQUIRED_FIELD) }),
       difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']),
       visibility: z.enum(['PUBLIC', 'PRIVATE']),
-      photos: z
-        .array(
-          z.object({
-            key: z.string().min(1),
-            url: z.string().min(1),
-            order: z.number().int().nonnegative(),
-          }),
-        )
-        .min(1, { message: t('recipe.create.photoRequired') }),
+      photos: draft
+        ? photos
+        : photos.min(1, { message: t('recipe.create.photoRequired') }),
       ingredients: z.array(
         z.object({
           ingredient: z
@@ -63,9 +73,10 @@ export function createRecipeSchema(t: TFunction) {
     })
     .superRefine((values, ctx) => {
       const description = values.description.trim()
+      const descriptionTooShort = !draft && description.length < 3
       if (
         description &&
-        (description.length < 3 || description.length > 1000)
+        (descriptionTooShort || description.length > 1000)
       ) {
         ctx.addIssue({
           code: 'custom',
@@ -83,7 +94,7 @@ export function createRecipeSchema(t: TFunction) {
         })
       }
 
-      if (values.ingredients.length === 0) {
+      if (!draft && values.ingredients.length === 0) {
         ctx.addIssue({
           code: 'custom',
           message: t('recipe.create.ingredientRequired'),
@@ -92,7 +103,7 @@ export function createRecipeSchema(t: TFunction) {
       }
 
       values.ingredients.forEach((row, index) => {
-        if (!row.ingredient) {
+        if (!draft && !row.ingredient) {
           ctx.addIssue({
             code: 'custom',
             message: t(TEXT.ERROR.REQUIRED_FIELD),
@@ -100,7 +111,7 @@ export function createRecipeSchema(t: TFunction) {
           })
         }
 
-        if (!row.unitId) {
+        if (!draft && !row.unitId) {
           ctx.addIssue({
             code: 'custom',
             message: t(TEXT.ERROR.REQUIRED_FIELD),
@@ -108,8 +119,12 @@ export function createRecipeSchema(t: TFunction) {
           })
         }
 
-        const quantity = Number(row.quantity.replace(',', '.'))
-        if (!row.quantity.trim() || !Number.isFinite(quantity) || quantity < 1) {
+        const quantityText = row.quantity.trim()
+        const quantity = Number(quantityText.replace(',', '.'))
+        if (
+          (draft ? quantityText.length > 0 : true) &&
+          (!quantityText || !Number.isFinite(quantity) || quantity < 1)
+        ) {
           ctx.addIssue({
             code: 'custom',
             message: t('recipe.create.quantityInvalid'),
@@ -117,6 +132,8 @@ export function createRecipeSchema(t: TFunction) {
           })
         }
       })
+
+      if (draft) return
 
       values.steps.forEach((step, index) => {
         const started =

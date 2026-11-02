@@ -1,4 +1,6 @@
-import { LOCAL_STORAGE } from '@constants/localStorage'
+import { LocalStorageKey } from '@constants/localStorage'
+
+import { getLocalStorage, setLocalStorage } from './local-storage'
 
 export const generateUuid = (): string => {
   const bytes = new Uint8Array(16)
@@ -21,11 +23,11 @@ export const generateUuid = (): string => {
 }
 
 export const getDeviceId = (): string => {
-  let deviceId = localStorage.getItem(LOCAL_STORAGE.DEVICE_ID)
+  let deviceId = getLocalStorage(LocalStorageKey.DeviceId)
 
   if (!deviceId) {
     deviceId = generateUuid()
-    localStorage.setItem(LOCAL_STORAGE.DEVICE_ID, deviceId)
+    setLocalStorage(LocalStorageKey.DeviceId, deviceId)
   }
 
   return deviceId

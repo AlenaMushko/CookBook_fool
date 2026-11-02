@@ -162,7 +162,11 @@
       "clearConfirmYes": "Yes",
       "clearConfirmNo": "No",
       "saveDraft": "Save draft",
-      "draftUnavailable": "Drafts are not saved yet"
+      "draftSaved": "Draft saved",
+      "draftResumeTitle": "Continue this recipe?",
+      "draftResumeDescription": "You started a recipe and didn't finish saving it. Continue or clear it?",
+      "draftResumeContinue": "Continue",
+      "draftResumeClear": "Clear"
     }
   },
   "forgot_password": "Forgot password?",

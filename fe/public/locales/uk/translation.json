@@ -164,7 +164,11 @@
       "clearConfirmYes": "Так",
       "clearConfirmNo": "Ні",
       "saveDraft": "Зберегти чернетку",
-      "draftUnavailable": "Чернетки ще не зберігаються"
+      "draftSaved": "Чернетку збережено",
+      "draftResumeTitle": "Продовжити цей рецепт?",
+      "draftResumeDescription": "Ви раніше створювали рецепт і не закінчили збереження. Продовжити чи очистити?",
+      "draftResumeContinue": "Продовжити",
+      "draftResumeClear": "Очистити"
     }
   },
   "forgot_password": "Забули пароль?",

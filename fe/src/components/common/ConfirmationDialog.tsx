@@ -10,7 +10,9 @@ type ConfirmationDialogProps = {
   onConfirm?: () => void | Promise<void>
   onClose?: () => void
   cancelLabel?: string
+  cancelVariant?: "primary" | "secondary" | "destructive"
   confirmLabel?: string
+  confirmVariant?: "primary" | "secondary" | "destructive"
   isSubmitting?: boolean
 }
 
@@ -22,7 +24,9 @@ export const ConfirmationDialog = ({
   onConfirm,
   onClose,
   cancelLabel = "Cancel",
+  cancelVariant = "secondary",
   confirmLabel = "Delete",
+  confirmVariant = "destructive",
   isSubmitting,
 }: ConfirmationDialogProps) => {
   return (
@@ -33,8 +37,9 @@ export const ConfirmationDialog = ({
       onSubmit={onConfirm}
       onClose={onClose}
       cancelLabel={cancelLabel}
+      cancelVariant={cancelVariant}
       submitLabel={confirmLabel}
-      submitVariant="destructive"
+      submitVariant={confirmVariant}
       isSubmitting={isSubmitting}
     >
       {children}

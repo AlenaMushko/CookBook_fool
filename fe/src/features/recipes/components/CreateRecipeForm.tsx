@@ -3,7 +3,12 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { Broom, Globe, Lock, Plus, Save, Send, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import {
+  Controller,
+  useFieldArray,
+  useForm,
+  type FieldPath,
+} from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import { ConfirmationDialog } from '@components/common/ConfirmationDialog'
@@ -25,6 +30,11 @@ import { recipesApi } from '../api/recipes.api'
 import { recipeQueryKeys } from '../api/recipes.queries'
 import { toCreateDishPayload } from '../lib/create-dish-payload'
 import { localizedName, unitSymbol } from '../lib/recipe-locale'
+import {
+  clearRecipeDraft,
+  readRecipeDraft,
+  saveRecipeDraft,
+} from '../lib/recipe-draft'
 import { createRecipeSchema } from '../schemas/recipe.schema'
 import type {
   CreateRecipeFormValues,
@@ -98,13 +108,18 @@ function isRecipeStarted(values: CreateRecipeFormValues) {
 export function CreateRecipeForm() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const [savedDraft] = useState(readRecipeDraft)
   const [clearOpen, setClearOpen] = useState(false)
+  const [draftOpen, setDraftOpen] = useState(savedDraft !== null)
 
   const schema = useMemo(() => createRecipeSchema(t), [t])
+  const draftSchema = useMemo(() => createRecipeSchema(t, 'draft'), [t])
   const {
     register,
     control,
     handleSubmit,
+    setError,
+    clearErrors,
     setValue,
     getValues,
     reset,
@@ -113,7 +128,7 @@ export function CreateRecipeForm() {
     formState: { errors, isSubmitting, isSubmitted },
   } = useForm<CreateRecipeFormValues>({
     resolver: zodResolver(schema),
-    defaultValues: emptyForm(),
+    defaultValues: savedDraft ?? emptyForm(),
   })
 
   const galleryPhotos = watch('photos')
@@ -231,6 +246,7 @@ export function CreateRecipeForm() {
       ...values.steps.flatMap((step) => step.photos.map((photo) => photo.key)),
     ]
     reset(emptyForm())
+    clearRecipeDraft()
     await deleteStoredFiles(keys)
   }
 
@@ -243,26 +259,39 @@ export function CreateRecipeForm() {
   }
 
   const handleSaveDraft = async () => {
-    try {
-      const values = getValues()
-      const dish = toCreateDishPayload(values);
-      // TODO: Save draft to local storage
-      console.log({dish})
+    const values = getValues()
+    const parsed = draftSchema.safeParse(values)
+    if (!parsed.success) {
+      clearErrors()
+      for (const issue of parsed.error.issues) {
+        const path = issue.path.join('.')
+        if (!path) continue
+        setError(path as FieldPath<CreateRecipeFormValues>, {
+          message: issue.message,
+        })
+      }
+      return
+    }
 
+    clearErrors()
+    try {
+      saveRecipeDraft(values)
+      showToast(t('recipe.create.draftSaved'), 'success')
       void navigate({
-        to: Routes.RECIPES,      
+        to: Routes.RECIPES,
       })
     } catch (error) {
-    showToast(
-      error instanceof Error ? error.message : t('error.serverError'),
-      'error',
-    )
+      showToast(
+        error instanceof Error ? error.message : t('error.serverError'),
+        'error',
+      )
     }
   }
 
   const onSubmit = handleSubmit(async (values) => {
     try {
       const dish = await recipesApi.create(toCreateDishPayload(values))
+      clearRecipeDraft()
 
       showToast(t('recipe.create.published'), 'success')
       void navigate({
@@ -675,6 +704,21 @@ export function CreateRecipeForm() {
       }}
     >
       {t('recipe.create.clearConfirmDescription')}
+    </ConfirmationDialog>
+    <ConfirmationDialog
+      open={draftOpen}
+      onOpenChange={setDraftOpen}
+      title={t('recipe.create.draftResumeTitle')}
+      cancelLabel={t('recipe.create.draftResumeContinue')}
+      cancelVariant="primary"
+      confirmLabel={t('recipe.create.draftResumeClear')}
+      confirmVariant="secondary"
+      onConfirm={() => {
+        setDraftOpen(false)
+        void clearRecipe()
+      }}
+    >
+      {t('recipe.create.draftResumeDescription')}
     </ConfirmationDialog>
     </>
   )
