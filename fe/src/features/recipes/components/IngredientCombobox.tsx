@@ -24,7 +24,7 @@ type IngredientComboboxProps = {
   className?: string
 }
 
-function useDebounced(value: string, delay = 250) {
+const useDebounced = (value: string, delay = 250) => {
   const [debounced, setDebounced] = useState(value)
 
   useEffect(() => {
@@ -35,12 +35,12 @@ function useDebounced(value: string, delay = 250) {
   return debounced
 }
 
-export function IngredientCombobox({
+export const IngredientCombobox = ({
   value,
   onChange,
   invalid = false,
   className,
-}: IngredientComboboxProps) {
+}: IngredientComboboxProps) => {
   const { t, i18n } = useTranslation()
   const [query, setQuery] = useState('')
   const search = useDebounced(query.trim())

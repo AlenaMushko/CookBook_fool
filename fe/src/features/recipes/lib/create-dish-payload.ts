@@ -5,29 +5,33 @@ import type {
   RecipeStepDraft,
 } from '../types/recipe.types'
 
-function filledText(value: string) {
+const filledText = (value: string) => {
   const trimmed = value.trim()
   return trimmed || undefined
 }
 
-function toIngredients(
+const toIngredients = (
   rows: RecipeIngredientDraft[],
-): CreateDishPayload['ingredients'] {
+  groupIds: Set<string>,
+): CreateDishPayload['ingredients'] => {
   return rows
     .flatMap((row) => {
       if (!row.ingredient || !row.unitId || !row.quantity.trim()) return []
+      const groupTempId =
+        row.groupId && groupIds.has(row.groupId) ? row.groupId : undefined
       return [
         {
           ingredientId: row.ingredient.id,
           unitId: row.unitId,
           quantity: Number(row.quantity.replace(',', '.')),
+          ...(groupTempId ? { groupTempId } : {}),
         },
       ]
     })
     .map((row, order) => ({ ...row, order }))
 }
 
-function toSteps(steps: RecipeStepDraft[]): CreateDishPayload['steps'] {
+const toSteps = (steps: RecipeStepDraft[]): CreateDishPayload['steps'] => {
   return steps
     .flatMap((step) => {
       const description = step.description.trim()
@@ -48,20 +52,38 @@ function toSteps(steps: RecipeStepDraft[]): CreateDishPayload['steps'] {
     .map((step, index) => ({ ...step, order: index + 1 }))
 }
 
-export function toCreateDishPayload(
+export const toCreateDishPayload = (
   values: CreateRecipeFormValues,
-): CreateDishPayload {
+  groups: { id: string; name?: string; order: number }[] = [],
+): CreateDishPayload => {
   const description = filledText(values.description)
   const prepTime = filledText(values.prepTime)
+  const ingredients = toIngredients(
+    values.ingredients,
+    new Set(groups.map((group) => group.id)),
+  )
+  const usedGroups = new Set(
+    ingredients.flatMap((item) => (item.groupTempId ? [item.groupTempId] : [])),
+  )
+  const ingredientGroups = groups
+    .filter((group) => usedGroups.has(group.id))
+    .sort((a, b) => a.order - b.order)
+    .map((group) => ({
+      tempId: group.id,
+      order: group.order,
+      ...(group.name ? { name: group.name } : {}),
+    }))
 
   return {
     title: values.title.trim(),
     ...(description ? { description } : {}),
     ...(prepTime ? { prepTime: Number(prepTime) } : {}),
+    baseServings: Number(values.servings),
     visibility: values.visibility,
     difficulty: values.difficulty,
     categoryId: values.categoryId,
-    ingredients: toIngredients(values.ingredients),
+    ...(ingredientGroups.length > 0 ? { ingredientGroups } : {}),
+    ingredients,
     steps: toSteps(values.steps),
     photos: values.photos.map(({ key, order }) => ({ key, order })),
   }

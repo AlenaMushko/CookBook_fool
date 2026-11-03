@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { useBlocker, useNavigate } from '@tanstack/react-router'
 import { Broom, Globe, Lock, Plus, Save, Send, X } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Controller,
   useFieldArray,
@@ -11,6 +11,7 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
+import { queryClient } from '@api/queryClient'
 import { ConfirmationDialog } from '@components/common/ConfirmationDialog'
 import { Button } from '@components/ui/button'
 import { Field, FieldError, FieldLabel } from '@components/ui/field'
@@ -23,6 +24,7 @@ import {
   SelectValue,
 } from '@components/ui/select'
 import { Textarea } from '@components/ui/textarea'
+import { DISH_PHOTO_LIMIT, STEP_PHOTO_LIMIT } from '@constants/recipe'
 import { Routes } from '@constants/routes'
 import { showToast } from '@/lib/toast'
 
@@ -31,6 +33,7 @@ import { recipeQueryKeys } from '../api/recipes.queries'
 import { toCreateDishPayload } from '../lib/create-dish-payload'
 import { localizedName, unitSymbol } from '../lib/recipe-locale'
 import {
+  RECIPE_DRAFT_AUTOSAVE_MS,
   clearRecipeDraft,
   readRecipeDraft,
   saveRecipeDraft,
@@ -38,6 +41,7 @@ import {
 import { createRecipeSchema } from '../schemas/recipe.schema'
 import type {
   CreateRecipeFormValues,
+  DishDetails,
   DishDifficulty,
   DishVisibility,
   RecipeIngredientDraft,
@@ -48,6 +52,7 @@ import { QuantityField } from './QuantityField'
 import { RecipePhotosField } from './RecipePhotosField'
 import { SectionCard } from './SectionCard'
 import { SegmentedChoice } from './SegmentedChoice'
+import { ServingsField } from './ServingsField'
 
 const formLabelClass = 'text-label uppercase tracking-[0.12em]'
 
@@ -67,6 +72,7 @@ const emptyForm = (): CreateRecipeFormValues => ({
   title: '',
   description: '',
   prepTime: '',
+  servings: '6',
   categoryId: '',
   difficulty: 'EASY',
   visibility: 'PUBLIC',
@@ -75,11 +81,19 @@ const emptyForm = (): CreateRecipeFormValues => ({
   steps: [emptyStep()],
 })
 
-function isRecipeStarted(values: CreateRecipeFormValues) {
+const photoKeys = (values: CreateRecipeFormValues) => {
+  return [
+    ...values.photos.map((photo) => photo.key),
+    ...values.steps.flatMap((step) => step.photos.map((photo) => photo.key)),
+  ]
+}
+
+const isRecipeStarted = (values: CreateRecipeFormValues) => {
   if (
     values.title.trim() ||
     values.description.trim() ||
     values.prepTime.trim() ||
+    values.servings.trim() !== '6' ||
     values.categoryId ||
     values.difficulty !== 'EASY' ||
     values.visibility !== 'PUBLIC' ||
@@ -105,12 +119,29 @@ function isRecipeStarted(values: CreateRecipeFormValues) {
   )
 }
 
-export function CreateRecipeForm() {
+export const CreateRecipeForm = ({
+  mode = 'create',
+  recipeId,
+  initialValues,
+  ingredientGroups = [],
+}: {
+  mode?: 'create' | 'edit'
+  recipeId?: string
+  initialValues?: CreateRecipeFormValues
+  ingredientGroups?: DishDetails['ingredientGroups']
+}) => {
+  const isEdit = mode === 'edit'
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const [savedDraft] = useState(readRecipeDraft)
+  const ignoreAutosave = useRef(false)
+  const [savedDraft] = useState(() => (isEdit ? null : readRecipeDraft()))
+  const [photoLimitNote, setPhotoLimitNote] = useState(false)
+  const [stepPhotoNote, setStepPhotoNote] = useState<number | null>(null)
   const [clearOpen, setClearOpen] = useState(false)
   const [draftOpen, setDraftOpen] = useState(savedDraft !== null)
+  const [originalKeys] = useState(
+    () => new Set(initialValues ? photoKeys(initialValues) : []),
+  )
 
   const schema = useMemo(() => createRecipeSchema(t), [t])
   const draftSchema = useMemo(() => createRecipeSchema(t, 'draft'), [t])
@@ -128,7 +159,42 @@ export function CreateRecipeForm() {
     formState: { errors, isSubmitting, isSubmitted },
   } = useForm<CreateRecipeFormValues>({
     resolver: zodResolver(schema),
-    defaultValues: savedDraft ?? emptyForm(),
+    defaultValues: initialValues ?? savedDraft ?? emptyForm(),
+  })
+
+  const persistDraft = useCallback(() => {
+    if (isEdit || ignoreAutosave.current) return
+    const values = getValues()
+    if (!isRecipeStarted(values)) return
+    saveRecipeDraft(values)
+  }, [getValues, isEdit])
+
+  useEffect(() => {
+    if (isEdit) return
+
+    const onPageHide = () => persistDraft()
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') persistDraft()
+    }
+
+    const intervalId = window.setInterval(persistDraft, RECIPE_DRAFT_AUTOSAVE_MS)
+    window.addEventListener('pagehide', onPageHide)
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => {
+      window.clearInterval(intervalId)
+      window.removeEventListener('pagehide', onPageHide)
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
+  }, [isEdit, persistDraft])
+
+  useBlocker({
+    disabled: isEdit,
+    enableBeforeUnload: false,
+    shouldBlockFn: () => {
+      persistDraft()
+      return false
+    },
   })
 
   const galleryPhotos = watch('photos')
@@ -161,6 +227,11 @@ export function CreateRecipeForm() {
       keys.map((key) => recipesApi.deleteFile(key).catch(() => undefined)),
     )
 
+  const deleteUnsavedFile = (key: string) => {
+    if (originalKeys.has(key)) return
+    void recipesApi.deleteFile(key).catch(() => undefined)
+  }
+
   const uploadPhotos = async (files: File[]) => {
     if (files.length === 0) return []
     const uploaded: { key: string; url: string }[] = []
@@ -181,7 +252,14 @@ export function CreateRecipeForm() {
   }
 
   const addPhotos = async (files: File[]) => {
-    const uploaded = await uploadPhotos(files)
+    const room = DISH_PHOTO_LIMIT - getValues('photos').length
+    if (room <= 0) {
+      setPhotoLimitNote(true)
+      return
+    }
+    const accepted = files.slice(0, room)
+    setPhotoLimitNote(accepted.length < files.length)
+    const uploaded = await uploadPhotos(accepted)
     if (!uploaded?.length) return
     setValue(
       'photos',
@@ -201,11 +279,19 @@ export function CreateRecipeForm() {
         .map((photo, order) => ({ ...photo, order })),
       { shouldDirty: true, shouldValidate: isSubmitted },
     )
-    void recipesApi.deleteFile(key).catch(() => undefined)
+    deleteUnsavedFile(key)
+    if (getValues('photos').length < DISH_PHOTO_LIMIT) setPhotoLimitNote(false)
   }
 
   const addStepPhotos = async (index: number, files: File[]) => {
-    const uploaded = await uploadPhotos(files)
+    const room = STEP_PHOTO_LIMIT - getValues(`steps.${index}.photos`).length
+    if (room <= 0) {
+      setStepPhotoNote(index)
+      return
+    }
+    const accepted = files.slice(0, room)
+    setStepPhotoNote(accepted.length < files.length ? index : null)
+    const uploaded = await uploadPhotos(accepted)
     if (!uploaded?.length) return
     setValue(
       `steps.${index}.photos`,
@@ -225,28 +311,38 @@ export function CreateRecipeForm() {
         .map((photo, order) => ({ ...photo, order })),
       { shouldDirty: true, shouldValidate: isSubmitted },
     )
-    void recipesApi.deleteFile(key).catch(() => undefined)
+    deleteUnsavedFile(key)
+    if (
+      stepPhotoNote === index &&
+      getValues(`steps.${index}.photos`).length < STEP_PHOTO_LIMIT
+    ) {
+      setStepPhotoNote(null)
+    }
   }
 
   const removeStep = (index: number) => {
     void deleteStoredFiles(
-      getValues(`steps.${index}.photos`).map((photo) => photo.key),
+      getValues(`steps.${index}.photos`)
+        .map((photo) => photo.key)
+        .filter((key) => !originalKeys.has(key)),
     )
     if (steps.fields.length === 1) {
+      setStepPhotoNote(null)
       setValue('steps.0', emptyStep(), { shouldDirty: true })
       return
     }
+    setStepPhotoNote(null)
     steps.remove(index)
   }
 
   const clearRecipe = async () => {
-    const values = getValues()
-    const keys = [
-      ...values.photos.map((photo) => photo.key),
-      ...values.steps.flatMap((step) => step.photos.map((photo) => photo.key)),
-    ]
-    reset(emptyForm())
-    clearRecipeDraft()
+    const keys = photoKeys(getValues()).filter((key) => !originalKeys.has(key))
+    ignoreAutosave.current = true
+    if (!isEdit) clearRecipeDraft()
+    reset(initialValues ?? emptyForm())
+    setPhotoLimitNote(false)
+    setStepPhotoNote(null)
+    ignoreAutosave.current = false
     await deleteStoredFiles(keys)
   }
 
@@ -276,6 +372,7 @@ export function CreateRecipeForm() {
     clearErrors()
     try {
       saveRecipeDraft(values)
+      ignoreAutosave.current = true
       showToast(t('recipe.create.draftSaved'), 'success')
       void navigate({
         to: Routes.RECIPES,
@@ -289,8 +386,32 @@ export function CreateRecipeForm() {
   }
 
   const onSubmit = handleSubmit(async (values) => {
+    const payload = {
+      ...toCreateDishPayload(values, ingredientGroups),
+      description: values.description.trim(),
+      prepTime: values.prepTime.trim() ? Number(values.prepTime.trim()) : null,
+    }
+
     try {
+      if (isEdit && recipeId) {
+        await recipesApi.update(recipeId, payload)
+        const kept = new Set(photoKeys(values))
+        await deleteStoredFiles(
+          [...originalKeys].filter((key) => !kept.has(key)),
+        )
+        void queryClient.invalidateQueries({
+          queryKey: recipeQueryKeys.dish(recipeId),
+        })
+        showToast(t('recipe.edit.saved'), 'success')
+        void navigate({
+          to: Routes.RECIPE,
+          params: { recipeId },
+        })
+        return
+      }
+
       const dish = await recipesApi.create(toCreateDishPayload(values))
+      ignoreAutosave.current = true
       clearRecipeDraft()
 
       showToast(t('recipe.create.published'), 'success')
@@ -310,7 +431,7 @@ export function CreateRecipeForm() {
     <>
     <form className="flex flex-col" onSubmit={onSubmit} noValidate>
       <h1 className="font-serif text-[28px] leading-[42px] font-normal text-foreground italic">
-        {t('recipe.create.title')}
+        {isEdit ? t('recipe.edit.title') : t('recipe.create.title')}
       </h1>
 
       <div className="mt-7 flex flex-col gap-[18px]">
@@ -454,6 +575,7 @@ export function CreateRecipeForm() {
               hint={t('recipe.create.photoHint')}
               photos={galleryPhotos}
               error={errors.photos?.message}
+              notice={photoLimitNote ? t('recipe.create.photoLimit') : undefined}
               disabled={isSubmitting}
               onSelect={(files) => void addPhotos(files)}
               onRemove={removePhoto}
@@ -462,10 +584,24 @@ export function CreateRecipeForm() {
         </SectionCard>
 
         <SectionCard title={t('recipe.create.ingredients')}>
-          <div className="hidden grid-cols-[minmax(0,1fr)_112px_76px_28px] gap-x-[7px] pt-1.5 pl-0.5 md:grid">
-            <span className="font-sans text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
-              {t('recipe.create.ingredient')}
-            </span>
+          <div className="max-w-sm">
+            <Controller
+              name="servings"
+              control={control}
+              render={({ field }) => (
+                <ServingsField
+                  value={field.value}
+                  onChange={field.onChange}
+                  invalid={Boolean(errors.servings)}
+                  error={errors.servings?.message}
+                  disabled={isSubmitting}
+                />
+              )}
+            />
+          </div>
+          <div className="mt-6 hidden grid-cols-[minmax(0,1fr)_40px_112px_76px] gap-x-[7px] pl-0.5 md:grid">
+            <span />
+            <span />
             <span className="font-sans text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
               {t('recipe.create.qty')}
             </span>
@@ -474,13 +610,13 @@ export function CreateRecipeForm() {
             </span>
           </div>
 
-          <div className="flex flex-col gap-2 pt-2">
+          <div className="flex flex-col pt-2">
             {ingredients.fields.map((field, index) => (
               <div
                 key={field.id}
-                className="grid grid-cols-[1fr_1fr_28px] items-start gap-x-[7px] gap-y-2 md:grid-cols-[minmax(0,1fr)_112px_76px_28px]"
+                className="grid grid-cols-[minmax(0,1fr)_40px] items-start gap-x-[7px] gap-y-2 border-b border-divider py-3 last:border-b-0 md:grid-cols-[minmax(0,1fr)_40px_112px_76px]"
               >
-                <div className="col-span-3 md:col-span-1">
+                <div className="min-w-0">
                   <Controller
                     name={`ingredients.${index}.ingredient`}
                     control={control}
@@ -501,21 +637,41 @@ export function CreateRecipeForm() {
                   ) : null}
                 </div>
 
-                <Controller
-                  name={`ingredients.${index}.quantity`}
-                  control={control}
-                  render={({ field: quantityField }) => (
-                    <QuantityField
-                      value={quantityField.value}
-                      onChange={quantityField.onChange}
-                      onBlur={quantityField.onBlur}
-                      disabled={isSubmitting}
-                      error={errors.ingredients?.[index]?.quantity?.message}
-                    />
-                  )}
-                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label={t('recipe.create.removeIngredient')}
+                  disabled={isSubmitting}
+                  onClick={() => {
+                    if (ingredients.fields.length === 1) {
+                      setValue('ingredients.0', emptyIngredient(), {
+                        shouldDirty: true,
+                      })
+                      return
+                    }
+                    ingredients.remove(index)
+                  }}
+                >
+                  <X strokeWidth={1.5} />
+                </Button>
 
-                <div>
+                <div className="col-span-2 grid grid-cols-2 gap-[7px] md:contents">
+                  <Controller
+                    name={`ingredients.${index}.quantity`}
+                    control={control}
+                    render={({ field: quantityField }) => (
+                      <QuantityField
+                        value={quantityField.value}
+                        onChange={quantityField.onChange}
+                        onBlur={quantityField.onBlur}
+                        disabled={isSubmitting}
+                        error={errors.ingredients?.[index]?.quantity?.message}
+                      />
+                    )}
+                  />
+
+                  <div>
                   <Controller
                     name={`ingredients.${index}.unitId`}
                     control={control}
@@ -554,26 +710,8 @@ export function CreateRecipeForm() {
                       {errors.ingredients[index]?.unitId?.message}
                     </FieldError>
                   ) : null}
+                  </div>
                 </div>
-
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  aria-label={t('recipe.create.removeIngredient')}
-                  disabled={isSubmitting}
-                  onClick={() => {
-                    if (ingredients.fields.length === 1) {
-                      setValue('ingredients.0', emptyIngredient(), {
-                        shouldDirty: true,
-                      })
-                      return
-                    }
-                    ingredients.remove(index)
-                  }}
-                >
-                  <X strokeWidth={1.5} />
-                </Button>
               </div>
             ))}
           </div>
@@ -625,6 +763,12 @@ export function CreateRecipeForm() {
                       label={t('recipe.create.stepPhoto')}
                       hint={t('recipe.create.stepPhotoHint')}
                       photos={stepValues[index]?.photos ?? []}
+                      error={errors.steps?.[index]?.photos?.message}
+                      notice={
+                        stepPhotoNote === index
+                          ? t('recipe.create.stepPhotoLimit')
+                          : undefined
+                      }
                       disabled={isSubmitting}
                       onSelect={(files) => void addStepPhotos(index, files)}
                       onRemove={(key) => removeStepPhoto(index, key)}
@@ -657,6 +801,7 @@ export function CreateRecipeForm() {
       </div>
 
       <div className="flex flex-col gap-3 pt-[26px]">
+        {isEdit ? null : (
         <div className="grid grid-cols-2 gap-3">
           <Button
             type="button"
@@ -679,16 +824,23 @@ export function CreateRecipeForm() {
             {t('recipe.create.saveDraft')}
           </Button>
         </div>
+        )}
         <Button
           type="submit"
           variant="primary"
           size="lg"
           className="w-full"
           isLoading={isSubmitting}
-          loadingText={t('recipe.create.publishing')}
+          loadingText={
+            isEdit ? t('recipe.edit.saving') : t('recipe.create.publishing')
+          }
         >
-          <Send strokeWidth={1.5} className="size-4" />
-          {t('recipe.create.publish')}
+          {isEdit ? (
+            <Save strokeWidth={1.5} className="size-4" />
+          ) : (
+            <Send strokeWidth={1.5} className="size-4" />
+          )}
+          {isEdit ? t('recipe.edit.save') : t('recipe.create.publish')}
         </Button>
       </div>
     </form>
@@ -705,6 +857,7 @@ export function CreateRecipeForm() {
     >
       {t('recipe.create.clearConfirmDescription')}
     </ConfirmationDialog>
+    {isEdit ? null : (
     <ConfirmationDialog
       open={draftOpen}
       onOpenChange={setDraftOpen}
@@ -720,6 +873,7 @@ export function CreateRecipeForm() {
     >
       {t('recipe.create.draftResumeDescription')}
     </ConfirmationDialog>
+    )}
     </>
   )
 }

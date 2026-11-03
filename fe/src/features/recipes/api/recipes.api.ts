@@ -7,6 +7,7 @@ import type {
   CreateDishPayload,
   CreatedDish,
   DishCategory,
+  DishDetails,
   MeasurementUnit,
 } from '../types/recipe.types'
 
@@ -33,9 +34,34 @@ export const recipesApi = {
     return apiJson<ListResponse<MeasurementUnit>>(ApiRoutes.measurementUnits.list)
   },
 
+  getById(id: string) {
+    return apiJson<DishDetails>(ApiRoutes.dish.byId(id))
+  },
+
+  like(id: string) {
+    return apiJson<void>(`${ApiRoutes.dish.byId(id)}/like`, { method: 'POST' })
+  },
+
+  unlike(id: string) {
+    return apiJson<void>(`${ApiRoutes.dish.byId(id)}/like`, { method: 'DELETE' })
+  },
+
   create(payload: CreateDishPayload) {
     return apiJson<CreatedDish>(ApiRoutes.dish.collection, {
       method: 'POST',
+      body: JSON.stringify(payload),
+    })
+  },
+
+  update(
+    id: string,
+    payload: Omit<CreateDishPayload, 'description' | 'prepTime'> & {
+      description?: string
+      prepTime?: number | null
+    },
+  ) {
+    return apiJson<DishDetails>(ApiRoutes.dish.byId(id), {
+      method: 'PATCH',
       body: JSON.stringify(payload),
     })
   },

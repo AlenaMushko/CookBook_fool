@@ -7,11 +7,12 @@ import { Field, FieldError, FieldLabel } from '@components/ui/field'
 
 const formLabelClass = 'text-label uppercase tracking-[0.12em]'
 
-export function RecipePhotosField({
+export const RecipePhotosField = ({
   photos,
   hint,
   label,
   error,
+  notice,
   multiple = false,
   disabled = false,
   onSelect,
@@ -21,11 +22,12 @@ export function RecipePhotosField({
   hint: string
   label?: string
   error?: string
+  notice?: string
   multiple?: boolean
   disabled?: boolean
   onSelect: (files: File[]) => void
   onRemove: (key: string) => void
-}) {
+}) => {
   const { t } = useTranslation()
 
   return (
@@ -54,11 +56,15 @@ export function RecipePhotosField({
         <ul className="mt-3 flex flex-wrap gap-2">
           {photos.map((photo) => (
             <li key={photo.key} className="relative">
-              <img
-                src={photo.url}
-                alt=""
-                className="size-16 rounded-md object-cover"
-              />
+              {photo.url ? (
+                <img
+                  src={photo.url}
+                  alt=""
+                  className="size-16 rounded-md object-cover"
+                />
+              ) : (
+                <span className="block size-16 rounded-md bg-muted" />
+              )}
               <Button
                 type="button"
                 variant="secondary"
@@ -73,6 +79,9 @@ export function RecipePhotosField({
             </li>
           ))}
         </ul>
+      ) : null}
+      {notice ? (
+        <p className="mt-3 text-[13px] leading-5 font-medium text-brand">{notice}</p>
       ) : null}
       {error ? <FieldError className="mt-2">{error}</FieldError> : null}
     </Field>

@@ -9,6 +9,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Max,
   Min,
   MinLength,
   ValidateNested,
@@ -131,6 +132,7 @@ export class DishWritableDto {
   @IsOptional()
   @IsNumber()
   @Min(0.1)
+  @Max(50)
   baseServings?: number;
 
   @ApiProperty()

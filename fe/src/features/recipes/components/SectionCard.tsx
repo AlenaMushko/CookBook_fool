@@ -1,16 +1,16 @@
 import type { ReactNode } from 'react'
 
-export function SectionCard({
+export const SectionCard = ({
   title,
   children,
 }: {
   title?: string
   children: ReactNode
-}) {
+}) => {
   return (
     <section className="rounded-lg border border-border bg-card p-[22px]">
       {title ? (
-        <h2 className="font-sans text-[11px] font-medium tracking-[0.07em] text-muted-foreground uppercase">
+        <h2 className="font-serif text-[22px] leading-7 font-medium text-foreground">
           {title}
         </h2>
       ) : null}

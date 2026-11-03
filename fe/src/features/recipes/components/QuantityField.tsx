@@ -8,17 +8,17 @@ import {
   InputGroupInput,
 } from '@components/ui/input-group'
 
-function parseQuantity(value: string) {
+const parseQuantity = (value: string) => {
   const parsed = Number(value.trim().replace(',', '.'))
   return Number.isFinite(parsed) ? parsed : null
 }
 
-function formatQuantity(value: number) {
+const formatQuantity = (value: number) => {
   const rounded = Math.round(value * 1000) / 1000
   return String(rounded)
 }
 
-export function QuantityField({
+export const QuantityField = ({
   value,
   onChange,
   onBlur,
@@ -30,7 +30,7 @@ export function QuantityField({
   onBlur: () => void
   disabled?: boolean
   error?: string
-}) {
+}) => {
   const { t } = useTranslation()
   const current = parseQuantity(value)
   const canDecrease = current != null && current > 1

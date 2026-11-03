@@ -5,7 +5,7 @@ type RecipeCardSkeletonProps = {
   className?: string
 }
 
-function RecipeCardSkeleton({ className }: RecipeCardSkeletonProps) {
+const RecipeCardSkeleton = ({ className }: RecipeCardSkeletonProps) => {
   return (
     <div
       data-slot="recipe-card-skeleton"
@@ -41,10 +41,10 @@ type RecipeCardSkeletonGridProps = {
   className?: string
 }
 
-function RecipeCardSkeletonGrid({
+const RecipeCardSkeletonGrid = ({
   count = 3,
   className,
-}: RecipeCardSkeletonGridProps) {
+}: RecipeCardSkeletonGridProps) => {
   return (
     <div
       data-slot="recipe-card-skeleton-grid"

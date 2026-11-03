@@ -47,6 +47,9 @@ export class DishPhotoResDto {
 
   @ApiProperty()
   order: number;
+
+  @ApiPropertyOptional()
+  url?: string;
 }
 
 export class DishStepResDto {
@@ -173,6 +176,9 @@ export class DishResDto {
 
   @ApiProperty()
   likesCount: number;
+
+  @ApiPropertyOptional()
+  isLiked?: boolean;
 
   @ApiPropertyOptional()
   isOwner?: boolean;

@@ -30,13 +30,14 @@ type DishPhotoJson = {
 export class DishMapper {
   public static toResponseDto(
     entity: DishListItem | DishWithRelations,
-    options?: { userId?: string },
+    options?: { userId?: string; isLiked?: boolean },
   ): DishResDto {
     const steps = (entity.steps as DishStepJson[]) ?? [];
     const photos = Array.isArray(entity.photos)
       ? (entity.photos as DishPhotoJson[]).map((photo) => ({
           key: photo.key,
           order: photo.order,
+          url: undefined,
         }))
       : undefined;
 
@@ -60,9 +61,14 @@ export class DishMapper {
           step.instructionEn ??
           undefined,
         photoKey: step.photoKey ?? step.photos?.[0]?.key ?? null,
-        photos:
+        photos: (
           step.photos ??
-          (step.photoKey ? [{ key: step.photoKey, order: 0 }] : undefined),
+          (step.photoKey ? [{ key: step.photoKey, order: 0 }] : undefined)
+        )?.map((photo) => ({
+          key: photo.key,
+          order: photo.order,
+          url: undefined,
+        })),
       })),
       photos,
       categoryId: entity.categoryId,
@@ -71,6 +77,7 @@ export class DishMapper {
       originalDishId: entity.originalDishId ?? undefined,
       ownerId: entity.ownerId,
       likesCount: entity._count?.likes ?? 0,
+      isLiked: options?.isLiked,
       isOwner: options?.userId ? entity.ownerId === options.userId : undefined,
       created: entity.created,
     };
@@ -94,7 +101,7 @@ export class DishMapper {
 
   public static toParsedResponseDto(
     entity: DishWithRelations,
-    options?: { userId?: string },
+    options?: { userId?: string; isLiked?: boolean },
   ): ParsedDishResDto {
     return {
       ...this.toResponseDto(entity, options),

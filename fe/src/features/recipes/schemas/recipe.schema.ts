@@ -1,6 +1,7 @@
 import type { TFunction } from 'i18next'
 import { z } from 'zod'
 
+import { DISH_PHOTO_LIMIT, MAX_SERVINGS, STEP_PHOTO_LIMIT } from '@constants/recipe'
 import { TEXT } from '@messages/validation'
 
 import type { CreateRecipeFormValues } from '../types/recipe.types'
@@ -11,22 +12,24 @@ const emptyIngredient = {
   quantity: '1',
 }
 
-export function createRecipeSchema(
+export const createRecipeSchema = (
   t: TFunction,
   mode: 'publish' | 'draft' = 'publish',
-) {
+) => {
   const draft = mode === 'draft'
   const title = z
     .string()
     .trim()
     .max(30, { message: t('recipe.create.titleLength') })
-  const photos = z.array(
-    z.object({
-      key: z.string().min(1),
-      url: z.string().min(1),
-      order: z.number().int().nonnegative(),
-    }),
-  )
+  const photos = z
+    .array(
+      z.object({
+        key: z.string().min(1),
+        url: z.string(),
+        order: z.number().int().nonnegative(),
+      }),
+    )
+    .max(DISH_PHOTO_LIMIT, { message: t('recipe.create.photoLimit') })
 
   return z
     .object({
@@ -35,6 +38,7 @@ export function createRecipeSchema(
         : title.min(3, { message: t('recipe.create.titleLength') }),
       description: z.string(),
       prepTime: z.string(),
+      servings: z.string(),
       categoryId: draft
         ? z.string()
         : z.string().min(1, { message: t(TEXT.ERROR.REQUIRED_FIELD) }),
@@ -53,19 +57,22 @@ export function createRecipeSchema(
             .nullable(),
           unitId: z.string(),
           quantity: z.string(),
+          groupId: z.string().optional(),
         }),
       ),
       steps: z.array(
         z.object({
           title: z.string(),
           description: z.string(),
-          photos: z.array(
-            z.object({
-              key: z.string().min(1),
-              url: z.string().min(1),
-              order: z.number().int().nonnegative(),
-            }),
-          ),
+          photos: z
+            .array(
+              z.object({
+                key: z.string().min(1),
+                url: z.string(),
+                order: z.number().int().nonnegative(),
+              }),
+            )
+            .max(STEP_PHOTO_LIMIT, { message: t('recipe.create.stepPhotoLimit') }),
         }),
       ),
     })
@@ -89,6 +96,20 @@ export function createRecipeSchema(
           code: 'custom',
           message: t('recipe.create.prepTimeInvalid'),
           path: ['prepTime'],
+        })
+      }
+
+      const servings = values.servings.trim()
+      const servingsCount = Number(servings)
+      if (
+        !/^[1-9]\d*$/.test(servings) ||
+        servingsCount < 1 ||
+        servingsCount > MAX_SERVINGS
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('recipe.create.servingsInvalid'),
+          path: ['servings'],
         })
       }
 

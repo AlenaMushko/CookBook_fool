@@ -8,10 +8,10 @@ import { Input } from '@components/ui/input'
 
 const formLabelClass = 'text-label uppercase tracking-[0.12em]'
 
-function formatPrepTime(
+const formatPrepTime = (
   minutes: number,
   t: (key: string, options?: Record<string, number>) => string,
-) {
+) => {
   if (minutes < 60) {
     return t('recipe.create.minutesShort', { count: minutes })
   }
@@ -25,7 +25,7 @@ function formatPrepTime(
   return t('recipe.create.hoursMinutes', { hours, minutes: rest })
 }
 
-export function PrepTimeField({
+export const PrepTimeField = ({
   value,
   onChange,
   invalid,
@@ -35,7 +35,7 @@ export function PrepTimeField({
   onChange: (value: string) => void
   invalid: boolean
   error?: string
-}) {
+}) => {
   const { t } = useTranslation()
   const [focused, setFocused] = useState(false)
   const [draft, setDraft] = useState(value)

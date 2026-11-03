@@ -187,7 +187,25 @@ export class DishService {
       throw new AppException(ErrorCode.DISH_PRIVATE, 404);
     }
 
-    return DishMapper.toParsedResponseDto(dish, { userId });
+    const isLiked = userId
+      ? Boolean(await this.likeRepository.findByUserAndDish(userId, id))
+      : undefined;
+    const dto = DishMapper.toParsedResponseDto(dish, { userId, isLiked });
+    await this.attachSignedPhotoUrls(dto);
+    return dto;
+  }
+
+  private async attachSignedPhotoUrls(dto: ParsedDishResDto): Promise<void> {
+    const photos = [
+      ...(dto.photos ?? []),
+      ...dto.steps.flatMap((step) => step.photos ?? []),
+    ];
+
+    await Promise.all(
+      photos.map(async (photo) => {
+        photo.url = await this.s3Service.getSignedGetUrl(photo.key);
+      }),
+    );
   }
 
   public async deleteDish(id: string, userData: IUserData): Promise<void> {
