@@ -173,7 +173,10 @@ export class DishWritableDto {
   @Type(() => DishStepDto)
   steps?: DishStepDto[];
 
-  @ApiPropertyOptional({ type: [DishPhotoDto] })
+  @ApiPropertyOptional({
+    type: [DishPhotoDto],
+    description: 'Optional. Omit the field or send an empty list.',
+  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })

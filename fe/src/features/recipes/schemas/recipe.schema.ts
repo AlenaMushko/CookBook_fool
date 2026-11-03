@@ -40,9 +40,7 @@ export function createRecipeSchema(
         : z.string().min(1, { message: t(TEXT.ERROR.REQUIRED_FIELD) }),
       difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']),
       visibility: z.enum(['PUBLIC', 'PRIVATE']),
-      photos: draft
-        ? photos
-        : photos.min(1, { message: t('recipe.create.photoRequired') }),
+      photos,
       ingredients: z.array(
         z.object({
           ingredient: z

@@ -5,7 +5,20 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const MAX_SIZE_MB = 10
-const ACCEPT = "image/png,image/jpeg,image/jpg"
+const ACCEPT = "image/*"
+const IMAGE_EXTENSIONS = [
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".webp",
+  ".gif",
+  ".avif",
+  ".heic",
+  ".heif",
+  ".bmp",
+  ".tif",
+  ".tiff",
+]
 
 type ImageUploaderProps = {
   className?: string
@@ -43,16 +56,23 @@ function ImageUploader({
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
-  const hintText = hint ?? `PNG, JPG up to ${maxSizeMb} MB`
+  const hintText = hint ?? `Images up to ${maxSizeMb} MB`
 
   const isAllowed = (file: File) => {
-    const allowed = accept.split(",").map((t) => t.trim())
-    return (
-      allowed.includes(file.type) ||
-      allowed.some(
-        (t) => t.startsWith(".") && file.name.toLowerCase().endsWith(t)
-      )
-    )
+    const type = file.type.toLowerCase()
+    const name = file.name.toLowerCase()
+    return accept.split(",").some((rule) => {
+      const token = rule.trim().toLowerCase()
+      if (token === "image/*") {
+        return (
+          (type.startsWith("image/") && type !== "image/svg+xml") ||
+          IMAGE_EXTENSIONS.some((ext) => name.endsWith(ext))
+        )
+      }
+      if (token.endsWith("/*")) return type.startsWith(token.slice(0, -1))
+      if (token.startsWith(".")) return name.endsWith(token)
+      return type === token
+    })
   }
 
   const acceptFiles = (files: File[]) => {
@@ -66,7 +86,7 @@ function ImageUploader({
     const valid: File[] = []
     for (const file of files) {
       if (!isAllowed(file)) {
-        setError("Use PNG or JPG")
+        setError("This image format is not supported")
         continue
       }
       if (file.size > maxSizeMb * 1024 * 1024) {

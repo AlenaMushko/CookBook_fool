@@ -14,7 +14,7 @@ import { apiPath, ApiRoute } from '../../common/constants/api-route.enum';
 import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
-import { imgConstants } from './constants/constants';
+import { imgConstants, isAllowedImage } from './constants/constants';
 import { S3Service } from './services/s3.service';
 
 @ApiTags('S3')
@@ -30,7 +30,7 @@ export class S3Controller {
       storage: memoryStorage(),
       limits: { fileSize: imgConstants.MAX_FILE_SIZE },
       fileFilter: (req, file, cb) => {
-        if (!imgConstants.MIMETYPES.includes(file.mimetype)) {
+        if (!isAllowedImage(file)) {
           cb(new BadRequestException('Invalid file type'), false);
         } else {
           cb(null, true);
