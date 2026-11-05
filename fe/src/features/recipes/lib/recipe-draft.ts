@@ -20,7 +20,7 @@ const hasDraftShape = (value: unknown): value is CreateRecipeFormValues => {
   return (
     typeof draft.title === 'string' &&
     typeof draft.description === 'string' &&
-    typeof draft.prepTime === 'string' &&
+    typeof draft.cookTime === 'string' &&
     typeof draft.servings === 'string' &&
     typeof draft.categoryId === 'string' &&
     (draft.difficulty === 'EASY' ||
@@ -39,8 +39,12 @@ export const readRecipeDraft = (): CreateRecipeFormValues | null => {
 
   try {
     const json: unknown = JSON.parse(raw)
-    if (json && typeof json === 'object' && !('servings' in json)) {
-      ;(json as { servings?: string }).servings = '6'
+    if (json && typeof json === 'object') {
+      const record = json as { servings?: string; prepTime?: string; cookTime?: string }
+      if (!('servings' in record)) record.servings = '6'
+      if (typeof record.prepTime === 'string' && typeof record.cookTime !== 'string') {
+        record.cookTime = record.prepTime
+      }
     }
     const parsed = draftSchema.safeParse(json)
     if (parsed.success) return parsed.data

@@ -10,7 +10,6 @@ const measurementUnitListSelect = {
   nameUk: true,
   symbolEn: true,
   symbolUk: true,
-  type: true,
   order: true,
 } satisfies Prisma.MeasurementUnitSelect;
 

@@ -37,7 +37,7 @@ export const createRecipeSchema = (
         ? title
         : title.min(3, { message: t('recipe.create.titleLength') }),
       description: z.string(),
-      prepTime: z.string(),
+      cookTime: z.string(),
       servings: z.string(),
       categoryId: draft
         ? z.string()
@@ -90,12 +90,12 @@ export const createRecipeSchema = (
         })
       }
 
-      const prepTime = values.prepTime.trim()
-      if (prepTime && !/^[1-9]\d*$/.test(prepTime)) {
+      const cookTime = values.cookTime.trim()
+      if (cookTime && !/^[1-9]\d*$/.test(cookTime)) {
         ctx.addIssue({
           code: 'custom',
-          message: t('recipe.create.prepTimeInvalid'),
-          path: ['prepTime'],
+          message: t('recipe.create.cookTimeInvalid'),
+          path: ['cookTime'],
         })
       }
 

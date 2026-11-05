@@ -140,7 +140,6 @@ async function seedMeasurementUnits(
         nameUk: unit.nameUk,
         symbolEn: unit.symbolEn,
         symbolUk: unit.symbolUk,
-        type: unit.type,
         order: unit.order,
         isActive: true,
       },
@@ -150,7 +149,6 @@ async function seedMeasurementUnits(
         nameUk: unit.nameUk,
         symbolEn: unit.symbolEn,
         symbolUk: unit.symbolUk,
-        type: unit.type,
         order: unit.order,
       },
     });

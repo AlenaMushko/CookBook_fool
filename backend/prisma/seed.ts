@@ -68,7 +68,6 @@ async function seedDemoData(
       description: 'Класичний український буряковий суп',
       visibility: DishVisibility.PUBLIC,
       difficulty: DishDifficulty.MEDIUM,
-      prepTime: 30,
       cookTime: 90,
       baseServings: 6,
       steps: [
@@ -124,7 +123,6 @@ async function seedDemoData(
       description: 'Шаруватий медовий торт',
       visibility: DishVisibility.PUBLIC,
       difficulty: DishDifficulty.HARD,
-      prepTime: 60,
       cookTime: 45,
       baseServings: 8,
       steps: [
@@ -168,7 +166,6 @@ async function seedDemoData(
       description: 'Roasted chicken with herbs',
       visibility: DishVisibility.PUBLIC,
       difficulty: DishDifficulty.EASY,
-      prepTime: 15,
       cookTime: 75,
       baseServings: 4,
       steps: [

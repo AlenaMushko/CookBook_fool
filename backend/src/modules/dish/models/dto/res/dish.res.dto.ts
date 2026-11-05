@@ -138,14 +138,11 @@ export class DishResDto {
   @ApiPropertyOptional()
   description?: string;
 
-  @ApiProperty({ enum: DishVisibility })
+  @ApiProperty({ enum: DishVisibility, enumName: 'DishVisibility' })
   visibility: DishVisibility;
 
-  @ApiProperty({ enum: DishDifficulty })
+  @ApiProperty({ enum: DishDifficulty, enumName: 'DishDifficulty' })
   difficulty: DishDifficulty;
-
-  @ApiPropertyOptional()
-  prepTime?: number;
 
   @ApiPropertyOptional()
   cookTime?: number;
@@ -218,9 +215,20 @@ export class DishListMetaDto {
   total: number;
 }
 
+export class DishListItemResDto extends DishResDto {
+  @ApiPropertyOptional({ type: DishOwnerDto })
+  owner?: DishOwnerDto;
+
+  @ApiPropertyOptional({ type: DishCategoryBriefDto })
+  category?: DishCategoryBriefDto;
+
+  @ApiPropertyOptional({ type: DishSubcategoryBriefDto })
+  subcategory?: DishSubcategoryBriefDto;
+}
+
 export class DishListResDto {
-  @ApiProperty({ type: [DishResDto] })
-  data: DishResDto[];
+  @ApiProperty({ type: [DishListItemResDto] })
+  data: DishListItemResDto[];
 
   @ApiProperty({ type: DishListMetaDto })
   meta: DishListMetaDto;

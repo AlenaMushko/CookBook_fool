@@ -13,18 +13,21 @@ import {
 
 export enum DishListScope {
   PUBLIC = 'public',
-  CREATED = 'created',
+  CREATED_BY_ME = 'createdByMe',
   SAVED = 'saved',
   COOKBOOK = 'cookbook',
 }
 
 export enum DishListSort {
-  NEWEST = 'newest',
-  OLDEST = 'oldest',
-  ALPHABETICAL = 'alphabetical',
-  POPULARITY = 'popularity',
-  COOK_TIME = 'cookTime',
+  CREATED = 'created',
+  SAVED = 'saved',
+  COOKED = 'cooked',
   DIFFICULTY = 'difficulty',
+}
+
+export enum DishListOrder {
+  ASC = 'asc',
+  DESC = 'desc',
 }
 
 export class DishesListReqDto {
@@ -63,7 +66,7 @@ export class DishesListReqDto {
   @IsUUID()
   areaId?: string;
 
-  @ApiPropertyOptional({ enum: DishDifficulty })
+  @ApiPropertyOptional({ enum: DishDifficulty, enumName: 'DishDifficulty' })
   @IsOptional()
   @IsEnum(DishDifficulty)
   difficulty?: DishDifficulty;
@@ -75,18 +78,35 @@ export class DishesListReqDto {
   @Min(0)
   maxCookTime?: number;
 
-  @ApiPropertyOptional({ enum: DishVisibility })
+  @ApiPropertyOptional({ enum: DishVisibility, enumName: 'DishVisibility' })
   @IsOptional()
   @IsEnum(DishVisibility)
   visibility?: DishVisibility;
 
-  @ApiPropertyOptional({ enum: DishListScope, default: DishListScope.PUBLIC })
+  @ApiPropertyOptional({
+    enum: DishListScope,
+    enumName: 'DishListScope',
+    default: DishListScope.PUBLIC,
+  })
   @IsOptional()
   @IsEnum(DishListScope)
   scope?: DishListScope = DishListScope.PUBLIC;
 
-  @ApiPropertyOptional({ enum: DishListSort, default: DishListSort.POPULARITY })
+  @ApiPropertyOptional({
+    enum: DishListSort,
+    enumName: 'DishListSort',
+    default: DishListSort.SAVED,
+  })
   @IsOptional()
   @IsEnum(DishListSort)
-  sort?: DishListSort = DishListSort.POPULARITY;
+  sort?: DishListSort = DishListSort.SAVED;
+
+  @ApiPropertyOptional({
+    enum: DishListOrder,
+    enumName: 'DishListOrder',
+    default: DishListOrder.DESC,
+  })
+  @IsOptional()
+  @IsEnum(DishListOrder)
+  order?: DishListOrder = DishListOrder.DESC;
 }

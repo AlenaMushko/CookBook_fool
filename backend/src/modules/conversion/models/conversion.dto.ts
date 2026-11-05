@@ -1,6 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsUUID, Min } from 'class-validator';
 
+export enum ConversionSource {
+  USER_INGREDIENT_RULE = 'USER_INGREDIENT_RULE',
+  GLOBAL_INGREDIENT_RULE = 'GLOBAL_INGREDIENT_RULE',
+  GENERIC_UNIT_RULE = 'GENERIC_UNIT_RULE',
+}
+
 export class ConvertRequestDto {
   @ApiProperty()
   @IsUUID()
@@ -27,8 +33,8 @@ export class ConvertResponseDto {
   @ApiProperty()
   unitId: string;
 
-  @ApiProperty()
-  source: string;
+  @ApiProperty({ enum: ConversionSource, enumName: 'ConversionSource' })
+  source: ConversionSource;
 
   @ApiProperty({
     description: 'True when conversion used a personal override',
@@ -124,14 +130,8 @@ export class EffectiveConversionResDto {
   @ApiProperty()
   factor: number;
 
-  @ApiProperty({
-    enum: [
-      'USER_INGREDIENT_RULE',
-      'GLOBAL_INGREDIENT_RULE',
-      'GENERIC_UNIT_RULE',
-    ],
-  })
-  source: string;
+  @ApiProperty({ enum: ConversionSource, enumName: 'ConversionSource' })
+  source: ConversionSource;
 
   @ApiProperty({
     description: 'True when value comes from a personal override',

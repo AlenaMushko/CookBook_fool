@@ -24,7 +24,6 @@ export type MeasurementUnit = {
   nameUk: string
   symbolEn?: string
   symbolUk?: string
-  type: string
   order: number
 }
 
@@ -50,7 +49,7 @@ export type DishPhoto = {
 export type CreateRecipeFormValues = {
   title: string
   description: string
-  prepTime: string
+  cookTime: string
   servings: string
   difficulty: DishDifficulty
   visibility: DishVisibility
@@ -63,7 +62,7 @@ export type CreateRecipeFormValues = {
 export type CreateDishPayload = {
   title: string
   description?: string
-  prepTime?: number
+  cookTime?: number
   visibility: DishVisibility
   difficulty: DishDifficulty
   categoryId: string
@@ -93,6 +92,32 @@ export type CreatedDish = {
   id: string
 }
 
+export type { DishListOrder, DishListScope, DishListSort } from '@constants/recipe'
+
+export type DishListCard = {
+  id: string
+  title: string
+  description?: string
+  difficulty: DishDifficulty
+  cookTime?: number
+  baseServings?: number
+  photos?: DishPhotoRef[]
+  isLiked?: boolean
+  isOwner?: boolean
+  category?: { nameEn: string; nameUk: string }
+  subcategory?: { nameEn: string; nameUk: string }
+  owner?: { id: string; firstName: string; lastName?: string }
+}
+
+export type DishListResult = {
+  data: DishListCard[]
+  meta: {
+    limit: number
+    offset: number
+    total: number
+  }
+}
+
 export type DishPhotoRef = {
   key: string
   order: number
@@ -105,7 +130,6 @@ export type DishDetails = {
   description?: string
   visibility: DishVisibility
   difficulty: DishDifficulty
-  prepTime?: number
   cookTime?: number
   baseServings?: number
   categoryId: string

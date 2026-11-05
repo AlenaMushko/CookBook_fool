@@ -23,7 +23,7 @@ export const dishToFormValues = (dish: DishDetails): CreateRecipeFormValues => {
   return {
     title: dish.title,
     description: dish.description ?? '',
-    prepTime: dish.prepTime ? String(dish.prepTime) : '',
+    cookTime: dish.cookTime ? String(dish.cookTime) : '',
     servings,
     categoryId: dish.categoryId,
     difficulty: dish.difficulty,

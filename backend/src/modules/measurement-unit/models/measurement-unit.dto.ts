@@ -20,9 +20,6 @@ export class MeasurementUnitResDto {
   symbolUk?: string;
 
   @ApiProperty()
-  type: string;
-
-  @ApiProperty()
   order: number;
 }
 

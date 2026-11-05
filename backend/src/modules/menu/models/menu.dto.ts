@@ -22,6 +22,7 @@ export class CreateDishInMenuDto extends OmitType(CreateDishDto, [
 ] as const) {
   @ApiPropertyOptional({
     enum: DishVisibility,
+    enumName: 'DishVisibility',
     default: DishVisibility.PRIVATE,
   })
   @IsOptional()

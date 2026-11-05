@@ -16,7 +16,10 @@ import { ResetPasswordRequestDto } from '../dto/request/reset-password.request.d
 import { SignInRequestDto } from '../dto/request/sign-in.request.dto';
 import { SignUpRequestDto } from '../dto/request/sign-up.request.dto';
 import { TokenResponseDto } from '../dto/response/token.response.dto';
-import { ValidateResetTokenResponseDto } from '../dto/response/validate-reset-token.response.dto';
+import {
+  ResetTokenValidationStatus,
+  ValidateResetTokenResponseDto,
+} from '../dto/response/validate-reset-token.response.dto';
 import { IUserData } from '../interfaces/user-data.interface';
 import { PasswordResetTokenRepository } from '../repositories/password-reset-token.repository';
 import { RefreshTokenRepository } from '../repositories/refresh-token.repository';
@@ -244,15 +247,15 @@ export class AuthService {
     const resetToken = await this.findPasswordResetToken(token);
 
     if (!resetToken) {
-      return { status: 'invalid' };
+      return { status: ResetTokenValidationStatus.INVALID };
     }
 
     if (resetToken.expiresAt < new Date()) {
       await this.passwordResetRepository.deleteById(resetToken.id);
-      return { status: 'expired' };
+      return { status: ResetTokenValidationStatus.EXPIRED };
     }
 
-    return { status: 'valid' };
+    return { status: ResetTokenValidationStatus.VALID };
   }
 
   public async resetPassword(dto: ResetPasswordRequestDto): Promise<void> {

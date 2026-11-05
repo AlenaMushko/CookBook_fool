@@ -3,7 +3,9 @@ import { Spinner } from '@/components/ui/spinner'
 
 export const Loader = () => {
   const isFetching = useIsFetching()
-  const isMutating = useIsMutating()
+  const isMutating = useIsMutating({
+    predicate: (mutation) => mutation.options.meta?.skipGlobalLoader !== true,
+  })
   const isLoading = isFetching + isMutating > 0
 
   if (!isLoading) return null

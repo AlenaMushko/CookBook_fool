@@ -1,6 +1,7 @@
 import { IngredientJson } from '../../ingredient/repositories/ingredient.repository';
 import { DishesListReqDto } from '../models/dto/req/dishes-list.req.dto';
 import {
+  DishListItemResDto,
   DishListResDto,
   DishResDto,
   ParsedDishResDto,
@@ -47,7 +48,6 @@ export class DishMapper {
       description: entity.description ?? undefined,
       visibility: entity.visibility,
       difficulty: entity.difficulty,
-      prepTime: entity.prepTime ?? undefined,
       cookTime: entity.cookTime ?? undefined,
       baseServings: entity.baseServings
         ? Number(entity.baseServings)
@@ -88,14 +88,52 @@ export class DishMapper {
     total: number,
     query: DishesListReqDto,
     userId?: string,
+    likedDishIds?: string[],
   ): DishListResDto {
+    const liked = new Set(likedDishIds ?? []);
+
     return {
-      data: entities.map((entity) => this.toResponseDto(entity, { userId })),
+      data: entities.map((entity) =>
+        this.toListItemDto(
+          entity,
+          userId,
+          likedDishIds ? liked.has(entity.id) : undefined,
+        ),
+      ),
       meta: {
         limit: query.limit ?? 12,
         offset: query.offset ?? 0,
         total,
       },
+    };
+  }
+
+  private static toListItemDto(
+    entity: DishListItem,
+    userId: string | undefined,
+    isLiked: boolean | undefined,
+  ): DishListItemResDto {
+    return {
+      ...this.toResponseDto(entity, { userId, isLiked }),
+      owner: {
+        id: entity.owner.id,
+        firstName: entity.owner.firstName,
+        lastName: entity.owner.lastName ?? undefined,
+      },
+      category: {
+        id: entity.category.id,
+        nameEn: entity.category.nameEn,
+        nameUk: entity.category.nameUk,
+        slug: entity.category.slug,
+      },
+      subcategory: entity.subcategory
+        ? {
+            id: entity.subcategory.id,
+            nameEn: entity.subcategory.nameEn,
+            nameUk: entity.subcategory.nameUk,
+            slug: entity.subcategory.slug,
+          }
+        : undefined,
     };
   }
 

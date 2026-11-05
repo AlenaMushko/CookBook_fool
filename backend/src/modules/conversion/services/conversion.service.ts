@@ -6,6 +6,7 @@ import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { IngredientService } from '../../ingredient/services/ingredient.service';
 import { MeasurementUnitService } from '../../measurement-unit/services/measurement-unit.service';
 import {
+  ConversionSource,
   ConvertRequestDto,
   ConvertResponseDto,
   CreateUserConversionDto,
@@ -17,9 +18,6 @@ import {
   UserConversionResDto,
 } from '../models/conversion.dto';
 import { ConversionRepository } from '../repositories/conversion.repository';
-
-export type ConversionSource =
-  'USER_INGREDIENT_RULE' | 'GLOBAL_INGREDIENT_RULE' | 'GENERIC_UNIT_RULE';
 
 @Injectable()
 export class ConversionService {
@@ -41,7 +39,7 @@ export class ConversionService {
       return {
         quantity: dto.quantity,
         unitId: dto.toUnitId,
-        source: 'GENERIC_UNIT_RULE',
+        source: ConversionSource.GENERIC_UNIT_RULE,
         isPersonal: false,
         isOwner: false,
       };
@@ -75,7 +73,7 @@ export class ConversionService {
     if (query.fromUnitId === query.toUnitId) {
       return {
         factor: 1,
-        source: 'GENERIC_UNIT_RULE',
+        source: ConversionSource.GENERIC_UNIT_RULE,
         isPersonal: false,
         isOwner: false,
       };
@@ -170,7 +168,7 @@ export class ConversionService {
     if (userRule) {
       return {
         factor: Number(userRule.factor),
-        source: 'USER_INGREDIENT_RULE',
+        source: ConversionSource.USER_INGREDIENT_RULE,
         isPersonal: true,
         isOwner: true,
         userRuleId: userRule.id,
@@ -185,7 +183,7 @@ export class ConversionService {
     if (globalRule) {
       return {
         factor: Number(globalRule.factor),
-        source: 'GLOBAL_INGREDIENT_RULE',
+        source: ConversionSource.GLOBAL_INGREDIENT_RULE,
         isPersonal: false,
         isOwner: false,
       };
@@ -198,7 +196,7 @@ export class ConversionService {
     if (genericRule) {
       return {
         factor: Number(genericRule.factor),
-        source: 'GENERIC_UNIT_RULE',
+        source: ConversionSource.GENERIC_UNIT_RULE,
         isPersonal: false,
         isOwner: false,
       };

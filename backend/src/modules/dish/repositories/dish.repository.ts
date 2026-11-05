@@ -4,12 +4,22 @@ import { DishVisibility, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import {
   DishesListReqDto,
+  DishListOrder,
   DishListScope,
   DishListSort,
 } from '../models/dto/req/dishes-list.req.dto';
 
 const dishListInclude = {
   _count: { select: { likes: true } },
+  category: {
+    select: { id: true, nameEn: true, nameUk: true, slug: true },
+  },
+  subcategory: {
+    select: { id: true, nameEn: true, nameUk: true, slug: true },
+  },
+  owner: {
+    select: { id: true, firstName: true, lastName: true },
+  },
 } satisfies Prisma.DishInclude;
 
 const dishDetailInclude = {
@@ -79,7 +89,8 @@ export class DishRepository {
       maxCookTime,
       visibility,
       scope = DishListScope.PUBLIC,
-      sort = DishListSort.POPULARITY,
+      sort = DishListSort.SAVED,
+      order = DishListOrder.DESC,
     } = query;
 
     const where = this.buildWhere({
@@ -95,7 +106,7 @@ export class DishRepository {
       likedDishIds,
     });
 
-    const orderBy = this.buildOrderBy(sort);
+    const orderBy = this.buildOrderBy(sort, order);
 
     const [dishes, total] = await this.prisma.$transaction([
       this.prisma.dish.findMany({
@@ -310,7 +321,7 @@ export class DishRepository {
     }
 
     switch (scope) {
-      case DishListScope.CREATED:
+      case DishListScope.CREATED_BY_ME:
         and.push({ ownerId: userId });
         if (visibility) and.push({ visibility });
         break;
@@ -332,29 +343,21 @@ export class DishRepository {
 
   private buildOrderBy(
     sort: DishListSort,
+    order: DishListOrder,
   ): Prisma.DishOrderByWithRelationInput[] {
+    const direction = order === DishListOrder.ASC ? 'asc' : 'desc';
+    const tie = [{ created: 'desc' as const }, { id: 'desc' as const }];
+
     switch (sort) {
-      case DishListSort.OLDEST:
-        return [{ created: 'asc' }, { id: 'asc' }];
-      case DishListSort.ALPHABETICAL:
-        return [{ title: 'asc' }, { id: 'asc' }];
-      case DishListSort.COOK_TIME:
-        return [
-          { cookTime: { sort: 'asc', nulls: 'last' } },
-          { created: 'desc' },
-          { id: 'desc' },
-        ];
+      case DishListSort.CREATED:
+        return [{ created: direction }, { id: direction }];
+      case DishListSort.COOKED:
+        return [{ cookTime: { sort: direction, nulls: 'last' } }, ...tie];
       case DishListSort.DIFFICULTY:
-        return [{ difficulty: 'asc' }, { created: 'desc' }, { id: 'desc' }];
-      case DishListSort.NEWEST:
-        return [{ created: 'desc' }, { id: 'desc' }];
-      case DishListSort.POPULARITY:
+        return [{ difficulty: direction }, ...tie];
+      case DishListSort.SAVED:
       default:
-        return [
-          { likes: { _count: 'desc' } },
-          { created: 'desc' },
-          { id: 'desc' },
-        ];
+        return [{ likes: { _count: direction } }, ...tie];
     }
   }
 }

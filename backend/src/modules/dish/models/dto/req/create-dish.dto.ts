@@ -108,19 +108,13 @@ export class DishWritableDto {
   @IsString()
   description?: string;
 
-  @ApiProperty({ enum: DishVisibility })
+  @ApiProperty({ enum: DishVisibility, enumName: 'DishVisibility' })
   @IsEnum(DishVisibility)
   visibility: DishVisibility;
 
-  @ApiProperty({ enum: DishDifficulty })
+  @ApiProperty({ enum: DishDifficulty, enumName: 'DishDifficulty' })
   @IsEnum(DishDifficulty)
   difficulty: DishDifficulty;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  prepTime?: number;
 
   @ApiPropertyOptional()
   @IsOptional()

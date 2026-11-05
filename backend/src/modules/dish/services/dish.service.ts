@@ -59,7 +59,6 @@ export class DishService {
         description: dto.description,
         visibility: dto.visibility,
         difficulty: dto.difficulty,
-        prepTime: dto.prepTime,
         cookTime: dto.cookTime,
         baseServings: dto.baseServings,
         steps: (dto.steps ?? []) as unknown as Prisma.InputJsonValue,
@@ -109,7 +108,6 @@ export class DishService {
       ...(dto.description !== undefined && { description: dto.description }),
       ...(dto.visibility !== undefined && { visibility: dto.visibility }),
       ...(dto.difficulty !== undefined && { difficulty: dto.difficulty }),
-      ...(dto.prepTime !== undefined && { prepTime: dto.prepTime }),
       ...(dto.cookTime !== undefined && { cookTime: dto.cookTime }),
       ...(dto.baseServings !== undefined && { baseServings: dto.baseServings }),
       ...(dto.categoryId !== undefined && { categoryId: dto.categoryId }),
@@ -153,14 +151,9 @@ export class DishService {
       throw new UnauthorizedException();
     }
 
-    const needsLikedIds =
-      query.scope === DishListScope.SAVED ||
-      query.scope === DishListScope.COOKBOOK;
-
-    const likedDishIds =
-      userId && needsLikedIds
-        ? await this.likeRepository.getLikedDishIds(userId)
-        : undefined;
+    const likedDishIds = userId
+      ? await this.likeRepository.getLikedDishIds(userId)
+      : undefined;
 
     const [entities, total] = await this.dishRepository.getList(
       query,
@@ -168,7 +161,15 @@ export class DishService {
       likedDishIds,
     );
 
-    return DishMapper.toListResponseDto(entities, total, query, userId);
+    const dto = DishMapper.toListResponseDto(
+      entities,
+      total,
+      query,
+      userId,
+      likedDishIds,
+    );
+    await this.attachCoverUrls(dto.data);
+    return dto;
   }
 
   public async getDishById(
@@ -193,6 +194,20 @@ export class DishService {
     const dto = DishMapper.toParsedResponseDto(dish, { userId, isLiked });
     await this.attachSignedPhotoUrls(dto);
     return dto;
+  }
+
+  private async attachCoverUrls(
+    dishes: { photos?: { key: string; order: number; url?: string }[] }[],
+  ): Promise<void> {
+    await Promise.all(
+      dishes.map(async (dish) => {
+        const cover = [...(dish.photos ?? [])].sort(
+          (a, b) => a.order - b.order,
+        )[0];
+        if (!cover) return;
+        cover.url = await this.s3Service.getSignedGetUrl(cover.key);
+      }),
+    );
   }
 
   private async attachSignedPhotoUrls(dto: ParsedDishResDto): Promise<void> {

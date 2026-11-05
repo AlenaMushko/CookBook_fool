@@ -1,8 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export type ResetTokenValidationStatus = 'valid' | 'expired' | 'invalid';
+export enum ResetTokenValidationStatus {
+  VALID = 'valid',
+  EXPIRED = 'expired',
+  INVALID = 'invalid',
+}
 
 export class ValidateResetTokenResponseDto {
-  @ApiProperty({ enum: ['valid', 'expired', 'invalid'] })
+  @ApiProperty({
+    enum: ResetTokenValidationStatus,
+    enumName: 'ResetTokenValidationStatus',
+  })
   status: ResetTokenValidationStatus;
 }

@@ -67,7 +67,6 @@ model MeasurementUnit {
   nameUk   String
   symbolEn String?
   symbolUk String?
-  type     MeasurementUnitType
   order    Int
   isActive Boolean             @default(true)
 
@@ -136,7 +135,6 @@ model Dish {
   visibility DishVisibility
   difficulty DishDifficulty
 
-  prepTime     Int?
   cookTime     Int?
   baseServings Decimal? @db.Decimal(5, 1)
 

@@ -8,9 +8,3 @@ enum DishDifficulty {
   MEDIUM
   HARD
 }
-
-enum MeasurementUnitType {
-  MASS
-  VOLUME
-  COUNT
-}

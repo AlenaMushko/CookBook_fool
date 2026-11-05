@@ -57,7 +57,7 @@ export const toCreateDishPayload = (
   groups: { id: string; name?: string; order: number }[] = [],
 ): CreateDishPayload => {
   const description = filledText(values.description)
-  const prepTime = filledText(values.prepTime)
+  const cookTime = filledText(values.cookTime)
   const ingredients = toIngredients(
     values.ingredients,
     new Set(groups.map((group) => group.id)),
@@ -77,7 +77,7 @@ export const toCreateDishPayload = (
   return {
     title: values.title.trim(),
     ...(description ? { description } : {}),
-    ...(prepTime ? { prepTime: Number(prepTime) } : {}),
+    ...(cookTime ? { cookTime: Number(cookTime) } : {}),
     baseServings: Number(values.servings),
     visibility: values.visibility,
     difficulty: values.difficulty,

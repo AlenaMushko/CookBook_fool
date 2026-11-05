@@ -61,13 +61,13 @@ export const PrepTimeField = ({
 
   return (
     <Field data-invalid={invalid}>
-      <FieldLabel className={formLabelClass}>{t('recipe.create.prepTime')}</FieldLabel>
+      <FieldLabel className={formLabelClass}>{t('recipe.create.cookTime')}</FieldLabel>
       <div className="flex items-center gap-2">
         <Button
           type="button"
           variant="secondary"
           size="icon"
-          aria-label={t('recipe.create.prepTimeDecrease')}
+          aria-label={t('recipe.create.cookTimeDecrease')}
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => step(-5)}
         >
@@ -76,7 +76,7 @@ export const PrepTimeField = ({
         <Input
           value={shown}
           inputMode="numeric"
-          placeholder={t('recipe.create.prepTimePlaceholder')}
+          placeholder={t('recipe.create.cookTimePlaceholder')}
           aria-invalid={invalid}
           onFocus={() => {
             setDraft(minutes > 0 ? String(minutes) : '')
@@ -97,7 +97,7 @@ export const PrepTimeField = ({
           type="button"
           variant="secondary"
           size="icon"
-          aria-label={t('recipe.create.prepTimeIncrease')}
+          aria-label={t('recipe.create.cookTimeIncrease')}
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => step(5)}
         >

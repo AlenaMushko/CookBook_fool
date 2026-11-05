@@ -8,6 +8,10 @@ import type {
   CreatedDish,
   DishCategory,
   DishDetails,
+  DishListOrder,
+  DishListResult,
+  DishListScope,
+  DishListSort,
   MeasurementUnit,
 } from '../types/recipe.types'
 
@@ -18,6 +22,28 @@ type ListResponse<T> = {
 export const recipesApi = {
   listCategories() {
     return apiJson<ListResponse<DishCategory>>(ApiRoutes.dish.categories)
+  },
+
+  list(params: {
+    scope: DishListScope
+    categoryId?: string
+    sort: DishListSort
+    order: DishListOrder
+    limit: number
+    offset: number
+  }) {
+    const search = new URLSearchParams({
+      scope: params.scope,
+      sort: params.sort,
+      order: params.order,
+      limit: String(params.limit),
+      offset: String(params.offset),
+    })
+    if (params.categoryId) search.set('categoryId', params.categoryId)
+
+    return apiJson<DishListResult>(
+      `${ApiRoutes.dish.collection}?${search.toString()}`,
+    )
   },
 
   searchIngredients(search: string) {
@@ -55,9 +81,9 @@ export const recipesApi = {
 
   update(
     id: string,
-    payload: Omit<CreateDishPayload, 'description' | 'prepTime'> & {
+    payload: Omit<CreateDishPayload, 'description' | 'cookTime'> & {
       description?: string
-      prepTime?: number | null
+      cookTime?: number | null
     },
   ) {
     return apiJson<DishDetails>(ApiRoutes.dish.byId(id), {

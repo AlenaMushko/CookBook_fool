@@ -71,7 +71,7 @@ const emptyStep = () => ({
 const emptyForm = (): CreateRecipeFormValues => ({
   title: '',
   description: '',
-  prepTime: '',
+  cookTime: '',
   servings: '6',
   categoryId: '',
   difficulty: 'EASY',
@@ -92,7 +92,7 @@ const isRecipeStarted = (values: CreateRecipeFormValues) => {
   if (
     values.title.trim() ||
     values.description.trim() ||
-    values.prepTime.trim() ||
+    values.cookTime.trim() ||
     values.servings.trim() !== '6' ||
     values.categoryId ||
     values.difficulty !== 'EASY' ||
@@ -389,7 +389,7 @@ export const CreateRecipeForm = ({
     const payload = {
       ...toCreateDishPayload(values, ingredientGroups),
       description: values.description.trim(),
-      prepTime: values.prepTime.trim() ? Number(values.prepTime.trim()) : null,
+      cookTime: values.cookTime.trim() ? Number(values.cookTime.trim()) : null,
     }
 
     try {
@@ -467,14 +467,14 @@ export const CreateRecipeForm = ({
 
             <div className="grid gap-6 md:grid-cols-2">
               <Controller
-                name="prepTime"
+                name="cookTime"
                 control={control}
                 render={({ field }) => (
                   <PrepTimeField
                     value={field.value}
                     onChange={field.onChange}
-                    invalid={Boolean(errors.prepTime)}
-                    error={errors.prepTime?.message}
+                    invalid={Boolean(errors.cookTime)}
+                    error={errors.cookTime?.message}
                   />
                 )}
               />

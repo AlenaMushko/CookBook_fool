@@ -62,7 +62,7 @@ export const RecipeDetails = ({
   )
   const scale = servings / baseServings
   const hero = gallery[activePhoto] ?? gallery[0]
-  const totalTime = (dish.prepTime ?? 0) + (dish.cookTime ?? 0)
+  const totalTime = dish.cookTime ?? 0
   const categoryLine = [
     localizedName(i18n.language, dish.category),
     dish.subcategory ? localizedName(i18n.language, dish.subcategory) : '',
@@ -321,7 +321,8 @@ export const RecipeDetails = ({
           </p>
         ) : null}
         <p className="pt-1 text-[13px] leading-5 text-subtle">
-          {t('recipe.details.by', { name: author })}
+          {t('recipe.details.byPrefix')}{' '}
+          <span className="font-semibold text-brand">{author}</span>
         </p>
       </div>
 
