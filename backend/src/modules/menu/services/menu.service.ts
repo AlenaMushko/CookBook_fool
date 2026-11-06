@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { DishVisibility } from '@prisma/client';
+import { DishVisibility, Prisma } from '@prisma/client';
 
 import { ErrorCode } from '../../../common/constants/error-codes';
 import { AppException } from '../../../common/expections/app.exception';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { DishRepository } from '../../dish/repositories/dish.repository';
 import { DishService } from '../../dish/services/dish.service';
+import { S3Service } from '../../s3/services/s3.service';
 import {
   AddMenuDishesDto,
   CreateMenuDto,
@@ -14,7 +15,7 @@ import {
   UpdateMenuDto,
   UpdateMenuSectionDto,
 } from '../models/menu.dto';
-import { MenuRepository } from '../repositories/menu.repository';
+import { MenuListItem, MenuRepository } from '../repositories/menu.repository';
 
 @Injectable()
 export class MenuService {
@@ -22,11 +23,13 @@ export class MenuService {
     private readonly menuRepository: MenuRepository,
     private readonly dishRepository: DishRepository,
     private readonly dishService: DishService,
+    private readonly s3Service: S3Service,
   ) {}
 
   public async findAll(userData: IUserData) {
     const menus = await this.menuRepository.findAllByOwner(userData.userId);
-    return { data: menus };
+    const data = await Promise.all(menus.map((menu) => this.toPreview(menu)));
+    return { data };
   }
 
   public async create(dto: CreateMenuDto, userData: IUserData) {
@@ -201,6 +204,27 @@ export class MenuService {
     return updated;
   }
 
+  private async toPreview(menu: MenuListItem) {
+    const covers = (
+      await Promise.all(
+        menu.dishes.map(async (row) => {
+          const cover = readPhotos(row.dish.photos).sort(
+            (a, b) => a.order - b.order,
+          )[0];
+          if (!cover) return null;
+          return await this.s3Service.getSignedGetUrl(cover.key);
+        }),
+      )
+    ).filter((url): url is string => Boolean(url));
+
+    return {
+      id: menu.id,
+      name: menu.name,
+      dishesCount: menu._count.dishes,
+      covers,
+    };
+  }
+
   private async getOwnedMenuOrThrow(menuId: string, ownerId: string) {
     const menu = await this.menuRepository.findById(menuId);
     if (!menu) {
@@ -229,3 +253,16 @@ export class MenuService {
     }
   }
 }
+
+const readPhotos = (value: Prisma.JsonValue) => {
+  if (!Array.isArray(value)) return [];
+
+  return value.flatMap((item) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) return [];
+    const key = 'key' in item && typeof item.key === 'string' ? item.key : '';
+    const order =
+      'order' in item && typeof item.order === 'number' ? item.order : 0;
+    if (!key) return [];
+    return [{ key, order }];
+  });
+};

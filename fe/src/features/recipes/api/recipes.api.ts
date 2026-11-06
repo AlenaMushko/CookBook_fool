@@ -42,7 +42,7 @@ export const recipesApi = {
     if (params.categoryId) search.set('categoryId', params.categoryId)
 
     return apiJson<DishListResult>(
-      `${ApiRoutes.dish.collection}?${search.toString()}`,
+      `${ApiRoutes.dish.all}?${search.toString()}`,
     )
   },
 
@@ -73,7 +73,7 @@ export const recipesApi = {
   },
 
   create(payload: CreateDishPayload) {
-    return apiJson<CreatedDish>(ApiRoutes.dish.collection, {
+    return apiJson<CreatedDish>(ApiRoutes.dish.all, {
       method: 'POST',
       body: JSON.stringify(payload),
     })

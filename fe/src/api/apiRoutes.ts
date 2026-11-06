@@ -19,7 +19,7 @@ export const ApiRoutes = {
     deleteFile: `/${ApiVersion.V1}/s3/delete-file`,
   },
   dish: {
-    collection: `/${ApiVersion.V1}/dish`,
+    all: `/${ApiVersion.V1}/dish`,
     categories: `/${ApiVersion.V1}/dish/categories`,
     byId: (dishId: string) => `/${ApiVersion.V1}/dish/${dishId}`,
   },
@@ -29,21 +29,13 @@ export const ApiRoutes = {
   measurementUnits: {
     list: `/${ApiVersion.V1}/measurement-units`,
   },
+  menu: {
+    all: `/${ApiVersion.V1}/menu`,
+  },
 
    // menus: {
-    //   all: '/api/menus',
-  
     //   byId: (menuId: string) =>
     //     `/api/menus/${menuId}`,
-    // },
-  
-    // recipes: {
-    //   all: '/api/recipes',
-  
-    //   my: '/api/recipes/my',
-  
-    //   byId: (recipeId: string) =>
-    //     `/api/recipes/${recipeId}`,
     // },
 
 } as const

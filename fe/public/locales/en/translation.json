@@ -284,6 +284,25 @@
   "brand": {
     "tagline": "Culinary book"
   },
+  "homePage": {
+    "searchPlaceholder": "Search recipes, ingredients…",
+    "popular": "Popular Recipes",
+    "recent": "Recently Added",
+    "viewAll": "View all",
+    "myCookbook": "My Cookbook",
+    "myMenus": "My Menus",
+    "seeAll": "See all",
+    "addToMenu": "Add to Menu",
+    "emptyRecipes": "No recipes in this view yet.",
+    "emptyMine": "You have not added recipes yet.",
+    "emptyMenus": "You have not created a menu yet.",
+    "servings_one": "{{count}} srv",
+    "servings_other": "{{count}} srv",
+    "saves_one": "{{count}} save",
+    "saves_other": "{{count}} saves",
+    "recipes_one": "{{count}} recipe",
+    "recipes_other": "{{count}} recipes"
+  },
   "hero": {
     "eyebrow": "Personal digital cookbook",
     "titleLine1": "Your recipes.",

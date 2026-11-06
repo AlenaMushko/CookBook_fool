@@ -101,6 +101,7 @@ export type DishListCard = {
   difficulty: DishDifficulty
   cookTime?: number
   baseServings?: number
+  likesCount?: number
   photos?: DishPhotoRef[]
   isLiked?: boolean
   isOwner?: boolean

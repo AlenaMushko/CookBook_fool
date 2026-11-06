@@ -286,6 +286,31 @@
   "brand": {
     "tagline": "Кулінарна книга"
   },
+  "homePage": {
+    "searchPlaceholder": "Пошук страв, інгредієнтів…",
+    "popular": "Популярні страви",
+    "recent": "Нещодавно додані",
+    "viewAll": "Дивитись усі",
+    "myCookbook": "Моя книга",
+    "myMenus": "Мої меню",
+    "seeAll": "Усі",
+    "addToMenu": "До меню",
+    "emptyRecipes": "У цьому перегляді ще немає страв.",
+    "emptyMine": "Ви ще не додали страв.",
+    "emptyMenus": "Ви ще не створили меню.",
+    "servings_one": "{{count}} порц.",
+    "servings_few": "{{count}} порц.",
+    "servings_many": "{{count}} порц.",
+    "servings_other": "{{count}} порц.",
+    "saves_one": "{{count}} збереження",
+    "saves_few": "{{count}} збереження",
+    "saves_many": "{{count}} збережень",
+    "saves_other": "{{count}} збережень",
+    "recipes_one": "{{count}} страва",
+    "recipes_few": "{{count}} страви",
+    "recipes_many": "{{count}} страв",
+    "recipes_other": "{{count}} страв"
+  },
   "hero": {
     "eyebrow": "Особиста цифрова кулінарна книга",
     "titleLine1": "Ваші рецепти.",

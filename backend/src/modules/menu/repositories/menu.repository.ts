@@ -9,6 +9,14 @@ const menuListSelect = {
   name: true,
   description: true,
   order: true,
+  _count: { select: { dishes: true } },
+  dishes: {
+    take: 4,
+    orderBy: { order: 'asc' as const },
+    select: {
+      dish: { select: { photos: true } },
+    },
+  },
 } as const;
 
 const menuDetailSelect = {
@@ -40,34 +48,13 @@ const menuDetailSelect = {
   },
 } as const;
 
-export type MenuListItem = {
-  id: string;
-  ownerId: string;
-  name: string;
-  description: string | null;
-  order: number;
-};
+export type MenuListItem = Prisma.MenuGetPayload<{
+  select: typeof menuListSelect;
+}>;
 
-export type MenuWithRelations = MenuListItem & {
-  sections: Array<{
-    id: string;
-    menuId: string;
-    name: string;
-    order: number;
-  }>;
-  dishes: Array<{
-    id: string;
-    menuId: string;
-    dishId: string;
-    sectionId: string | null;
-    order: number;
-    dish: {
-      id: string;
-      title: string;
-      visibility: string;
-    };
-  }>;
-};
+export type MenuWithRelations = Prisma.MenuGetPayload<{
+  select: typeof menuDetailSelect;
+}>;
 
 @Injectable()
 export class MenuRepository {
