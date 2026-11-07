@@ -3,16 +3,16 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { Bookmark, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { queryClient } from '@api/queryClient'
 import { Button } from '@components/ui/button'
 import { Spinner } from '@components/ui/spinner'
 import { Routes } from '@constants/routes'
 import { useAuthSession } from '@/hooks/useAuthSession'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
+import { syncDishSaved } from '@/features/recipes/lib/sync-dish-saved'
 import { formatMinutes } from '@/features/recipes/lib/recipe-measures'
 import { localizedName } from '@/features/recipes/lib/recipe-locale'
-import type { DishListCard, DishListResult } from '@/features/recipes/types/recipe.types'
+import type { DishListCard } from '@/features/recipes/types/recipe.types'
 import { showToast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 
@@ -40,27 +40,7 @@ export const HomeRecipeCard = ({ dish }: { dish: DishListCard }) => {
     mutationFn: (nextSaved: boolean) =>
       nextSaved ? recipesApi.like(dish.id) : recipesApi.unlike(dish.id),
     onSuccess: (_result, nextSaved) => {
-      queryClient.setQueriesData<DishListResult>(
-        { queryKey: ['dishes', 'list', 'home'] },
-        (current) => {
-          if (!current) return current
-          return {
-            ...current,
-            data: current.data.map((item) =>
-              item.id === dish.id
-                ? {
-                    ...item,
-                    isLiked: nextSaved,
-                    likesCount: Math.max(
-                      0,
-                      (item.likesCount ?? 0) + (nextSaved ? 1 : -1),
-                    ),
-                  }
-                : item,
-            ),
-          }
-        },
-      )
+      syncDishSaved(dish.id, nextSaved)
     },
     onError: (error) => {
       showToast(

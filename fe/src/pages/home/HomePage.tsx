@@ -11,6 +11,7 @@ import { DishListOrder, DishListScope, DishListSort } from '@constants/recipe'
 import { Routes } from '@constants/routes'
 import { HomeRecipeCard } from '@/features/home/components/HomeRecipeCard'
 import { homeStateFromSearch, toHomeSearch } from '@/features/home/home-search'
+import type { MenuPreview } from '@/features/menus/types/menu.types'
 import { useAuthSession } from '@/hooks/useAuthSession'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
 import { recipeQueryKeys } from '@/features/recipes/api/recipes.queries'
@@ -23,13 +24,6 @@ import { HomeHero } from './HomeHero'
 
 const PREVIEW_COUNT = 3
 const MINE_COUNT = 2
-
-type HomeMenu = {
-  id: string
-  name: string
-  dishesCount: number
-  covers: string[]
-}
 
 const homeList = (
   scope: DishListScope,
@@ -95,7 +89,7 @@ export const HomePage = () => {
   })
   const menusQuery = useQuery({
     queryKey: ['menus', 'home'],
-    queryFn: () => apiJson<{ data: HomeMenu[] }>(ApiRoutes.menu.all),
+    queryFn: () => apiJson<{ data: MenuPreview[] }>(ApiRoutes.menu.all),
     enabled: isAuthenticated,
     staleTime: Infinity,
   })
@@ -337,7 +331,7 @@ const MenuSection = ({
   seeAll: string
   empty: string
   pending: boolean
-  menus: HomeMenu[]
+  menus: MenuPreview[]
 }) => {
   const { t } = useTranslation()
 
@@ -358,8 +352,8 @@ const MenuSection = ({
               className="flex items-center gap-3 rounded-2xl border border-border bg-card p-2.5"
             >
               <div className="grid size-14 shrink-0 grid-cols-2 gap-0.5 overflow-hidden rounded-lg bg-background">
-                {menu.covers.slice(0, 4).map((url) => (
-                  <img key={url} src={url} alt="" className="size-full object-cover" />
+                {menu.dishCoverPhotoUrls.slice(0, 4).map((photoUrl) => (
+                  <img key={photoUrl} src={photoUrl} alt="" className="size-full object-cover" />
                 ))}
               </div>
               <div className="min-w-0">

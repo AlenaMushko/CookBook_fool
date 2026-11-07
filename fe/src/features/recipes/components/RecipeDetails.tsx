@@ -28,6 +28,11 @@ import { cn } from '@/lib/utils'
 
 import { recipesApi } from '../api/recipes.api'
 import { recipeQueryKeys } from '../api/recipes.queries'
+import {
+  captureDishSavedState,
+  restoreDishSavedState,
+  syncDishSaved,
+} from '../lib/sync-dish-saved'
 import { formatAmount, formatMinutes } from '../lib/recipe-measures'
 import { localizedName, unitSymbol } from '../lib/recipe-locale'
 import type { DishDetails, DishPhotoRef, MeasurementUnit } from '../types/recipe.types'
@@ -108,13 +113,24 @@ export const RecipeDetails = ({
   }, [dish.ingredientGroups, dish.ingredients])
 
   const likeMutation = useMutation({
+    meta: { skipGlobalLoader: true },
     mutationFn: (nextLiked: boolean) =>
       nextLiked ? recipesApi.like(dish.id) : recipesApi.unlike(dish.id),
-    onSuccess: (_result, nextLiked) => {
+    onMutate: async (nextLiked) => {
+      await queryClient.cancelQueries({ queryKey: ['dishes', 'list'] })
+      await queryClient.cancelQueries({ queryKey: recipeQueryKeys.dish(dish.id) })
+      const snapshot = captureDishSavedState(dish.id)
+      syncDishSaved(dish.id, nextLiked)
       setLiked(nextLiked)
-      void queryClient.invalidateQueries({ queryKey: recipeQueryKeys.dish(dish.id) })
+      return { snapshot }
     },
-    onError: (error) => {
+    onSuccess: (_result, nextLiked) => {
+      syncDishSaved(dish.id, nextLiked)
+      setLiked(nextLiked)
+    },
+    onError: (error, nextLiked, context) => {
+      if (context) restoreDishSavedState(context.snapshot)
+      setLiked(!nextLiked)
       showToast(
         error instanceof Error ? error.message : t('error.serverError'),
         'error',

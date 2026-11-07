@@ -1,10 +1,12 @@
-import type { CreateMenuInput, Menu, UpdateMenuInput } from '../types/menu.types'
+import { ApiRoutes } from '@api/apiRoutes'
+import { apiJson } from '@api/client'
+
 import { generateUuid } from '../../../lib/device'
+import type { CreateMenuInput, Menu, MenuPreview, UpdateMenuInput } from '../types/menu.types'
 
 export const menusApi = {
-  async listMine(): Promise<Menu[]> {
-    // TODO: replace with real API call
-    return []
+  listMine() {
+    return apiJson<{ data: MenuPreview[] }>(ApiRoutes.menu.all)
   },
 
   async getById(menuId: string): Promise<Menu | null> {

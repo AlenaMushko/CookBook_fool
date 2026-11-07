@@ -4,6 +4,13 @@ export type Menu = {
   // ...
 }
 
+export type MenuPreview = {
+  id: string
+  name: string
+  dishesCount: number
+  dishCoverPhotoUrls: string[]
+}
+
 export type CreateMenuInput = {
   title: string
   // ...  

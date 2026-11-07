@@ -4,7 +4,7 @@ import {
   DishListSort,
 } from '@constants/recipe'
 
-import { COOKBOOK_SCOPES, type CookbookView } from './constants'
+import { COOKBOOK_SCOPES } from './constants'
 
 export type CookbookSearch = {
   q?: string
@@ -12,7 +12,6 @@ export type CookbookSearch = {
   category?: string
   sort?: DishListSort
   order?: DishListOrder
-  view?: CookbookView
   page?: number
 }
 
@@ -22,7 +21,6 @@ export type CookbookListState = {
   category?: string
   sort: DishListSort
   order: DishListOrder
-  view: CookbookView
   page: number
 }
 
@@ -47,7 +45,6 @@ export function parseCookbookSearch(search: Record<string, unknown>): CookbookSe
     category: typeof search.category === 'string' ? search.category : undefined,
     sort: oneOf<DishListSort>(search.sort, SORTS) ?? DishListSort.SAVED,
     order: oneOf<DishListOrder>(search.order, ORDERS) ?? DishListOrder.DESC,
-    view: search.view === 'list' || search.view === 'grid' ? search.view : 'grid',
     page: pageNumber(search.page) ?? 1,
   })
 }
@@ -59,7 +56,6 @@ export function cookbookStateFromSearch(search: CookbookSearch): CookbookListSta
     category: search.category,
     sort: search.sort ?? DishListSort.SAVED,
     order: search.order ?? DishListOrder.DESC,
-    view: search.view ?? 'grid',
     page: search.page ?? 1,
   }
 }
@@ -71,7 +67,6 @@ export function toCookbookSearch(state: CookbookListState): CookbookSearch {
   if (state.category) search.category = state.category
   if (state.sort !== DishListSort.SAVED) search.sort = state.sort
   if (state.order !== DishListOrder.DESC) search.order = state.order
-  if (state.view === 'list') search.view = 'list'
   if (state.page > 1) search.page = state.page
   return search
 }

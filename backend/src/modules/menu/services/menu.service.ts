@@ -205,23 +205,23 @@ export class MenuService {
   }
 
   private async toPreview(menu: MenuListItem) {
-    const covers = (
+    const dishCoverPhotoUrls = (
       await Promise.all(
-        menu.dishes.map(async (row) => {
-          const cover = readPhotos(row.dish.photos).sort(
+        menu.dishes.map(async (menuDish) => {
+          const [firstPhoto] = readPhotos(menuDish.dish.photos).sort(
             (a, b) => a.order - b.order,
-          )[0];
-          if (!cover) return null;
-          return await this.s3Service.getSignedGetUrl(cover.key);
+          );
+          if (!firstPhoto) return null;
+          return await this.s3Service.getSignedGetUrl(firstPhoto.key);
         }),
       )
-    ).filter((url): url is string => Boolean(url));
+    ).filter((photoUrl): photoUrl is string => Boolean(photoUrl));
 
     return {
       id: menu.id,
       name: menu.name,
       dishesCount: menu._count.dishes,
-      covers,
+      dishCoverPhotoUrls,
     };
   }
 

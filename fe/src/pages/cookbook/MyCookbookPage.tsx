@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
-import { ChevronDown, ChevronUp, LayoutGrid, List, Plus } from 'lucide-react'
+import { ChevronDown, ChevronUp, Plus } from 'lucide-react'
 import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -40,7 +40,7 @@ export const MyCookbookPage = () => {
   const list = cookbookStateFromSearch(
     useSearch({ from: '/_authenticated/my-cookbook' }),
   )
-  const { q: search, scope, category: categoryId, sort, order, view, page } = list
+  const { q: search, scope, category: categoryId, sort, order, page } = list
   const commit = useCallback(
     (patch: Partial<CookbookListState>) => {
       void navigate({
@@ -220,56 +220,15 @@ export const MyCookbookPage = () => {
             )
           })}
         </div>
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            aria-pressed={view === 'grid'}
-            aria-label={t('cookbook.viewGrid')}
-            onClick={() => commit({ view: 'grid' })}
-            className={cn(
-              'flex size-8 cursor-pointer items-center justify-center rounded-lg transition-colors',
-              view === 'grid'
-                ? 'bg-primary/15 text-primary'
-                : 'border border-border bg-card text-muted-foreground hover:bg-secondary',
-            )}
-          >
-            <LayoutGrid className="size-4" strokeWidth={1.5} />
-          </button>
-          <button
-            type="button"
-            aria-pressed={view === 'list'}
-            aria-label={t('cookbook.viewList')}
-            onClick={() => commit({ view: 'list' })}
-            className={cn(
-              'flex size-8 cursor-pointer items-center justify-center rounded-lg transition-colors',
-              view === 'list'
-                ? 'bg-primary/15 text-primary'
-                : 'border border-border bg-card text-muted-foreground hover:bg-secondary',
-            )}
-          >
-            <List className="size-4" strokeWidth={1.5} />
-          </button>
-        </div>
       </div>
 
       <div className="@container flex w-full flex-1 flex-col px-5 pt-6 pb-12 sm:px-7">
         {listQuery.isPending ? (
-          view === 'grid' ? (
-            <div className={cardGridClass}>
-              {Array.from({ length: 8 }, (_, index) => (
-                <RecipeCardSkeleton key={index} className="w-full max-w-none" />
-              ))}
-            </div>
-          ) : (
-            <div className="flex w-full flex-col gap-3">
-              {Array.from({ length: 6 }, (_, index) => (
-                <div
-                  key={index}
-                  className="h-24 animate-pulse rounded-2xl border border-border bg-card"
-                />
-              ))}
-            </div>
-          )
+          <div className={cardGridClass}>
+            {Array.from({ length: 8 }, (_, index) => (
+              <RecipeCardSkeleton key={index} className="w-full max-w-none" />
+            ))}
+          </div>
         ) : null}
 
         {listQuery.isError ? (
@@ -281,9 +240,9 @@ export const MyCookbookPage = () => {
         ) : null}
 
         {listQuery.data && listQuery.data.data.length > 0 ? (
-          <div className={view === 'grid' ? cardGridClass : 'flex w-full flex-col gap-3'}>
+          <div className={cardGridClass}>
             {listQuery.data.data.map((dish) => (
-              <CookbookCard key={dish.id} dish={dish} layout={view} />
+              <CookbookCard key={dish.id} dish={dish} />
             ))}
           </div>
         ) : null}

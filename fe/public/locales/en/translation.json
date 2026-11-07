@@ -18,6 +18,9 @@
     "checkEmail":"Check your email",
     "profileUpdated": "Profile updated successfully"
   },
+  "loader": {
+    "loading": "Loading…"
+  },
   "file": {
     "uploadSuccess": "File uploaded successfully",
     "uploadFail": "File upload failed, please try again",
@@ -397,8 +400,6 @@
       "cooked": "Cooked On",
       "difficulty": "Difficulty"
     },
-    "viewGrid": "Grid",
-    "viewList": "List",
     "count_one": "{{count}} recipe",
     "count_other": "{{count}} recipes",
     "portions_one": "{{count}} serving",
@@ -413,6 +414,12 @@
     "unsaved": "Removed from saved",
     "pages": "Recipe pages",
     "page": "Page {{page}}"
+  },
+  "menus": {
+    "title": "My Menus",
+    "subtitle": "Occasions, gatherings, and a few days planned ahead.",
+    "create": "Plan a menu",
+    "emptyBody": "Your menus for different occasions or a stretch of time can live here — a week of meals, a celebration, or a table already composed."
   },
   "pagination": {
     "label": "Pages",

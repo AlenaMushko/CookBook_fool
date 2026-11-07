@@ -10,8 +10,6 @@ export const COOKBOOK_SCOPES = [
   DishListScope.SAVED,
 ] as const
 
-export type CookbookView = 'grid' | 'list'
-
 export const COOKBOOK_SORT_CHIPS = [
   { key: DishListSort.CREATED, icon: Calendar },
   { key: DishListSort.SAVED, icon: Bookmark },

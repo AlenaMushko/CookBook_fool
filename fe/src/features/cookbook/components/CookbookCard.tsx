@@ -3,35 +3,24 @@ import { Link } from '@tanstack/react-router'
 import { Bookmark, ChefHat, Clock, Soup } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { queryClient } from '@api/queryClient'
 import { Spinner } from '@components/ui/spinner'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@components/ui/tooltip'
-import { DishDifficultyLevel, DishListScope } from '@constants/recipe'
+import { DishDifficultyLevel } from '@constants/recipe'
 import { Routes } from '@constants/routes'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
-import { recipeQueryKeys } from '@/features/recipes/api/recipes.queries'
+import { syncDishSaved } from '@/features/recipes/lib/sync-dish-saved'
 import { formatMinutes } from '@/features/recipes/lib/recipe-measures'
 import { localizedName } from '@/features/recipes/lib/recipe-locale'
-import type {
-  DishDetails,
-  DishListCard,
-  DishListResult,
-} from '@/features/recipes/types/recipe.types'
+import type { DishListCard } from '@/features/recipes/types/recipe.types'
 import { showToast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 
-export const CookbookCard = ({
-  dish,
-  layout = 'grid',
-}: {
-  dish: DishListCard
-  layout?: 'grid' | 'list'
-}) => {
+export const CookbookCard = ({ dish }: { dish: DishListCard }) => {
   const { t, i18n } = useTranslation()
   const { user } = useCurrentUser()
   const cover = [...(dish.photos ?? [])].sort((a, b) => a.order - b.order)[0]
@@ -60,36 +49,7 @@ export const CookbookCard = ({
       nextSaved ? recipesApi.like(dish.id) : recipesApi.unlike(dish.id),
     onSuccess: (_result, nextSaved) => {
       if (!nextSaved) showToast(t('cookbook.unsaved'), 'success')
-      const cachedLists = queryClient.getQueriesData<DishListResult>({
-        queryKey: ['dishes', 'list'],
-      })
-      for (const [key, current] of cachedLists) {
-        if (!current) continue
-        const scope = (key[2] as { scope?: string } | undefined)?.scope
-        const dropFromSaved = scope === DishListScope.SAVED && !nextSaved
-        const data = current.data.flatMap((item) => {
-          if (item.id !== dish.id) return [item]
-          if (dropFromSaved) return []
-          return [{ ...item, isLiked: nextSaved }]
-        })
-        const removed = data.length < current.data.length
-        queryClient.setQueryData<DishListResult>(key, {
-          ...current,
-          data,
-          meta: removed
-            ? { ...current.meta, total: Math.max(0, current.meta.total - 1) }
-            : current.meta,
-        })
-      }
-      queryClient.setQueryData<DishDetails>(recipeQueryKeys.dish(dish.id), (current) => {
-        if (!current) return current
-        const delta = Number(nextSaved) - Number(Boolean(current.isLiked))
-        return {
-          ...current,
-          isLiked: nextSaved,
-          likesCount: Math.max(0, current.likesCount + delta),
-        }
-      })
+      syncDishSaved(dish.id, nextSaved)
     },
     onError: (error) => {
       showToast(
@@ -113,10 +73,7 @@ export const CookbookCard = ({
               event.stopPropagation()
               toggleSave.mutate(!saved)
             }}
-            className={cn(
-              'absolute z-10 flex size-8 cursor-pointer items-center justify-center rounded-lg bg-card/95 text-foreground shadow-[0_1px_2px_rgba(43,38,32,0.12)] transition-colors duration-150 hover:bg-card disabled:cursor-wait disabled:opacity-70',
-              layout === 'list' ? 'top-1/2 right-3 -translate-y-1/2' : 'top-2 right-2',
-            )}
+            className="absolute top-2 right-2 z-10 flex size-8 cursor-pointer items-center justify-center rounded-lg bg-card/95 text-foreground shadow-[0_1px_2px_rgba(43,38,32,0.12)] transition-colors duration-150 hover:bg-card disabled:cursor-wait disabled:opacity-70"
           >
             <Bookmark
               className={cn(
@@ -173,45 +130,6 @@ export const CookbookCard = ({
       ) : null}
     </div>
   )
-
-  if (layout === 'list') {
-    return (
-      <article
-        aria-busy={toggleSave.isPending}
-        className="relative flex w-full overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_3px_rgba(43,38,32,0.06)]"
-      >
-        <Link
-          to={Routes.RECIPE}
-          params={{ recipeId: dish.id }}
-          className="flex min-w-0 flex-1 text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
-        >
-          <div className="relative h-24 w-28 shrink-0 bg-background sm:h-[104px] sm:w-36">
-            {cover?.url ? (
-              <img src={cover.url} alt="" className="size-full object-cover" />
-            ) : null}
-          </div>
-          <div className="flex min-w-0 flex-1 flex-col justify-center px-3 py-2 pr-12">
-            {categoryLine ? (
-              <p className="truncate text-[10px] leading-4 font-medium tracking-[0.6px] text-muted-foreground uppercase">
-                {categoryLine}
-              </p>
-            ) : null}
-            <h2 className="truncate font-serif text-[15px] leading-5 font-semibold text-foreground">
-              {dish.title}
-            </h2>
-            {!mine && author ? (
-              <p className="truncate text-[12px] leading-4 font-semibold text-brand">
-                {author}
-              </p>
-            ) : null}
-            {meta}
-          </div>
-        </Link>
-        {saveButton}
-        {cardLoader}
-      </article>
-    )
-  }
 
   return (
     <article
