@@ -145,6 +145,38 @@ export class DishRepository {
     });
   }
 
+  public async findGramsPerCup(
+    ingredientIds: string[],
+  ): Promise<Map<string, number>> {
+    const uniqueIds = [...new Set(ingredientIds)];
+    if (uniqueIds.length === 0) return new Map();
+
+    const units = await this.prisma.measurementUnit.findMany({
+      where: { code: { in: ['cup', 'g'] } },
+      select: { id: true, code: true },
+    });
+    const cupId = units.find((unit) => unit.code === 'cup')?.id;
+    const gramId = units.find((unit) => unit.code === 'g')?.id;
+    if (!cupId || !gramId) return new Map();
+
+    const rules = await this.prisma.conversionRule.findMany({
+      where: {
+        ingredientId: { in: uniqueIds },
+        fromUnitId: cupId,
+        toUnitId: gramId,
+      },
+      select: { ingredientId: true, factor: true },
+    });
+
+    return new Map(
+      rules.flatMap((rule) =>
+        rule.ingredientId
+          ? [[rule.ingredientId, Number(rule.factor)] as const]
+          : [],
+      ),
+    );
+  }
+
   public async create(
     data: Prisma.DishUncheckedCreateInput,
   ): Promise<DishWithRelations> {

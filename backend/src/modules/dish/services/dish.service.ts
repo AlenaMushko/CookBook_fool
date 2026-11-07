@@ -78,9 +78,11 @@ export class DishService {
       dto.ingredients,
     );
 
-    return DishMapper.toParsedResponseDto(dish, {
-      userId: userData.userId,
-    });
+    return await this.withMeasureFactors(
+      DishMapper.toParsedResponseDto(dish, {
+        userId: userData.userId,
+      }),
+    );
   }
 
   public async updateDish(
@@ -150,9 +152,11 @@ export class DishService {
       dto.ingredients,
     );
 
-    return DishMapper.toParsedResponseDto(dish, {
-      userId: userData.userId,
-    });
+    return await this.withMeasureFactors(
+      DishMapper.toParsedResponseDto(dish, {
+        userId: userData.userId,
+      }),
+    );
   }
 
   public async getAllDishes(
@@ -207,6 +211,17 @@ export class DishService {
       : undefined;
     const dto = DishMapper.toParsedResponseDto(dish, { userId, isLiked });
     await this.attachSignedPhotoUrls(dto);
+    return await this.withMeasureFactors(dto);
+  }
+
+  private async withMeasureFactors(dto: ParsedDishResDto) {
+    const factors = await this.dishRepository.findGramsPerCup(
+      dto.ingredients.map((ingredient) => ingredient.ingredientId),
+    );
+    for (const ingredient of dto.ingredients) {
+      const gramsPerCup = factors.get(ingredient.ingredientId);
+      if (gramsPerCup !== undefined) ingredient.gramsPerCup = gramsPerCup;
+    }
     return dto;
   }
 

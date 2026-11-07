@@ -40,6 +40,7 @@ import {
 import { formatAmount, formatMinutes } from '../lib/recipe-measures'
 import { localizedName, unitSymbol } from '../lib/recipe-locale'
 import type { DishDetails, DishPhotoRef, MeasurementUnit } from '../types/recipe.types'
+import { IngredientMeasures } from './IngredientMeasures'
 import { RecipeImage } from './RecipeImage'
 import { RecipePhotoViewer } from './RecipePhotoViewer'
 
@@ -151,7 +152,7 @@ export const RecipeDetails = ({
       await queryClient.invalidateQueries({ queryKey: ['dishes'] })
       await queryClient.invalidateQueries({ queryKey: ['menus'] })
       showToast(t('recipe.details.deleted'), 'success')
-      void router.navigate({ to: Routes.MY_COOKBOOK })
+      void router.navigate({ to: Routes.RECIPES })
     },
     onError: (error) => {
       const blocked =
@@ -222,21 +223,25 @@ export const RecipeDetails = ({
                 ]
                   .filter(Boolean)
                   .join(' ')
+                const ingredientName = localizedName(i18n.language, item)
                 return (
-                  <li key={item.id} className="flex items-center gap-3 text-[15px]">
-                    {item.image ? (
-                      <img
-                        src={item.image}
-                        alt=""
-                        className="size-9 shrink-0 rounded-lg object-cover"
-                      />
-                    ) : (
-                      <span className="size-9 shrink-0 rounded-lg bg-muted" />
-                    )}
-                    <span className="min-w-0 flex-1 truncate">
-                      {localizedName(i18n.language, item)}
-                    </span>
-                    <span className="shrink-0 text-muted-foreground">{amount}</span>
+                  <li key={item.id} className="flex flex-col gap-1.5 text-[15px]">
+                    <div className="flex items-center gap-3">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt=""
+                          className="size-9 shrink-0 rounded-lg object-cover"
+                        />
+                      ) : (
+                        <span className="size-9 shrink-0 rounded-lg bg-muted" />
+                      )}
+                      <span className="min-w-0 flex-1 truncate">{ingredientName}</span>
+                      <span className="shrink-0 text-muted-foreground">{amount}</span>
+                    </div>
+                    {item.gramsPerCup ? (
+                      <IngredientMeasures name={ingredientName} gramsPerCup={item.gramsPerCup} />
+                    ) : null}
                   </li>
                 )
               })}

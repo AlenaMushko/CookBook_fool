@@ -158,5 +158,6 @@ export type DishDetails = {
     quantity: number
     groupId?: string
     order: number
+    gramsPerCup?: number
   }[]
 }

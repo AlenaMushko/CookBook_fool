@@ -222,7 +222,14 @@
       "backToRecipe": "Back to recipe",
       "loading": "Loading recipe…",
       "unitsError": "Could not load measurement units. Refresh the page and try again.",
-      "notFound": "Recipe not found"
+      "notFound": "Recipe not found",
+      "showMeasures": "Measure table",
+      "hideMeasures": "Hide measure table",
+      "measureIngredient": "Ingredient",
+      "measureCup": "1 cup",
+      "measureTbsp": "1 tbsp",
+      "measureTsp": "1 tsp",
+      "measureGrams": "{{amount}} g"
     }
   },
   "forgot_password": "Forgot password?",

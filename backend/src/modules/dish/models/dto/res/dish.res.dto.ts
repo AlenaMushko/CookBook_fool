@@ -28,6 +28,11 @@ export class DishIngredientResDto {
 
   @ApiProperty()
   order: number;
+
+  @ApiPropertyOptional({
+    description: 'Grams in one cup, from the ingredient conversion rule',
+  })
+  gramsPerCup?: number;
 }
 
 export class DishIngredientGroupResDto {

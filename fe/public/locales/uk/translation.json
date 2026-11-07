@@ -224,7 +224,14 @@
       "backToRecipe": "До рецепта",
       "loading": "Завантаження рецепта…",
       "unitsError": "Не вдалося завантажити одиниці виміру. Оновіть сторінку і спробуйте ще раз.",
-      "notFound": "Рецепт не знайдено"
+      "notFound": "Рецепт не знайдено",
+      "showMeasures": "Таблиця мір",
+      "hideMeasures": "Сховати таблицю мір",
+      "measureIngredient": "Інгредієнт",
+      "measureCup": "1 скл",
+      "measureTbsp": "1 ст. л.",
+      "measureTsp": "1 ч. л.",
+      "measureGrams": "{{amount}} г"
     }
   },
   "forgot_password": "Забули пароль?",
