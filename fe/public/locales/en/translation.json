@@ -181,6 +181,7 @@
     },
     "details": {
       "library": "Library",
+      "back": "Back",
       "save": "Save",
       "saveHint": "Click to add this recipe to favorites",
       "savedHint": "Click to remove this recipe from favorites",

@@ -1,17 +1,13 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { ChevronDown, ChevronUp, LayoutGrid, List, Plus } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ListPagination } from '@components/common/ListPagination'
 import { Button } from '@components/ui/button'
 import { SearchInput } from '@components/ui/search-input'
-import {
-  DishListOrder,
-  DishListScope,
-  DishListSort,
-} from '@constants/recipe'
+import { DishListOrder } from '@constants/recipe'
 import { Routes } from '@constants/routes'
 import { CookbookCard } from '@/features/cookbook/components/CookbookCard'
 import {
@@ -19,8 +15,12 @@ import {
   COOKBOOK_SCOPES,
   COOKBOOK_SORT_CHIPS,
   cookbookScopeKey,
-  type CookbookView,
 } from '@/features/cookbook/constants'
+import {
+  cookbookStateFromSearch,
+  toCookbookSearch,
+  type CookbookListState,
+} from '@/features/cookbook/list-search'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
 import { recipeQueryKeys } from '@/features/recipes/api/recipes.queries'
 import { RecipeCardSkeleton } from '@/features/recipes/components/RecipeCardSkeleton'
@@ -36,13 +36,22 @@ const cardGridClass = [
 
 export const MyCookbookPage = () => {
   const { t, i18n } = useTranslation()
-  const [search, setSearch] = useState('')
-  const [scope, setScope] = useState<DishListScope>(DishListScope.PUBLIC)
-  const [categoryId, setCategoryId] = useState<string>()
-  const [sort, setSort] = useState<DishListSort>(DishListSort.SAVED)
-  const [order, setOrder] = useState<DishListOrder>(DishListOrder.DESC)
-  const [view, setView] = useState<CookbookView>('grid')
-  const [page, setPage] = useState(1)
+  const navigate = useNavigate()
+  const list = cookbookStateFromSearch(
+    useSearch({ from: '/_authenticated/my-cookbook' }),
+  )
+  const { q: search, scope, category: categoryId, sort, order, view, page } = list
+  const commit = useCallback(
+    (patch: Partial<CookbookListState>) => {
+      void navigate({
+        to: Routes.MY_COOKBOOK,
+        search: (current) =>
+          toCookbookSearch({ ...cookbookStateFromSearch(current), ...patch }),
+        replace: true,
+      })
+    },
+    [navigate],
+  )
 
   const categoriesQuery = useQuery({
     queryKey: recipeQueryKeys.categories(),
@@ -72,8 +81,8 @@ export const MyCookbookPage = () => {
   )
 
   useEffect(() => {
-    if (listQuery.data && page > pageCount) setPage(pageCount)
-  }, [listQuery.data, page, pageCount])
+    if (listQuery.data && page > pageCount) commit({ page: pageCount })
+  }, [commit, listQuery.data, page, pageCount])
 
   return (
     <div className="-m-5 flex min-h-full flex-col">
@@ -90,7 +99,7 @@ export const MyCookbookPage = () => {
           <div className="flex w-full items-center gap-2.5 lg:w-auto lg:shrink-0">
             <SearchInput
               value={search}
-              onChange={(event) => setSearch(event.target.value)}
+              onChange={(event) => commit({ q: event.target.value })}
               placeholder={t('cookbook.searchPlaceholder')}
               aria-label={t('cookbook.searchPlaceholder')}
               containerClassName="w-full max-w-none flex-1 bg-background md:w-auto lg:w-[210px] lg:flex-none"
@@ -113,10 +122,7 @@ export const MyCookbookPage = () => {
                 type="button"
                 role="tab"
                 aria-selected={selected}
-                onClick={() => {
-                  setScope(item)
-                  setPage(1)
-                }}
+                onClick={() => commit({ scope: item, page: 1 })}
                 className={cn(
                   'cursor-pointer border-b-[1.5px] px-5 py-2 text-[13px] leading-5 whitespace-nowrap transition-colors',
                   selected
@@ -135,10 +141,7 @@ export const MyCookbookPage = () => {
         <div className="flex flex-wrap gap-1.5 pb-3">
           <button
             type="button"
-            onClick={() => {
-              setCategoryId(undefined)
-              setPage(1)
-            }}
+            onClick={() => commit({ category: undefined, page: 1 })}
             className={cn(
               'cursor-pointer rounded-full px-4 py-[7px] text-[13px] leading-5 whitespace-nowrap transition-colors',
               categoryId == null
@@ -154,10 +157,7 @@ export const MyCookbookPage = () => {
               <button
                 key={category.id}
                 type="button"
-                onClick={() => {
-                  setCategoryId(category.id)
-                  setPage(1)
-                }}
+                onClick={() => commit({ category: category.id, page: 1 })}
                 className={cn(
                   'cursor-pointer rounded-full px-4 py-[7px] text-[13px] leading-5 whitespace-nowrap transition-colors',
                   selected
@@ -193,16 +193,16 @@ export const MyCookbookPage = () => {
                 aria-pressed={selected}
                 onClick={() => {
                   if (selected) {
-                    setOrder((current) =>
-                      current === DishListOrder.ASC
-                        ? DishListOrder.DESC
-                        : DishListOrder.ASC,
-                    )
+                    commit({
+                      order:
+                        order === DishListOrder.ASC
+                          ? DishListOrder.DESC
+                          : DishListOrder.ASC,
+                      page: 1,
+                    })
                   } else {
-                    setSort(key)
-                    setOrder(DishListOrder.ASC)
+                    commit({ sort: key, order: DishListOrder.ASC, page: 1 })
                   }
-                  setPage(1)
                 }}
                 className={cn(
                   'inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] leading-5 whitespace-nowrap transition-colors',
@@ -225,7 +225,7 @@ export const MyCookbookPage = () => {
             type="button"
             aria-pressed={view === 'grid'}
             aria-label={t('cookbook.viewGrid')}
-            onClick={() => setView('grid')}
+            onClick={() => commit({ view: 'grid' })}
             className={cn(
               'flex size-8 cursor-pointer items-center justify-center rounded-lg transition-colors',
               view === 'grid'
@@ -239,7 +239,7 @@ export const MyCookbookPage = () => {
             type="button"
             aria-pressed={view === 'list'}
             aria-label={t('cookbook.viewList')}
-            onClick={() => setView('list')}
+            onClick={() => commit({ view: 'list' })}
             className={cn(
               'flex size-8 cursor-pointer items-center justify-center rounded-lg transition-colors',
               view === 'list'
@@ -291,7 +291,7 @@ export const MyCookbookPage = () => {
         <ListPagination
           page={page}
           pageCount={pageCount}
-          onPageChange={setPage}
+          onPageChange={(next) => commit({ page: next })}
           label={t('cookbook.pages')}
         />
       </div>

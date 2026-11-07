@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
+import { Link, useCanGoBack, useRouter } from '@tanstack/react-router'
 import {
   Bookmark,
   ChefHat,
@@ -41,6 +41,8 @@ export const RecipeDetails = ({
   units: MeasurementUnit[]
 }) => {
   const { t, i18n } = useTranslation()
+  const router = useRouter()
+  const canGoBack = useCanGoBack()
   const { isAuthenticated } = useAuthSession()
   const { user } = useCurrentUser()
   const isOwner = dish.isOwner === true || user?.id === dish.owner.id
@@ -138,6 +140,14 @@ export const RecipeDetails = ({
   }
 
   const closeViewer = useCallback(() => setViewerIndex(null), [])
+
+  const goBack = () => {
+    if (canGoBack) {
+      router.history.back()
+      return
+    }
+    void router.navigate({ to: Routes.HOME })
+  }
 
   const ingredientsCard = (
     <section className="rounded-2xl border border-border bg-card p-5">
@@ -251,13 +261,14 @@ export const RecipeDetails = ({
         ) : (
           <div className="size-full bg-muted" />
         )}
-        <Link
-          to={Routes.RECIPES}
-          aria-label={t('recipe.details.library')}
+        <button
+          type="button"
+          onClick={goBack}
+          aria-label={t('recipe.details.back')}
           className="absolute top-3 left-3 flex size-9 cursor-pointer items-center justify-center rounded-full bg-card/90 text-foreground transition-colors duration-150 hover:bg-card"
         >
           <ChevronLeft className="size-4" strokeWidth={1.5} />
-        </Link>
+        </button>
         {isOwner ? null : (
           <Tooltip>
             <TooltipTrigger

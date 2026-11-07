@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
-import { useState } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ApiRoutes } from '@api/apiRoutes'
@@ -10,6 +10,7 @@ import { SearchInput } from '@components/ui/search-input'
 import { DishListOrder, DishListScope, DishListSort } from '@constants/recipe'
 import { Routes } from '@constants/routes'
 import { HomeRecipeCard } from '@/features/home/components/HomeRecipeCard'
+import { homeStateFromSearch, toHomeSearch } from '@/features/home/home-search'
 import { useAuthSession } from '@/hooks/useAuthSession'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
 import { recipeQueryKeys } from '@/features/recipes/api/recipes.queries'
@@ -57,9 +58,21 @@ const homeList = (
 
 export const HomePage = () => {
   const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
   const { isAuthenticated } = useAuthSession()
-  const [search, setSearch] = useState('')
-  const [categoryId, setCategoryId] = useState<string>()
+  const { q: search, category: categoryId } = homeStateFromSearch(
+    useSearch({ from: '/(public)/' }),
+  )
+  const commit = useCallback(
+    (next: { q: string; category?: string }) => {
+      void navigate({
+        to: Routes.HOME,
+        search: toHomeSearch(next),
+        replace: true,
+      })
+    },
+    [navigate],
+  )
 
   const categoriesQuery = useQuery({
     queryKey: recipeQueryKeys.categories(),
@@ -98,7 +111,7 @@ export const HomePage = () => {
         <div className="flex flex-col gap-4">
           <SearchInput
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => commit({ q: event.target.value, category: categoryId })}
             placeholder={t('homePage.searchPlaceholder')}
             aria-label={t('homePage.searchPlaceholder')}
             containerClassName="w-full max-w-none bg-card md:w-full"
@@ -106,7 +119,7 @@ export const HomePage = () => {
           <div className="flex flex-wrap gap-1.5">
             <CategoryChip
               selected={categoryId == null}
-              onClick={() => setCategoryId(undefined)}
+              onClick={() => commit({ q: search, category: undefined })}
             >
               {t('cookbook.all')}
             </CategoryChip>
@@ -114,7 +127,7 @@ export const HomePage = () => {
               <CategoryChip
                 key={category.id}
                 selected={categoryId === category.id}
-                onClick={() => setCategoryId(category.id)}
+                onClick={() => commit({ q: search, category: category.id })}
               >
                 {localizedName(i18n.language, category)}
               </CategoryChip>
