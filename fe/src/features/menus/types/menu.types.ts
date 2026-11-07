@@ -7,6 +7,7 @@ export type Menu = {
 export type MenuPreview = {
   id: string
   name: string
+  occasion: string | null
   dishesCount: number
   dishCoverPhotoUrls: string[]
 }

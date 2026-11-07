@@ -418,8 +418,12 @@
   },
   "menus": {
     "title": "My Menus",
-    "subtitle": "Occasions, gatherings, and a few days planned ahead.",
-    "create": "Plan a menu",
+    "subtitle": "Prepare recipe sets for any occasion",
+    "create": "Create Menu",
+    "newCard": "Create a new menu",
+    "newCardHint": "Group recipes for any occasion",
+    "shoppingTitle": "Shopping lists — coming soon",
+    "shoppingBody": "Soon you will be able to generate a combined shopping list from all recipes in a menu.",
     "emptyBody": "Your menus for different occasions or a stretch of time can live here — a week of meals, a celebration, or a table already composed.",
     "createPage": {
       "back": "Back to My Menus",

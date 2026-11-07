@@ -232,6 +232,7 @@ export class MenuService {
     return {
       id: menu.id,
       name: menu.name,
+      occasion: menu.occasion,
       dishesCount: menu._count.dishes,
       dishCoverPhotoUrls,
     };
