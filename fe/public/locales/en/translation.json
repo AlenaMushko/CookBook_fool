@@ -98,6 +98,9 @@
     "expand": "Expand navigation"
   },
   "recipe": {
+    "list": {
+      "title": "Recipes"
+    },
     "create": {
       "title": "New Recipe",
       "name": "Title",
@@ -326,7 +329,6 @@
     "title": "We couldn't finish that.",
     "description": "Something unexpected happened while loading this page. Your recipes and changes are safe.",
     "hint": "Please try again in a moment.",
-    "tryAgain": "Try again",
     "goBack": "Return to previous page"
   },
   "home": "Home",
@@ -459,6 +461,45 @@
       "draftResumeDescription": "You started a menu and didn't finish saving it. Continue or clear it?",
       "draftResumeContinue": "Continue",
       "draftResumeClear": "Clear"
+    },
+    "detail": {
+      "save": "Save Changes",
+      "saved": "Changes saved",
+      "saveFailed": "Couldn't save the menu.",
+      "nameRequired": "Enter a menu title.",
+      "nameTaken": "You already have a menu with this name.",
+      "editName": "Edit title",
+      "editDescription": "Edit description",
+      "updated": "Updated {{date}}",
+      "hintTitle": "Create menu stages",
+      "hintBody": "Organize your recipes into stages (e.g., Starters, Main Dishes, Desserts) and arrange them in the perfect order.",
+      "dismissHint": "Dismiss",
+      "addStage": "Add Stage",
+      "stagePlaceholder": "Starters",
+      "dropHere": "Drop recipe here",
+      "addToStage": "Add recipe to this stage",
+      "removeRecipe": "Remove recipe",
+      "removeStage": "Remove stage",
+      "renameStage": "Rename stage",
+      "collapse": "Collapse",
+      "expand": "Expand",
+      "drag": "Drag to reorder",
+      "addRecipes": "Add Recipes",
+      "addingTo": "Adding to {{name}}",
+      "dragNoteTitle": "Drag & Drop",
+      "dragNote": "Drag recipes from the list to any stage on the left, or click + to add them.",
+      "unsectioned": "Without a stage",
+      "delete": "Delete menu",
+      "deleteTitle": "Delete this menu?",
+      "deleteBody": "The recipes stay in your cookbook. Only this menu is removed.",
+      "deleted": "Menu deleted",
+      "stageNameRequired": "Give each stage a name.",
+      "duplicateStage": "Stage names have to be different.",
+      "more": "Menu actions"
+    },
+    "view": {
+      "edit": "Edit",
+      "stagesNote": "You can create stages for this menu. To add them, go to menu editing."
     }
   },
   "pagination": {

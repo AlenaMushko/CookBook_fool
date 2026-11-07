@@ -1,7 +1,49 @@
-export type Menu = {
+export type MenuSectionDetail = {
   id: string
+  name: string
+  order: number
+}
+
+export type MenuDishDetail = {
+  dishId: string
+  sectionId: string | null
+  order: number
   title: string
-  // ...
+  cookTime: number | null
+  baseServings: number | null
+  coverUrl: string | null
+}
+
+export type MenuDetail = {
+  id: string
+  name: string
+  description: string | null
+  occasion: string | null
+  updated: string
+  sections: MenuSectionDetail[]
+  dishes: MenuDishDetail[]
+}
+
+export type MenuStageDraft = {
+  id: string
+  name: string
+}
+
+export type MenuDishDraft = {
+  dishId: string
+  sectionId: string | null
+  title: string
+  cookTime: number | null
+  baseServings: number | null
+  coverUrl: string | null
+}
+
+export type MenuBoardDraft = {
+  name: string
+  description: string
+  occasion: string
+  sections: MenuStageDraft[]
+  dishes: MenuDishDraft[]
 }
 
 export type MenuPreview = {
@@ -19,6 +61,7 @@ export type CreateMenuInput = {
 }
 
 export type UpdateMenuInput = {
-  title: string
-  // ...
+  name?: string
+  description?: string
+  occasion?: string
 }

@@ -15,7 +15,11 @@ import {
   UpdateMenuDto,
   UpdateMenuSectionDto,
 } from '../models/menu.dto';
-import { MenuListItem, MenuRepository } from '../repositories/menu.repository';
+import {
+  MenuListItem,
+  MenuRepository,
+  MenuWithRelations,
+} from '../repositories/menu.repository';
 
 @Injectable()
 export class MenuService {
@@ -49,7 +53,8 @@ export class MenuService {
   }
 
   public async findById(id: string, userData: IUserData) {
-    return await this.getOwnedMenuOrThrow(id, userData.userId);
+    const menu = await this.getOwnedMenuOrThrow(id, userData.userId);
+    return await this.toDetail(menu);
   }
 
   public async update(id: string, dto: UpdateMenuDto, userData: IUserData) {
@@ -214,6 +219,41 @@ export class MenuService {
     }
 
     return updated;
+  }
+
+  private async toDetail(menu: MenuWithRelations) {
+    const dishes = await Promise.all(
+      menu.dishes.map(async (row) => {
+        const [firstPhoto] = readPhotos(row.dish.photos).sort(
+          (a, b) => a.order - b.order,
+        );
+        return {
+          dishId: row.dishId,
+          sectionId: row.sectionId,
+          order: row.order,
+          title: row.dish.title,
+          cookTime: row.dish.cookTime,
+          baseServings: row.dish.baseServings,
+          coverUrl: firstPhoto
+            ? await this.s3Service.getSignedGetUrl(firstPhoto.key)
+            : null,
+        };
+      }),
+    );
+
+    return {
+      id: menu.id,
+      name: menu.name,
+      description: menu.description,
+      occasion: menu.occasion,
+      updated: menu.updated,
+      sections: menu.sections.map((section) => ({
+        id: section.id,
+        name: section.name,
+        order: section.order,
+      })),
+      dishes,
+    };
   }
 
   private async toPreview(menu: MenuListItem) {

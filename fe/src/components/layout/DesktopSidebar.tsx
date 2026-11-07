@@ -71,7 +71,7 @@ export const DesktopSidebar = () => {
     >
       <div
         aria-hidden
-        className="h-full transition-[width] duration-300 ease-in-out"
+        className="h-full transition-[width] duration-300 ease-smooth"
         style={{ width }}
       />
 
@@ -80,7 +80,7 @@ export const DesktopSidebar = () => {
         className={cn(
           'absolute inset-y-0 left-0 z-30 flex h-full flex-col overflow-hidden',
           'border-r-[0.75px] border-secondary-border bg-sidebar',
-          'transition-[width] duration-300 ease-in-out',
+          'transition-[width] duration-300 ease-smooth',
         )}
         style={{ width }}
       >
@@ -101,7 +101,7 @@ export const DesktopSidebar = () => {
                       aria-label={label}
                       className={cn(
                         'flex h-10 items-center gap-2.5 rounded-[7px] px-2.5 font-sans text-[13px] whitespace-nowrap',
-                        'transition-[background-color,border-color,color] duration-200 ease-linear',
+                        'transition-[background-color,border-color,color] duration-200 ease-smooth',
                         isActive
                           ? 'border-l-[3px] border-l-primary bg-card pr-2.5 pl-[7px] font-semibold text-primary shadow-subtle'
                           : 'border border-transparent font-medium text-muted-foreground hover:border-primary hover:bg-card hover:text-primary',
@@ -129,7 +129,7 @@ export const DesktopSidebar = () => {
               className={cn(
                 'flex h-10 items-center gap-2.5 rounded-[7px] border border-transparent px-2.5',
                 'font-sans text-[13px] font-medium whitespace-nowrap text-brand',
-                'transition-[background-color,border-color] duration-200 ease-linear',
+                'transition-[background-color,border-color] duration-200 ease-smooth',
                 'hover:border-brand hover:bg-brand-soft',
               )}
             >
@@ -152,14 +152,14 @@ export const DesktopSidebar = () => {
         className={cn(
           'absolute top-5 z-50 flex size-7 -translate-x-1/2 items-center justify-center rounded-md cursor-pointer',
           'border border-secondary-border bg-card text-muted-foreground shadow-subtle',
-          'transition-[color,border-color,transform,left] duration-300 ease-in-out',
+          'transition-[color,border-color,transform,left] duration-300 ease-smooth',
           'hover:border-primary hover:text-primary active:scale-95',
         )}
         style={{ left: width }}
       >
         <ToggleIcon
           className={cn(
-            'size-3.5 transition-transform duration-300 ease-in-out',
+            'size-3.5 transition-transform duration-300 ease-smooth',
             !expanded && 'rotate-180',
           )}
           strokeWidth={1.6}

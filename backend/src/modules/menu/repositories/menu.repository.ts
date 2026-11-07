@@ -26,6 +26,7 @@ const menuDetailSelect = {
   name: true,
   description: true,
   occasion: true,
+  updated: true,
   order: true,
   sections: {
     orderBy: { order: 'asc' as const },
@@ -43,7 +44,9 @@ const menuDetailSelect = {
         select: {
           id: true,
           title: true,
-          visibility: true,
+          cookTime: true,
+          baseServings: true,
+          photos: true,
         },
       },
     },

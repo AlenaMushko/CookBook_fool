@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
+import { PageTitle } from '@components/common'
 import { ProfileForm } from '@features/profile/components/ProfileForm'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 
@@ -9,18 +10,18 @@ export const ProfilePage = () => {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-10 text-body text-muted-foreground">
+      <PageTitle className="mx-auto max-w-lg px-4 py-10 text-body text-muted-foreground">
         {t('profilePage.loading')}
-      </div>
+      </PageTitle>
     )
   }
 
   if (isError || !user) {
     return (
       <div className="mx-auto flex max-w-lg flex-col gap-4 px-4 py-10">
-        <p className="text-body text-muted-foreground">
+        <PageTitle className="text-body text-muted-foreground">
           {t('profilePage.loadError')}
-        </p>
+        </PageTitle>
         <button
           type="button"
           className="text-body font-medium text-brand underline-offset-4 hover:underline"

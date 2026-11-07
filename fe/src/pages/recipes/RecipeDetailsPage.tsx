@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
+import { PageTitle } from '@components/common'
 import { RecipeDetails } from '@/features/recipes/components/RecipeDetails'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
 import { recipeQueryKeys } from '@/features/recipes/api/recipes.queries'
@@ -19,15 +20,15 @@ export const RecipeDetailsPage = ({ recipeId }: { recipeId: string }) => {
   })
 
   if (dishQuery.isPending || unitsQuery.isPending) {
-    return <p className="text-subtle">{t('recipe.details.loading')}</p>
+    return <PageTitle className="text-subtle">{t('recipe.details.loading')}</PageTitle>
   }
 
   if (dishQuery.isError || !dishQuery.data) {
-    return <p className="text-subtle">{t('recipe.details.notFound')}</p>
+    return <PageTitle className="text-subtle">{t('recipe.details.notFound')}</PageTitle>
   }
 
   if (unitsQuery.isError) {
-    return <p className="text-subtle">{t('recipe.details.unitsError')}</p>
+    return <PageTitle className="text-subtle">{t('recipe.details.unitsError')}</PageTitle>
   }
 
   return (

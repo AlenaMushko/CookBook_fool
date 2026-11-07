@@ -3,17 +3,12 @@ import { useRouter } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import {
-  navButtonLinkVariants,
-  PageSection,
-  SIZES,
-  VARIANTS,
-} from '@components/layout'
+import { PageSection } from '@components/layout'
 
 import errorIllustration from '@/assets/images/error-page-illustration.png'
-import { cn } from '@/lib/utils'
 
-export function ErrorPage({ reset }: ErrorComponentProps) {
+export function ErrorPage(props: ErrorComponentProps) {
+  void props
   const { t } = useTranslation()
   const router = useRouter()
 
@@ -60,22 +55,8 @@ export function ErrorPage({ reset }: ErrorComponentProps) {
 
           <button
             type="button"
-            onClick={reset}
-            className={cn(
-              navButtonLinkVariants({
-                variant: VARIANTS.PRIMARY,
-                size: SIZES.MD,
-              }),
-              'mt-8 min-w-32 md:mt-10',
-            )}
-          >
-            {t('errorPage.tryAgain')}
-          </button>
-
-          <button
-            type="button"
             onClick={handleGoBack}
-            className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-md text-body font-medium text-outline-foreground underline-offset-4 transition-colors hover:text-primary-hover hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+            className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-md text-body font-medium text-outline-foreground underline-offset-4 transition-colors hover:text-primary-hover hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background md:mt-10"
           >
             <ArrowLeft
               aria-hidden="true"

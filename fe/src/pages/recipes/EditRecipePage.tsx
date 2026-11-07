@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
+import { PageTitle } from '@components/common'
 import { Routes } from '@constants/routes'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
 import { recipeQueryKeys } from '@/features/recipes/api/recipes.queries'
@@ -21,13 +22,13 @@ export const EditRecipePage = ({ recipeId }: { recipeId: string }) => {
     (user?.id != null && user.id === dishQuery.data?.owner.id)
 
   if (dishQuery.isPending || isLoading) {
-    return <p className="text-subtle">{t('recipe.details.loading')}</p>
+    return <PageTitle className="text-subtle">{t('recipe.details.loading')}</PageTitle>
   }
 
   if (dishQuery.isError || !dishQuery.data) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="text-subtle">{t('recipe.details.notFound')}</p>
+        <PageTitle className="text-subtle">{t('recipe.details.notFound')}</PageTitle>
         <Link to={Routes.RECIPES} className="w-fit text-[14px] text-brand">
           {t('recipe.details.library')}
         </Link>
@@ -38,7 +39,7 @@ export const EditRecipePage = ({ recipeId }: { recipeId: string }) => {
   if (!isOwner) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="text-subtle">{t('recipe.details.editForbidden')}</p>
+        <PageTitle className="text-subtle">{t('recipe.details.editForbidden')}</PageTitle>
         <Link
           to={Routes.RECIPE}
           params={{ recipeId }}

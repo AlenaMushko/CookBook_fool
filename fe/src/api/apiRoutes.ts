@@ -31,7 +31,13 @@ export const ApiRoutes = {
   },
   menu: {
     all: `/${ApiVersion.V1}/menu`,
+    byId: (menuId: string) => `/${ApiVersion.V1}/menu/${menuId}`,
     dishes: (menuId: string) => `/${ApiVersion.V1}/menu/${menuId}/dishes`,
+    dish: (menuId: string, dishId: string) =>
+      `/${ApiVersion.V1}/menu/${menuId}/dishes/${dishId}`,
+    sections: (menuId: string) => `/${ApiVersion.V1}/menu/${menuId}/sections`,
+    section: (menuId: string, sectionId: string) =>
+      `/${ApiVersion.V1}/menu/${menuId}/sections/${sectionId}`,
   },
 
    // menus: {

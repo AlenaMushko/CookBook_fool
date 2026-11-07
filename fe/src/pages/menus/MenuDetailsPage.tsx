@@ -1,12 +1,9 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
+
+import { MenuView } from '@/features/menus/components/menu-detail/MenuView'
 import { menuDetailsQueryOptions } from '@/features/menus'
 
 export const MenuDetailsPage = ({ menuId }: { menuId: string }) => {
   const { data: menu } = useSuspenseQuery(menuDetailsQueryOptions(menuId))
-
-  if (!menu) {
-    return <p>Menu not found</p>
-  }
-
-  return <h1>{menu.title}</h1>
+  return <MenuView menu={menu} />
 }

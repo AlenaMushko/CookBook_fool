@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { PageTitle } from '@components/common'
 import { AuthSplitLayout } from '@pages/auth/AuthSplitLayout'
 import { authApi } from '@features/auth/api/auth.api'
 import { ResetPasswordForm } from '@features/auth/components/ResetPasswordForm'
@@ -97,9 +98,9 @@ export const ResetPasswordPage = () => {
         </>
       ) : (
         <>
-          <p className="text-body-large text-muted-foreground">
+          <PageTitle className="text-body-large text-muted-foreground">
             {t(messageKey)}
-          </p>
+          </PageTitle>
 
           <div className="mt-8 flex flex-col gap-4 md:mt-10">
             <Link
