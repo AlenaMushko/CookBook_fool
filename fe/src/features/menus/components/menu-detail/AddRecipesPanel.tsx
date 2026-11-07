@@ -3,13 +3,30 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ListPagination } from '@components/common/ListPagination'
+import { Button } from '@components/ui/button'
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@components/ui/dialog'
 import { SearchInput } from '@components/ui/search-input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@components/ui/select'
 import { DishListOrder, DishListScope, DishListSort } from '@constants/recipe'
 import { DishCategoryChips, DishSortChips } from '@/features/recipes/components/dish-filters'
 import { useDishCategories } from '@/features/recipes/hooks/useDishCategories'
 import { useDishList } from '@/features/recipes/hooks/useDishList'
 import type { DishListCard } from '@/features/recipes/types/recipe.types'
 
+import type { MenuStageDraft } from '../../types/menu.types'
 import { RecipePickRow } from './RecipePickRow'
 
 const PAGE_SIZE = 6
@@ -17,23 +34,41 @@ const PAGE_SIZE = 6
 export const AddRecipesPanel = ({
   placedIds,
   targetName,
+  sections = [],
   draggable = true,
+  chooseStage = false,
   onAdd,
   onRemove,
 }: {
   placedIds: ReadonlySet<string>
   targetName: string
+  sections?: MenuStageDraft[]
   draggable?: boolean
-  onAdd: (dish: DishListCard) => void
+  chooseStage?: boolean
+  onAdd: (dish: DishListCard, sectionId?: string | null) => void
   onRemove: (dishId: string) => void
 }) => {
   const { t } = useTranslation()
+  const [pending, setPending] = useState<DishListCard | null>(null)
+  const [sectionId, setSectionId] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [categoryId, setCategoryId] = useState<string>()
   const [sort, setSort] = useState<DishListSort>(DishListSort.SAVED)
   const [order, setOrder] = useState<DishListOrder>(DishListOrder.DESC)
   const [page, setPage] = useState(1)
+  const stages = sections.filter((section) => section.name.trim())
   const categories = useDishCategories()
+
+  const closePicker = () => {
+    setPending(null)
+    setSectionId(null)
+  }
+
+  const place = (nextSectionId: string | null) => {
+    if (!pending) return
+    onAdd(pending, nextSectionId)
+    closePicker()
+  }
   const { query, total, pageCount } = useDishList({
     scopeKey: ['menu-picker'],
     scope: DishListScope.COOKBOOK,
@@ -88,7 +123,14 @@ export const AddRecipesPanel = ({
             dish={dish}
             placed={placedIds.has(dish.id)}
             draggable={draggable}
-            onAdd={() => onAdd(dish)}
+            onAdd={() => {
+              if (chooseStage) {
+                setSectionId(null)
+                setPending(dish)
+                return
+              }
+              onAdd(dish)
+            }}
             onRemove={() => onRemove(dish.id)}
           />
         ))}
@@ -108,6 +150,52 @@ export const AddRecipesPanel = ({
           </p>
         </div>
       ) : null}
+      <Dialog open={pending != null} onOpenChange={(open) => { if (!open) closePicker() }}>
+        <DialogContent className="z-[80] max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>{t('menus.detail.addRecipe')}</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[13px] leading-5 font-medium">{t('menus.addDish.stage')}</span>
+              <Select
+                value={sectionId}
+                items={stages.map((stage) => ({ value: stage.id, label: stage.name }))}
+                onValueChange={setSectionId}
+                disabled={stages.length === 0}
+              >
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={
+                      stages.length === 0
+                        ? t('menus.detail.noStages')
+                        : t('menus.addDish.stagePlaceholder')
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {stages.map((stage) => (
+                    <SelectItem key={stage.id} value={stage.id}>
+                      {stage.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <Button type="button" variant="secondary" size="modal" onClick={closePicker}>
+              {t('cancel')}
+            </Button>
+            <Button type="button" variant="secondary" size="modal" onClick={() => place(null)}>
+              {t('menus.detail.addWithoutStage')}
+            </Button>
+            <Button type="button" size="modal" disabled={!sectionId} onClick={() => place(sectionId)}>
+              {t('menus.detail.addPickedStage')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   )
 }

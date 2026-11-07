@@ -135,8 +135,12 @@ export const MenuEditor = ({ menu }: { menu: MenuDetail }) => {
     <AddRecipesPanel
       placedIds={placedIds}
       targetName={target?.name || t('menus.detail.unsectioned')}
+      sections={draft.sections}
       draggable={isDesktop}
-      onAdd={(dish) => addDish(dish, target?.id ?? null)}
+      chooseStage={!isDesktop}
+      onAdd={(dish, sectionId) =>
+        addDish(dish, sectionId === undefined ? (target?.id ?? null) : sectionId)
+      }
       onRemove={removeDish}
     />
   )
