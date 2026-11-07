@@ -14,6 +14,7 @@ import {
 } from '@/features/recipes/components/dish-filters'
 import { useDishCategories } from '@/features/recipes/hooks/useDishCategories'
 import { useDishList } from '@/features/recipes/hooks/useDishList'
+import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
 import { formatMinutes } from '@/features/recipes/lib/recipe-measures'
 import { localizedName } from '@/features/recipes/lib/recipe-locale'
@@ -165,7 +166,7 @@ const PickerCard = ({
         className="block cursor-pointer text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
       >
         <div className="relative h-28 bg-secondary">
-          {photo ? <img src={photo} alt="" className="size-full object-cover" /> : null}
+          <RecipeImage src={photo} className="size-full object-cover" />
         </div>
         <div className="px-3 py-2.5">
           {category ? (

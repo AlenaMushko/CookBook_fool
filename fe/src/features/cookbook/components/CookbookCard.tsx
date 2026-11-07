@@ -14,6 +14,7 @@ import { Routes } from '@constants/routes'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { AddToMenuButton } from '@/features/menus/components/AddToMenuButton'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
+import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 import { syncDishSaved } from '@/features/recipes/lib/sync-dish-saved'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
 import { formatMinutes } from '@/features/recipes/lib/recipe-measures'
@@ -147,9 +148,7 @@ export const CookbookCard = ({ dish }: { dish: DishListCard }) => {
         className="flex min-h-0 min-w-0 flex-1 flex-col text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
       >
         <div className="relative h-[128px] shrink-0 bg-background @min-[640px]:h-[148px] @min-[1040px]:h-[168px]">
-          {cover?.url ? (
-            <img src={cover.url} alt="" className="size-full object-cover" />
-          ) : null}
+          <RecipeImage src={cover?.url} className="size-full object-cover" />
         </div>
         <div
           className={cn(

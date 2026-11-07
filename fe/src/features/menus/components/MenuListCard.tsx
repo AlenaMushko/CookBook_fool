@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
 import { Routes } from '@constants/routes'
+import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
 import { cn } from '@/lib/utils'
 
@@ -26,7 +27,7 @@ export const MenuListCard = ({ menu }: { menu: MenuPreview }) => {
         {covers.map((photoUrl, index) => (
           <div key={index} className="bg-background">
             {photoUrl ? (
-              <img src={photoUrl} alt="" className="size-full object-cover" />
+              <RecipeImage src={photoUrl} className="size-full object-cover" />
             ) : null}
           </div>
         ))}

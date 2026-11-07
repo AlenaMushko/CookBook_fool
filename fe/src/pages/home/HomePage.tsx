@@ -14,6 +14,7 @@ import { homeStateFromSearch, toHomeSearch } from '@/features/home/home-search'
 import type { MenuPreview } from '@/features/menus/types/menu.types'
 import { useAuthSession } from '@/hooks/useAuthSession'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
+import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 import { DishCategoryChips } from '@/features/recipes/components/dish-filters'
 import { useDishCategories } from '@/features/recipes/hooks/useDishCategories'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
@@ -254,9 +255,7 @@ const MineSection = ({
                 )}
               >
                 <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-background">
-                  {cover?.url ? (
-                    <img src={cover.url} alt="" className="size-full object-cover" />
-                  ) : null}
+                  <RecipeImage src={cover?.url} className="size-full object-cover" />
                 </div>
                 <div className="min-w-0">
                   <p className="truncate font-serif text-[16px] leading-5 font-semibold">
@@ -313,7 +312,7 @@ const MenuSection = ({
             >
               <div className="grid size-14 shrink-0 grid-cols-2 gap-0.5 overflow-hidden rounded-lg bg-background">
                 {menu.dishCoverPhotoUrls.slice(0, 4).map((photoUrl) => (
-                  <img key={photoUrl} src={photoUrl} alt="" className="size-full object-cover" />
+                  <RecipeImage key={photoUrl} src={photoUrl} className="size-full object-cover" />
                 ))}
               </div>
               <div className="min-w-0">

@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { DishPhotoRef } from '../types/recipe.types'
+import { RecipeImage } from './RecipeImage'
 
 export const RecipePhotoViewer = ({
   photos,
@@ -63,16 +64,11 @@ export const RecipePhotoViewer = ({
       ) : null}
 
       <div className="relative w-fit max-h-[80vh] max-w-[80vw]">
-        {photo.url ? (
-          <img
-            key={`${photo.key}-${index}`}
-            src={photo.url}
-            alt=""
-            className="animate-in fade-in block h-auto max-h-[80vh] w-auto max-w-[80vw] min-h-0 min-w-0 rounded-lg object-contain duration-200"
-          />
-        ) : (
-          <div className="h-[50vh] w-[70vw] max-h-[80vh] max-w-[80vw] rounded-lg bg-white/10" />
-        )}
+        <RecipeImage
+          key={`${photo.key}-${index}`}
+          src={photo.url}
+          className="animate-in fade-in block h-auto max-h-[80vh] w-auto max-w-[80vw] min-h-0 min-w-0 rounded-lg object-contain duration-200"
+        />
         <button
           type="button"
           aria-label={t('recipe.details.closePhoto')}

@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import type { MouseEvent } from 'react'
 
 import { Routes } from '@constants/routes'
+import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 
 import type { MenuDishDraft } from '../../types/menu.types'
 import { MenuDishMeta } from './MenuDishMeta'
@@ -22,9 +23,11 @@ export const MenuDishLink = ({
     onDragStart={(event) => event.preventDefault()}
   >
     <span className="size-12 shrink-0 overflow-hidden rounded-lg bg-secondary">
-      {dish.coverUrl ? (
-        <img src={dish.coverUrl} alt="" draggable={false} className="pointer-events-none size-full object-cover" />
-      ) : null}
+      <RecipeImage
+        src={dish.coverUrl}
+        draggable={false}
+        className="pointer-events-none size-full object-cover"
+      />
     </span>
     <span className="min-w-0">
       <span className="block truncate text-[14px] font-medium text-foreground">{dish.title}</span>

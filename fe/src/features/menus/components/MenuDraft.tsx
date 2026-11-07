@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { Button } from '@components/ui/button'
 import { Routes } from '@constants/routes'
+import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
 import { formatMinutes } from '@/features/recipes/lib/recipe-measures'
 import { cn } from '@/lib/utils'
@@ -63,7 +64,7 @@ export const MenuDraft = ({
                   className="flex min-w-0 flex-1 items-center gap-2.5 text-foreground"
                 >
                   <div className="size-11 shrink-0 overflow-hidden rounded-lg bg-secondary">
-                    {photo ? <img src={photo} alt="" className="size-full object-cover" /> : null}
+                    <RecipeImage src={photo} className="size-full object-cover" />
                   </div>
                   <div className="min-w-0">
                     <p className="truncate text-[14px] leading-5 font-medium">{dish.title}</p>

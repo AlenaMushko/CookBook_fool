@@ -2,6 +2,7 @@ import { useDraggable } from '@dnd-kit/core'
 import { Check, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
 import type { DishListCard } from '@/features/recipes/types/recipe.types'
 import { cn } from '@/lib/utils'
@@ -54,9 +55,11 @@ export const RecipePickRow = ({
         />
       ) : null}
       <span className="size-12 shrink-0 overflow-hidden rounded-lg bg-secondary">
-        {photo ? (
-          <img src={photo} alt="" draggable={false} className="pointer-events-none size-full object-cover" />
-        ) : null}
+        <RecipeImage
+          src={photo}
+          draggable={false}
+          className="pointer-events-none size-full object-cover"
+        />
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate text-[14px] font-medium text-foreground">{dish.title}</span>

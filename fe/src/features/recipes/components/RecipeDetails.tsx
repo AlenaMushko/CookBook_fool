@@ -40,6 +40,7 @@ import {
 import { formatAmount, formatMinutes } from '../lib/recipe-measures'
 import { localizedName, unitSymbol } from '../lib/recipe-locale'
 import type { DishDetails, DishPhotoRef, MeasurementUnit } from '../types/recipe.types'
+import { RecipeImage } from './RecipeImage'
 import { RecipePhotoViewer } from './RecipePhotoViewer'
 
 export const RecipeDetails = ({
@@ -283,9 +284,7 @@ export const RecipeDetails = ({
                         onClick={() => openPhoto(photo)}
                         className="size-16 cursor-pointer overflow-hidden rounded-lg transition-opacity duration-150 hover:opacity-80"
                       >
-                        {photo.url ? (
-                          <img src={photo.url} alt="" className="size-full object-cover" />
-                        ) : null}
+                        <RecipeImage src={photo.url} className="size-full object-cover" />
                       </button>
                     ))}
                   </div>
@@ -301,11 +300,7 @@ export const RecipeDetails = ({
   return (
     <article className="mx-auto flex w-full max-w-[1040px] flex-col pb-8 text-foreground">
       <div className="relative h-[240px] overflow-hidden rounded-2xl md:h-[360px]">
-        {hero?.url ? (
-          <img src={hero.url} alt="" className="size-full object-cover" />
-        ) : (
-          <div className="size-full bg-muted" />
-        )}
+        <RecipeImage src={hero?.url} className="size-full object-cover" />
         <button
           type="button"
           onClick={goBack}
@@ -360,9 +355,7 @@ export const RecipeDetails = ({
                     : 'border-white/55 opacity-90',
                 )}
               >
-                {photo.url ? (
-                  <img src={photo.url} alt="" className="size-full object-cover" />
-                ) : null}
+                <RecipeImage src={photo.url} className="size-full object-cover" />
               </button>
             ))}
           </div>

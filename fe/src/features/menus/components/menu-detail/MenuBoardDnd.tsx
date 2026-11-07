@@ -14,6 +14,7 @@ import { GripVertical } from 'lucide-react'
 import { useState, type Dispatch, type ReactNode, type SetStateAction } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 import { cn } from '@/lib/utils'
 
 import { coverUrl } from '../../lib/cover-url'
@@ -91,7 +92,7 @@ const applyDrop = (draft: MenuBoardDraft, from: MenuDragData, to: MenuDragData):
 const DragGhost = ({ title, cover }: { title: string; cover?: string | null }) => (
   <div className="flex w-64 items-center gap-3 rounded-xl border border-primary bg-card px-2 py-2 shadow-[0_12px_28px_rgba(43,38,32,0.18)]">
     <span className="size-10 shrink-0 overflow-hidden rounded-lg bg-secondary">
-      {cover ? <img src={cover} alt="" className="size-full object-cover" /> : null}
+      <RecipeImage src={cover} className="size-full object-cover" />
     </span>
     <span className="truncate text-[14px] font-medium text-foreground">{title}</span>
   </div>

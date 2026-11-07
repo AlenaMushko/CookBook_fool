@@ -5,6 +5,8 @@ import { ImageUploader } from '@components/common/ImageUploader'
 import { Button } from '@components/ui/button'
 import { Field, FieldError, FieldLabel } from '@components/ui/field'
 
+import { RecipeImage } from './RecipeImage'
+
 const formLabelClass = 'text-label uppercase tracking-[0.12em]'
 
 export const RecipePhotosField = ({
@@ -56,15 +58,7 @@ export const RecipePhotosField = ({
         <ul className="mt-3 flex flex-wrap gap-2">
           {photos.map((photo) => (
             <li key={photo.key} className="relative">
-              {photo.url ? (
-                <img
-                  src={photo.url}
-                  alt=""
-                  className="size-16 rounded-md object-cover"
-                />
-              ) : (
-                <span className="block size-16 rounded-md bg-muted" />
-              )}
+              <RecipeImage src={photo.url} className="size-16 rounded-md object-cover" />
               <Button
                 type="button"
                 variant="secondary"

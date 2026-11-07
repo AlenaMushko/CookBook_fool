@@ -9,6 +9,7 @@ import { Routes } from '@constants/routes'
 import { useAuthSession } from '@/hooks/useAuthSession'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
+import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 import { syncDishSaved } from '@/features/recipes/lib/sync-dish-saved'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
 import { formatMinutes } from '@/features/recipes/lib/recipe-measures'
@@ -64,9 +65,7 @@ export const HomeRecipeCard = ({ dish }: { dish: DishListCard }) => {
         className="flex min-h-0 flex-1 cursor-pointer flex-col text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
       >
         <div className="relative h-40 bg-background">
-          {cover?.url ? (
-            <img src={cover.url} alt="" className="size-full object-cover" />
-          ) : null}
+          <RecipeImage src={cover?.url} className="size-full object-cover" />
         </div>
         <div className="flex flex-1 flex-col px-3.5 pt-3 pb-3.5">
           {categoryLine ? (
