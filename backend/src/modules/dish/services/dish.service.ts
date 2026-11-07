@@ -52,10 +52,12 @@ export class DishService {
     );
     await this.validateArea(dto.areaId);
     await this.validateIngredients(dto.ingredients);
+    const title = dto.title.trim();
+    await this.assertOwnTitleAvailable(userData.userId, title);
 
     const dish = await this.dishRepository.createWithRelations(
       {
-        title: dto.title,
+        title,
         description: dto.description,
         visibility: dto.visibility,
         difficulty: dto.difficulty,
@@ -87,6 +89,10 @@ export class DishService {
     userData: IUserData,
   ): Promise<ParsedDishResDto> {
     const existing = await this.findOwnedOrThrow(id, userData.userId);
+    const title = dto.title?.trim();
+    if (title !== undefined) {
+      await this.assertOwnTitleAvailable(userData.userId, title, id);
+    }
 
     if (dto.categoryId || dto.subcategoryId) {
       await this.validateCategoryAndSubcategory(
@@ -104,7 +110,7 @@ export class DishService {
     }
 
     const dishData: Prisma.DishUncheckedUpdateInput = {
-      ...(dto.title !== undefined && { title: dto.title }),
+      ...(title !== undefined && { title }),
       ...(dto.description !== undefined && { description: dto.description }),
       ...(dto.visibility !== undefined && { visibility: dto.visibility }),
       ...(dto.difficulty !== undefined && { difficulty: dto.difficulty }),
@@ -259,6 +265,22 @@ export class DishService {
 
   public async dislikeDish(id: string, userData: IUserData): Promise<void> {
     await this.likeRepository.delete(userData.userId, id);
+  }
+
+  private async assertOwnTitleAvailable(
+    ownerId: string,
+    title: string,
+    exceptId?: string,
+  ) {
+    if (!title) return;
+    const taken = await this.dishRepository.existsOwnedTitle(
+      ownerId,
+      title,
+      exceptId,
+    );
+    if (taken) {
+      throw new AppException(ErrorCode.DISH_TITLE_EXISTS, 409);
+    }
   }
 
   public async findOwnedOrThrow(id: string, userId: string) {

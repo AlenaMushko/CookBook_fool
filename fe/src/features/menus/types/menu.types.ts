@@ -12,8 +12,9 @@ export type MenuPreview = {
 }
 
 export type CreateMenuInput = {
-  title: string
-  // ...  
+  name: string
+  description?: string
+  occasion?: string
 }
 
 export type UpdateMenuInput = {

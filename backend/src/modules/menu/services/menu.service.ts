@@ -33,13 +33,16 @@ export class MenuService {
   }
 
   public async create(dto: CreateMenuDto, userData: IUserData) {
+    const name = dto.name.trim();
+    await this.assertOwnNameAvailable(userData.userId, name);
     const order =
       dto.order ??
       (await this.menuRepository.getNextMenuOrder(userData.userId));
 
     return await this.menuRepository.create({
-      name: dto.name,
-      description: dto.description,
+      name,
+      description: dto.description?.trim() || null,
+      occasion: dto.occasion?.trim() || null,
       ownerId: userData.userId,
       order,
     });
@@ -51,9 +54,18 @@ export class MenuService {
 
   public async update(id: string, dto: UpdateMenuDto, userData: IUserData) {
     await this.getOwnedMenuOrThrow(id, userData.userId);
+    const name = dto.name?.trim();
+    if (name !== undefined) {
+      await this.assertOwnNameAvailable(userData.userId, name, id);
+    }
     return await this.menuRepository.update(id, {
-      ...(dto.name !== undefined && { name: dto.name }),
-      ...(dto.description !== undefined && { description: dto.description }),
+      ...(name !== undefined && { name }),
+      ...(dto.description !== undefined && {
+        description: dto.description.trim() || null,
+      }),
+      ...(dto.occasion !== undefined && {
+        occasion: dto.occasion.trim() || null,
+      }),
       ...(dto.order !== undefined && { order: dto.order }),
     });
   }
@@ -223,6 +235,22 @@ export class MenuService {
       dishesCount: menu._count.dishes,
       dishCoverPhotoUrls,
     };
+  }
+
+  private async assertOwnNameAvailable(
+    ownerId: string,
+    name: string,
+    exceptId?: string,
+  ) {
+    if (!name) return;
+    const taken = await this.menuRepository.existsOwnedName(
+      ownerId,
+      name,
+      exceptId,
+    );
+    if (taken) {
+      throw new AppException(ErrorCode.MENU_NAME_EXISTS, 409);
+    }
   }
 
   private async getOwnedMenuOrThrow(menuId: string, ownerId: string) {

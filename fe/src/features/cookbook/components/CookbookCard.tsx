@@ -14,6 +14,7 @@ import { Routes } from '@constants/routes'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
 import { syncDishSaved } from '@/features/recipes/lib/sync-dish-saved'
+import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
 import { formatMinutes } from '@/features/recipes/lib/recipe-measures'
 import { localizedName } from '@/features/recipes/lib/recipe-locale'
 import type { DishListCard } from '@/features/recipes/types/recipe.types'
@@ -134,7 +135,10 @@ export const CookbookCard = ({ dish }: { dish: DishListCard }) => {
   return (
     <article
       aria-busy={toggleSave.isPending}
-      className="group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_3px_rgba(43,38,32,0.06)] transition-shadow duration-200 hover:shadow-[0_6px_16px_rgba(43,38,32,0.08)]"
+      className={cn(
+        'group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_3px_rgba(43,38,32,0.06)]',
+        recipeCardInteractiveClass,
+      )}
     >
       <Link
         to={Routes.RECIPE}

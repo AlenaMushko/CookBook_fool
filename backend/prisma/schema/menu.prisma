@@ -5,6 +5,7 @@ model Menu {
   ownerId     String   @db.Uuid
   name        String
   description String?
+  occasion    String?  @db.VarChar(32)
   order       Int      @default(0)
 
   owner    User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)

@@ -9,6 +9,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  MaxLength,
   Min,
   ValidateIf,
   ValidateNested,
@@ -40,6 +41,16 @@ export class CreateMenuDto {
   @IsString()
   description?: string;
 
+  @ApiPropertyOptional({
+    maxLength: 32,
+    example: 'Різдво',
+    description: 'Short occasion written by hand, not a date',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(32)
+  occasion?: string;
+
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
@@ -57,6 +68,12 @@ export class UpdateMenuDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiPropertyOptional({ maxLength: 32, nullable: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(32)
+  occasion?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

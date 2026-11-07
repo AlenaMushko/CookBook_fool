@@ -1,31 +1,27 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
-import { ChevronDown, ChevronUp, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ListPagination } from '@components/common/ListPagination'
 import { Button } from '@components/ui/button'
 import { SearchInput } from '@components/ui/search-input'
-import { DishListOrder } from '@constants/recipe'
 import { Routes } from '@constants/routes'
 import { CookbookCard } from '@/features/cookbook/components/CookbookCard'
-import {
-  COOKBOOK_PAGE_SIZE,
-  COOKBOOK_SCOPES,
-  COOKBOOK_SORT_CHIPS,
-  cookbookScopeKey,
-} from '@/features/cookbook/constants'
+import { COOKBOOK_PAGE_SIZE } from '@/features/cookbook/constants'
 import {
   cookbookStateFromSearch,
   toCookbookSearch,
   type CookbookListState,
 } from '@/features/cookbook/list-search'
-import { recipesApi } from '@/features/recipes/api/recipes.api'
-import { recipeQueryKeys } from '@/features/recipes/api/recipes.queries'
+import {
+  DishCategoryChips,
+  DishScopeTabs,
+  DishSortChips,
+} from '@/features/recipes/components/dish-filters'
 import { RecipeCardSkeleton } from '@/features/recipes/components/RecipeCardSkeleton'
-import { localizedName } from '@/features/recipes/lib/recipe-locale'
-import { cn } from '@/lib/utils'
+import { useDishCategories } from '@/features/recipes/hooks/useDishCategories'
+import { useDishList } from '@/features/recipes/hooks/useDishList'
 
 const cardGridClass = [
   'grid w-full justify-center gap-3 sm:gap-4',
@@ -35,7 +31,7 @@ const cardGridClass = [
 ].join(' ')
 
 export const MyCookbookPage = () => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const list = cookbookStateFromSearch(
     useSearch({ from: '/_authenticated/my-cookbook' }),
@@ -53,32 +49,16 @@ export const MyCookbookPage = () => {
     [navigate],
   )
 
-  const categoriesQuery = useQuery({
-    queryKey: recipeQueryKeys.categories(),
-    queryFn: () => recipesApi.listCategories(),
+  const categories = useDishCategories()
+  const { query: listQuery, total, pageCount } = useDishList({
+    scopeKey: ['dishes', 'list'],
+    scope,
+    categoryId,
+    sort,
+    order,
+    page,
+    pageSize: COOKBOOK_PAGE_SIZE,
   })
-
-  const listQuery = useQuery({
-    queryKey: ['dishes', 'list', { scope, categoryId: categoryId ?? null, sort, order, page }],
-    queryFn: () =>
-      recipesApi.list({
-        scope,
-        categoryId,
-        sort,
-        order,
-        limit: COOKBOOK_PAGE_SIZE,
-        offset: (page - 1) * COOKBOOK_PAGE_SIZE,
-      }),
-    placeholderData: keepPreviousData,
-    staleTime: Infinity,
-    gcTime: 30 * 60 * 1000,
-  })
-
-  const total = listQuery.data?.meta.total ?? 0
-  const pageCount = Math.max(1, Math.ceil(total / COOKBOOK_PAGE_SIZE))
-  const categories = [...(categoriesQuery.data?.data ?? [])].sort(
-    (a, b) => a.order - b.order,
-  )
 
   useEffect(() => {
     if (listQuery.data && page > pageCount) commit({ page: pageCount })
@@ -113,63 +93,21 @@ export const MyCookbookPage = () => {
             </Button>
           </div>
         </div>
-        <div className="mt-3.5 flex flex-wrap" role="tablist" aria-label={t('cookbook.title')}>
-          {COOKBOOK_SCOPES.map((item) => {
-            const selected = scope === item
-            return (
-              <button
-                key={item}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                onClick={() => commit({ scope: item, page: 1 })}
-                className={cn(
-                  'cursor-pointer border-b-[1.5px] px-5 py-2 text-[13px] leading-5 whitespace-nowrap transition-colors',
-                  selected
-                    ? 'border-primary font-semibold text-primary'
-                    : 'border-transparent font-normal text-muted-foreground hover:text-foreground',
-                )}
-              >
-                {t(`cookbook.${cookbookScopeKey[item]}`)}
-              </button>
-            )
-          })}
-        </div>
+        <DishScopeTabs
+          className="mt-3.5"
+          value={scope}
+          ariaLabel={t('cookbook.title')}
+          onChange={(next) => commit({ scope: next, page: 1 })}
+        />
       </header>
 
       <div className="border-b border-border bg-background px-5 pt-3 sm:px-7">
-        <div className="flex flex-wrap gap-1.5 pb-3">
-          <button
-            type="button"
-            onClick={() => commit({ category: undefined, page: 1 })}
-            className={cn(
-              'cursor-pointer rounded-full px-4 py-[7px] text-[13px] leading-5 whitespace-nowrap transition-colors',
-              categoryId == null
-                ? 'bg-primary font-semibold text-primary-foreground'
-                : 'border border-border bg-card font-normal text-muted-foreground hover:bg-secondary',
-            )}
-          >
-            {t('cookbook.all')}
-          </button>
-          {categories.map((category) => {
-            const selected = categoryId === category.id
-            return (
-              <button
-                key={category.id}
-                type="button"
-                onClick={() => commit({ category: category.id, page: 1 })}
-                className={cn(
-                  'cursor-pointer rounded-full px-4 py-[7px] text-[13px] leading-5 whitespace-nowrap transition-colors',
-                  selected
-                    ? 'bg-primary font-semibold text-primary-foreground'
-                    : 'border border-border bg-card font-normal text-muted-foreground hover:bg-secondary',
-                )}
-              >
-                {localizedName(i18n.language, category)}
-              </button>
-            )
-          })}
-        </div>
+        <DishCategoryChips
+          className="pb-3"
+          categories={categories}
+          value={categoryId}
+          onChange={(category) => commit({ category, page: 1 })}
+        />
       </div>
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-divider bg-background px-5 py-2.5 sm:px-7">
@@ -182,44 +120,12 @@ export const MyCookbookPage = () => {
             0
           </span>
         )}
-        <div className="flex min-w-0 flex-1 flex-wrap items-center justify-center gap-1.5">
-          {COOKBOOK_SORT_CHIPS.map(({ key, icon: Icon }) => {
-            const selected = sort === key
-            const Arrow = order === DishListOrder.ASC ? ChevronUp : ChevronDown
-            return (
-              <button
-                key={key}
-                type="button"
-                aria-pressed={selected}
-                onClick={() => {
-                  if (selected) {
-                    commit({
-                      order:
-                        order === DishListOrder.ASC
-                          ? DishListOrder.DESC
-                          : DishListOrder.ASC,
-                      page: 1,
-                    })
-                  } else {
-                    commit({ sort: key, order: DishListOrder.ASC, page: 1 })
-                  }
-                }}
-                className={cn(
-                  'inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] leading-5 whitespace-nowrap transition-colors',
-                  selected
-                    ? 'bg-primary/15 font-medium text-primary'
-                    : 'border border-border bg-card font-normal text-muted-foreground hover:bg-secondary',
-                )}
-              >
-                <Icon className="size-3.5 shrink-0" strokeWidth={1.5} aria-hidden />
-                {t(`cookbook.filters.${key}`)}
-                {selected ? (
-                  <Arrow className="size-3.5 shrink-0" strokeWidth={1.5} aria-hidden />
-                ) : null}
-              </button>
-            )
-          })}
-        </div>
+        <DishSortChips
+          className="min-w-0 flex-1 justify-center"
+          sort={sort}
+          order={order}
+          onChange={(next) => commit({ ...next, page: 1 })}
+        />
       </div>
 
       <div className="@container flex w-full flex-1 flex-col px-5 pt-6 pb-12 sm:px-7">

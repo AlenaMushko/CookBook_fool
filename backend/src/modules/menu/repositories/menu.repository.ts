@@ -8,6 +8,7 @@ const menuListSelect = {
   ownerId: true,
   name: true,
   description: true,
+  occasion: true,
   order: true,
   _count: { select: { dishes: true } },
   dishes: {
@@ -24,6 +25,7 @@ const menuDetailSelect = {
   ownerId: true,
   name: true,
   description: true,
+  occasion: true,
   order: true,
   sections: {
     orderBy: { order: 'asc' as const },
@@ -66,6 +68,22 @@ export class MenuRepository {
       orderBy: [{ order: 'asc' }, { created: 'desc' }],
       select: menuListSelect,
     });
+  }
+
+  public async existsOwnedName(
+    ownerId: string,
+    name: string,
+    exceptId?: string,
+  ): Promise<boolean> {
+    const menu = await this.prisma.menu.findFirst({
+      where: {
+        ownerId,
+        name: { equals: name, mode: 'insensitive' },
+        ...(exceptId ? { id: { not: exceptId } } : {}),
+      },
+      select: { id: true },
+    });
+    return Boolean(menu);
   }
 
   public async findById(id: string): Promise<MenuWithRelations | null> {

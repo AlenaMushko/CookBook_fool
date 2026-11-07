@@ -2,6 +2,7 @@
 export const LocalStorageKey = {
   DeviceId: 'deviceId',
   RecipeDraft: 'recipeDraft',
+  MenuDraft: 'menuDraft',
 } as const
 
 export type LocalStorageKey =

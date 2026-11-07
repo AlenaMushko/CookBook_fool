@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
-import { useBlocker, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { Broom, Globe, Lock, Plus, Save, Send, X } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Controller,
   useFieldArray,
@@ -11,6 +11,7 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
+import { ApiError } from '@api/client'
 import { queryClient } from '@api/queryClient'
 import { ConfirmationDialog } from '@components/common/ConfirmationDialog'
 import { Button } from '@components/ui/button'
@@ -26,6 +27,7 @@ import {
 import { Textarea } from '@components/ui/textarea'
 import { DISH_PHOTO_LIMIT, STEP_PHOTO_LIMIT } from '@constants/recipe'
 import { Routes } from '@constants/routes'
+import { useAutosaveDraft } from '@/hooks/useAutosaveDraft'
 import { showToast } from '@/lib/toast'
 
 import { recipesApi } from '../api/recipes.api'
@@ -133,7 +135,6 @@ export const CreateRecipeForm = ({
   const isEdit = mode === 'edit'
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const ignoreAutosave = useRef(false)
   const [savedDraft] = useState(() => (isEdit ? null : readRecipeDraft()))
   const [photoLimitNote, setPhotoLimitNote] = useState(false)
   const [stepPhotoNote, setStepPhotoNote] = useState<number | null>(null)
@@ -162,38 +163,13 @@ export const CreateRecipeForm = ({
     defaultValues: initialValues ?? savedDraft ?? emptyForm(),
   })
 
-  const persistDraft = useCallback(() => {
-    if (isEdit || ignoreAutosave.current) return
-    const values = getValues()
-    if (!isRecipeStarted(values)) return
-    saveRecipeDraft(values)
-  }, [getValues, isEdit])
-
-  useEffect(() => {
-    if (isEdit) return
-
-    const onPageHide = () => persistDraft()
-    const onVisibility = () => {
-      if (document.visibilityState === 'hidden') persistDraft()
-    }
-
-    const intervalId = window.setInterval(persistDraft, RECIPE_DRAFT_AUTOSAVE_MS)
-    window.addEventListener('pagehide', onPageHide)
-    document.addEventListener('visibilitychange', onVisibility)
-
-    return () => {
-      window.clearInterval(intervalId)
-      window.removeEventListener('pagehide', onPageHide)
-      document.removeEventListener('visibilitychange', onVisibility)
-    }
-  }, [isEdit, persistDraft])
-
-  useBlocker({
-    disabled: isEdit,
-    enableBeforeUnload: false,
-    shouldBlockFn: () => {
-      persistDraft()
-      return false
+  const draftAutosave = useAutosaveDraft({
+    enabled: !isEdit,
+    intervalMs: RECIPE_DRAFT_AUTOSAVE_MS,
+    save: () => {
+      const values = getValues()
+      if (!isRecipeStarted(values)) return
+      saveRecipeDraft(values)
     },
   })
 
@@ -337,12 +313,12 @@ export const CreateRecipeForm = ({
 
   const clearRecipe = async () => {
     const keys = photoKeys(getValues()).filter((key) => !originalKeys.has(key))
-    ignoreAutosave.current = true
+    draftAutosave.pause()
     if (!isEdit) clearRecipeDraft()
     reset(initialValues ?? emptyForm())
     setPhotoLimitNote(false)
     setStepPhotoNote(null)
-    ignoreAutosave.current = false
+    draftAutosave.resume()
     await deleteStoredFiles(keys)
   }
 
@@ -372,7 +348,7 @@ export const CreateRecipeForm = ({
     clearErrors()
     try {
       saveRecipeDraft(values)
-      ignoreAutosave.current = true
+      draftAutosave.pause()
       showToast(t('recipe.create.draftSaved'), 'success')
       void navigate({
         to: Routes.RECIPES,
@@ -411,7 +387,7 @@ export const CreateRecipeForm = ({
       }
 
       const dish = await recipesApi.create(toCreateDishPayload(values))
-      ignoreAutosave.current = true
+      draftAutosave.pause()
       clearRecipeDraft()
 
       showToast(t('recipe.create.published'), 'success')
@@ -420,10 +396,15 @@ export const CreateRecipeForm = ({
         params: { recipeId: dish.id },
       })
     } catch (error) {
-      showToast(
-        error instanceof Error ? error.message : t('error.serverError'),
-        'error',
-      )
+      const taken =
+        error instanceof ApiError && error.code === 'DISH_TITLE_EXISTS'
+      const message = taken
+        ? t('recipe.create.titleTaken')
+        : error instanceof Error
+          ? error.message
+          : t('error.serverError')
+      if (taken) setError('title', { message })
+      showToast(message, 'error')
     }
   })
 

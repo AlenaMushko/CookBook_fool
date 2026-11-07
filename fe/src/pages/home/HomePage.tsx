@@ -14,9 +14,10 @@ import { homeStateFromSearch, toHomeSearch } from '@/features/home/home-search'
 import type { MenuPreview } from '@/features/menus/types/menu.types'
 import { useAuthSession } from '@/hooks/useAuthSession'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
-import { recipeQueryKeys } from '@/features/recipes/api/recipes.queries'
+import { DishCategoryChips } from '@/features/recipes/components/dish-filters'
+import { useDishCategories } from '@/features/recipes/hooks/useDishCategories'
+import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
 import { formatMinutes } from '@/features/recipes/lib/recipe-measures'
-import { localizedName } from '@/features/recipes/lib/recipe-locale'
 import type { DishListCard, DishListResult } from '@/features/recipes/types/recipe.types'
 import { cn } from '@/lib/utils'
 
@@ -51,7 +52,7 @@ const homeList = (
 })
 
 export const HomePage = () => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuthSession()
   const { q: search, category: categoryId } = homeStateFromSearch(
@@ -68,10 +69,7 @@ export const HomePage = () => {
     [navigate],
   )
 
-  const categoriesQuery = useQuery({
-    queryKey: recipeQueryKeys.categories(),
-    queryFn: () => recipesApi.listCategories(),
-  })
+  const categories = useDishCategories()
   const popularQuery = useQuery(
     homeList(DishListScope.PUBLIC, DishListSort.SAVED, categoryId, PREVIEW_COUNT),
   )
@@ -94,10 +92,6 @@ export const HomePage = () => {
     staleTime: Infinity,
   })
 
-  const categories = [...(categoriesQuery.data?.data ?? [])].sort(
-    (a, b) => a.order - b.order,
-  )
-
   return (
     <div className="-m-5 flex flex-col">
       <HomeHero />
@@ -110,23 +104,11 @@ export const HomePage = () => {
             aria-label={t('homePage.searchPlaceholder')}
             containerClassName="w-full max-w-none bg-card md:w-full"
           />
-          <div className="flex flex-wrap gap-1.5">
-            <CategoryChip
-              selected={categoryId == null}
-              onClick={() => commit({ q: search, category: undefined })}
-            >
-              {t('cookbook.all')}
-            </CategoryChip>
-            {categories.map((category) => (
-              <CategoryChip
-                key={category.id}
-                selected={categoryId === category.id}
-                onClick={() => commit({ q: search, category: category.id })}
-              >
-                {localizedName(i18n.language, category)}
-              </CategoryChip>
-            ))}
-          </div>
+          <DishCategoryChips
+            categories={categories}
+            value={categoryId}
+            onChange={(category) => commit({ q: search, category })}
+          />
         </div>
 
         <RecipeSection
@@ -165,31 +147,6 @@ export const HomePage = () => {
         ) : null}
       </div>
     </div>
-  )
-}
-
-const CategoryChip = ({
-  selected,
-  onClick,
-  children,
-}: {
-  selected: boolean
-  onClick: () => void
-  children: string
-}) => {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        'cursor-pointer rounded-full px-4 py-[7px] text-[13px] leading-5 whitespace-nowrap transition-colors',
-        selected
-          ? 'bg-primary font-semibold text-primary-foreground'
-          : 'border border-border bg-card font-normal text-muted-foreground hover:bg-secondary',
-      )}
-    >
-      {children}
-    </button>
   )
 }
 
@@ -291,7 +248,10 @@ const MineSection = ({
                 key={dish.id}
                 to={Routes.RECIPE}
                 params={{ recipeId: dish.id }}
-                className="flex items-center gap-3 rounded-2xl border border-border bg-card p-2.5"
+                className={cn(
+                  'flex items-center gap-3 rounded-2xl border border-border bg-card p-2.5',
+                  recipeCardInteractiveClass,
+                )}
               >
                 <div className="size-14 shrink-0 overflow-hidden rounded-lg bg-background">
                   {cover?.url ? (

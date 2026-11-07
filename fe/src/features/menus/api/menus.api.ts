@@ -1,7 +1,6 @@
 import { ApiRoutes } from '@api/apiRoutes'
 import { apiJson } from '@api/client'
 
-import { generateUuid } from '../../../lib/device'
 import type { CreateMenuInput, Menu, MenuPreview, UpdateMenuInput } from '../types/menu.types'
 
 export const menusApi = {
@@ -17,12 +16,18 @@ export const menusApi = {
     }
   },
 
-  async create(input: CreateMenuInput): Promise<Menu> {
-    // TODO: replace with real API call
-    return {
-      id: generateUuid(),
-      title: input.title ?? '',
-    }
+  create(input: CreateMenuInput) {
+    return apiJson<{ id: string }>(ApiRoutes.menu.all, {
+      method: 'POST',
+      body: JSON.stringify(input),
+    })
+  },
+
+  addDishes(menuId: string, dishIds: string[]) {
+    return apiJson<{ data: unknown[] }>(ApiRoutes.menu.dishes(menuId), {
+      method: 'POST',
+      body: JSON.stringify({ dishIds }),
+    })
   },
 
   async update(params: { menuId: string; input: UpdateMenuInput }): Promise<Menu> {

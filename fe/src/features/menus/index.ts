@@ -7,6 +7,7 @@ export {
   updateMenuMutationOptions,
   deleteMenuMutationOptions,
 } from './api/menus.queries'
-export { menuSchema } from './schemas/menu.schema'
+export { createMenuSchema, MENU_OCCASION_MAX } from './schemas/menu.schema'
+export type { CreateMenuValues } from './schemas/menu.schema'
 export type { Menu } from './types/menu.types'
 export type { CreateMenuInput, UpdateMenuInput } from './types/menu.types'

@@ -10,6 +10,7 @@ import { useAuthSession } from '@/hooks/useAuthSession'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
 import { syncDishSaved } from '@/features/recipes/lib/sync-dish-saved'
+import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
 import { formatMinutes } from '@/features/recipes/lib/recipe-measures'
 import { localizedName } from '@/features/recipes/lib/recipe-locale'
 import type { DishListCard } from '@/features/recipes/types/recipe.types'
@@ -51,11 +52,16 @@ export const HomeRecipeCard = ({ dish }: { dish: DishListCard }) => {
   })
 
   return (
-    <article className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_3px_rgba(43,38,32,0.06)]">
+    <article
+      className={cn(
+        'relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_3px_rgba(43,38,32,0.06)]',
+        recipeCardInteractiveClass,
+      )}
+    >
       <Link
         to={Routes.RECIPE}
         params={{ recipeId: dish.id }}
-        className="flex min-h-0 flex-1 flex-col text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+        className="flex min-h-0 flex-1 cursor-pointer flex-col text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
       >
         <div className="relative h-40 bg-background">
           {cover?.url ? (

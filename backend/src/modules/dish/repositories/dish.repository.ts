@@ -122,6 +122,22 @@ export class DishRepository {
     return [dishes, total];
   }
 
+  public async existsOwnedTitle(
+    ownerId: string,
+    title: string,
+    exceptId?: string,
+  ): Promise<boolean> {
+    const dish = await this.prisma.dish.findFirst({
+      where: {
+        ownerId,
+        title: { equals: title, mode: 'insensitive' },
+        ...(exceptId ? { id: { not: exceptId } } : {}),
+      },
+      select: { id: true },
+    });
+    return Boolean(dish);
+  }
+
   public async findDishById(id: string): Promise<DishWithRelations | null> {
     return await this.prisma.dish.findUnique({
       where: { id },
