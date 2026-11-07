@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { queryClient } from '@api/queryClient'
 import { Button } from '@components/ui/button'
 import { FormFieldInput } from '@components/ui/form-field-input'
+import { Routes } from '@constants/routes'
 import { URLS } from '@constants/url'
 import { profileQueryKeys } from '@/features/profile/api/profile.queries'
 import { notifyAuthChanged } from '@/lib/auth-session'
@@ -62,7 +63,7 @@ export const LoginForm = ({ redirectTo }: LoginFormProps) => {
         return
       }
 
-      void navigate({ to: URLS.MY_COOKBOOK })
+      void navigate({ to: Routes.RECIPES })
     } catch (error) {
       showToast(
         error instanceof Error ? error.message : t('error.serverError'),

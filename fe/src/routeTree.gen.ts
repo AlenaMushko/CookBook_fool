@@ -19,7 +19,6 @@ import { Route as publicNotFoundRouteImport } from './routes/(public)/not-found'
 import { Route as publicResetPasswordRouteImport } from './routes/(public)/reset-password'
 import { Route as AuthenticatedChangePasswordRouteImport } from './routes/_authenticated/change-password'
 import { Route as AuthenticatedFeedbackRouteImport } from './routes/_authenticated/feedback'
-import { Route as AuthenticatedMyCookbookRouteImport } from './routes/_authenticated/my-cookbook'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as publicRecipesIndexRouteImport } from './routes/(public)/recipes/index'
 import { Route as publicRecipesRecipeIdRouteImport } from './routes/(public)/recipes/$recipeId'
@@ -78,11 +77,6 @@ const AuthenticatedChangePasswordRoute =
 const AuthenticatedFeedbackRoute = AuthenticatedFeedbackRouteImport.update({
   id: '/feedback',
   path: '/feedback',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedMyCookbookRoute = AuthenticatedMyCookbookRouteImport.update({
-  id: '/my-cookbook',
-  path: '/my-cookbook',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
@@ -144,7 +138,6 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof publicResetPasswordRoute
   '/change-password': typeof AuthenticatedChangePasswordRoute
   '/feedback': typeof AuthenticatedFeedbackRoute
-  '/my-cookbook': typeof AuthenticatedMyCookbookRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/recipes/$recipeId': typeof publicRecipesRecipeIdRoute
   '/menus/new': typeof AuthenticatedMenusNewRoute
@@ -165,7 +158,6 @@ export interface FileRoutesByTo {
   '/reset-password': typeof publicResetPasswordRoute
   '/change-password': typeof AuthenticatedChangePasswordRoute
   '/feedback': typeof AuthenticatedFeedbackRoute
-  '/my-cookbook': typeof AuthenticatedMyCookbookRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/recipes/$recipeId': typeof publicRecipesRecipeIdRoute
   '/menus/new': typeof AuthenticatedMenusNewRoute
@@ -187,7 +179,6 @@ export interface FileRoutesById {
   '/(public)/reset-password': typeof publicResetPasswordRoute
   '/_authenticated/change-password': typeof AuthenticatedChangePasswordRoute
   '/_authenticated/feedback': typeof AuthenticatedFeedbackRoute
-  '/_authenticated/my-cookbook': typeof AuthenticatedMyCookbookRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/(public)/': typeof publicIndexRoute
   '/(public)/recipes/$recipeId': typeof publicRecipesRecipeIdRoute
@@ -211,7 +202,6 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/change-password'
     | '/feedback'
-    | '/my-cookbook'
     | '/profile'
     | '/recipes/$recipeId'
     | '/menus/new'
@@ -232,7 +222,6 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/change-password'
     | '/feedback'
-    | '/my-cookbook'
     | '/profile'
     | '/recipes/$recipeId'
     | '/menus/new'
@@ -253,7 +242,6 @@ export interface FileRouteTypes {
     | '/(public)/reset-password'
     | '/_authenticated/change-password'
     | '/_authenticated/feedback'
-    | '/_authenticated/my-cookbook'
     | '/_authenticated/profile'
     | '/(public)/'
     | '/(public)/recipes/$recipeId'
@@ -351,13 +339,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFeedbackRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/my-cookbook': {
-      id: '/_authenticated/my-cookbook'
-      path: '/my-cookbook'
-      fullPath: '/my-cookbook'
-      preLoaderRoute: typeof AuthenticatedMyCookbookRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -427,7 +408,6 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedChangePasswordRoute: typeof AuthenticatedChangePasswordRoute
   AuthenticatedFeedbackRoute: typeof AuthenticatedFeedbackRoute
-  AuthenticatedMyCookbookRoute: typeof AuthenticatedMyCookbookRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedMenusNewRoute: typeof AuthenticatedMenusNewRoute
   AuthenticatedRecipesNewRoute: typeof AuthenticatedRecipesNewRoute
@@ -440,7 +420,6 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedChangePasswordRoute: AuthenticatedChangePasswordRoute,
   AuthenticatedFeedbackRoute: AuthenticatedFeedbackRoute,
-  AuthenticatedMyCookbookRoute: AuthenticatedMyCookbookRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedMenusNewRoute: AuthenticatedMenusNewRoute,
   AuthenticatedRecipesNewRoute: AuthenticatedRecipesNewRoute,

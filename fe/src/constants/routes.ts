@@ -14,7 +14,6 @@ export const Routes = {
   PROFILE: '/profile',
   FEEDBACK: '/feedback',
   CHANGE_PASSWORD: '/change-password',
-  MY_COOKBOOK: '/my-cookbook',
   RECIPE_NEW: '/recipes/new',
   RECIPE_EDIT: '/recipes/$recipeId/edit',
   MENUS: '/menus',

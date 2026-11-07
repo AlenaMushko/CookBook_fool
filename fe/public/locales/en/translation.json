@@ -89,6 +89,7 @@
     "mobile": "Mobile navigation",
     "sidebar": "Main navigation",
     "home": "Home",
+    "recipes": "Recipes",
     "myCookbook": "My Cookbook",
     "myMenus": "My Menus",
     "createRecipe": "Recipe",
@@ -99,7 +100,8 @@
   },
   "recipe": {
     "list": {
-      "title": "Recipes"
+      "title": "Recipes",
+      "subtitle": "Every dish in one place."
     },
     "create": {
       "title": "New Recipe",
@@ -223,8 +225,8 @@
       "loading": "Loading recipe…",
       "unitsError": "Could not load measurement units. Refresh the page and try again.",
       "notFound": "Recipe not found",
-      "showMeasures": "Measure table",
-      "hideMeasures": "Hide measure table",
+      "showMeasures": "View measurements",
+      "hideMeasures": "Hide measurements",
       "measureIngredient": "Ingredient",
       "measureCup": "1 cup",
       "measureTbsp": "1 tbsp",

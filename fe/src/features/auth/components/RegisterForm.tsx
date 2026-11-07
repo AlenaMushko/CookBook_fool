@@ -9,6 +9,7 @@ import { queryClient } from '@api/queryClient'
 import { Button } from '@components/ui/button'
 import { FieldError } from '@components/ui/field'
 import { FormFieldInput } from '@components/ui/form-field-input'
+import { Routes } from '@constants/routes'
 import { URLS } from '@constants/url'
 import { profileQueryKeys } from '@/features/profile/api/profile.queries'
 import { notifyAuthChanged } from '@/lib/auth-session'
@@ -58,7 +59,7 @@ export const RegisterForm = () => {
       queryClient.setQueryData(profileQueryKeys.me(), user)
       await queryClient.invalidateQueries({ queryKey: profileQueryKeys.me() })
       notifyAuthChanged()
-      void navigate({ to: URLS.MY_COOKBOOK })
+      void navigate({ to: Routes.RECIPES })
     } catch (error) {
       setError('root', {
         message:

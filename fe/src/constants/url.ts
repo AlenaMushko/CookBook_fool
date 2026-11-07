@@ -8,7 +8,7 @@ export const URLS = {
   REGISTER: '/register',
   AUTH: '/auth',
   USER: '/user',
-  MY_COOKBOOK: '/my-cookbook',
+  RECIPES: '/recipes',
   MENUS: '/menus',
   RECIPE_NEW: '/recipes/new',
   NOT_FOUND: '/not-found',

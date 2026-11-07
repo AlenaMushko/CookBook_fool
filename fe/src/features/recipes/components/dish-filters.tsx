@@ -32,12 +32,14 @@ const chipClass = (selected: boolean, surface: DishFilterSurface) =>
 export const DishScopeTabs = ({
   value,
   onChange,
+  scopes = COOKBOOK_SCOPES,
   ariaLabel,
   className,
   tabClassName,
 }: {
   value: DishListScope
   onChange: (scope: DishListScope) => void
+  scopes?: readonly (typeof COOKBOOK_SCOPES)[number][]
   ariaLabel?: string
   className?: string
   tabClassName?: string
@@ -46,7 +48,7 @@ export const DishScopeTabs = ({
 
   return (
     <div className={cn('flex flex-wrap', className)} role="tablist" aria-label={ariaLabel}>
-      {COOKBOOK_SCOPES.map((scope) => {
+      {scopes.map((scope) => {
         const selected = value === scope
         return (
           <button
