@@ -126,11 +126,13 @@ export const CreateRecipeForm = ({
   recipeId,
   initialValues,
   ingredientGroups = [],
+  savedByOthers = false,
 }: {
   mode?: 'create' | 'edit'
   recipeId?: string
   initialValues?: CreateRecipeFormValues
   ingredientGroups?: DishDetails['ingredientGroups']
+  savedByOthers?: boolean
 }) => {
   const isEdit = mode === 'edit'
   const { t, i18n } = useTranslation()
@@ -396,6 +398,11 @@ export const CreateRecipeForm = ({
         params: { recipeId: dish.id },
       })
     } catch (error) {
+      if (error instanceof ApiError && error.code === 'DISH_CANNOT_MAKE_PRIVATE') {
+        setValue('visibility', 'PUBLIC')
+        showToast(t('recipe.edit.cannotMakePrivate'), 'error')
+        return
+      }
       const taken =
         error instanceof ApiError && error.code === 'DISH_TITLE_EXISTS'
       const message = taken
@@ -528,7 +535,13 @@ export const CreateRecipeForm = ({
                   render={({ field }) => (
                     <SegmentedChoice<DishVisibility>
                       value={field.value}
-                      onChange={field.onChange}
+                      onChange={(next) => {
+                        if (savedByOthers && next === 'PRIVATE') {
+                          showToast(t('recipe.edit.cannotMakePrivate'), 'error')
+                          return
+                        }
+                        field.onChange(next)
+                      }}
                       options={[
                         {
                           value: 'PUBLIC',

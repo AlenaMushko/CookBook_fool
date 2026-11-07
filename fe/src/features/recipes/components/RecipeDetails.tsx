@@ -8,11 +8,14 @@ import {
   Minus,
   Pencil,
   Plus,
+  Trash2,
 } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { ApiError } from '@api/client'
 import { queryClient } from '@api/queryClient'
+import { ConfirmationDialog } from '@components/common/ConfirmationDialog'
 import { Button } from '@components/ui/button'
 import {
   Tooltip,
@@ -63,6 +66,7 @@ export const RecipeDetails = ({
     dish.baseServings && dish.baseServings >= 1 ? Math.round(dish.baseServings) : 6
   const [servings, setServings] = useState(baseServings)
   const [liked, setLiked] = useState(Boolean(dish.isLiked))
+  const [deleteOpen, setDeleteOpen] = useState(false)
 
   const unitById = useMemo(
     () => new Map(units.map((unit) => [unit.id, unit])),
@@ -134,6 +138,30 @@ export const RecipeDetails = ({
       setLiked(!nextLiked)
       showToast(
         error instanceof Error ? error.message : t('error.serverError'),
+        'error',
+      )
+    },
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: () => recipesApi.delete(dish.id),
+    onSuccess: async () => {
+      setDeleteOpen(false)
+      await queryClient.invalidateQueries({ queryKey: ['dishes'] })
+      await queryClient.invalidateQueries({ queryKey: ['menus'] })
+      showToast(t('recipe.details.deleted'), 'success')
+      void router.navigate({ to: Routes.MY_COOKBOOK })
+    },
+    onError: (error) => {
+      const blocked =
+        error instanceof ApiError && error.code === 'DISH_SAVED_BY_OTHERS'
+      if (blocked) setDeleteOpen(false)
+      showToast(
+        blocked
+          ? t('recipe.details.deleteBlocked')
+          : error instanceof Error
+            ? error.message
+            : t('error.serverError'),
         'error',
       )
     },
@@ -465,15 +493,47 @@ export const RecipeDetails = ({
       </div>
 
       {isOwner ? (
-        <Button
-          size="lg"
-          className="mt-6 w-full bg-brand text-white hover:bg-brand-active"
-          render={<Link to={Routes.RECIPE_EDIT} params={{ recipeId: dish.id }} />}
-        >
-          <Pencil strokeWidth={1.5} />
-          {t('recipe.details.edit')}
-        </Button>
+        <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+          <Button
+            size="lg"
+            className="w-full bg-brand text-white hover:bg-brand-active sm:flex-1"
+            render={<Link to={Routes.RECIPE_EDIT} params={{ recipeId: dish.id }} />}
+          >
+            <Pencil strokeWidth={1.5} />
+            {t('recipe.details.edit')}
+          </Button>
+          <Button
+            type="button"
+            size="lg"
+            variant="destructive"
+            className="w-full sm:w-auto"
+            disabled={deleteMutation.isPending}
+            onClick={() => setDeleteOpen(true)}
+          >
+            <Trash2 strokeWidth={1.5} />
+            {t('recipe.details.delete')}
+          </Button>
+        </div>
       ) : null}
+
+      <ConfirmationDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title={t('recipe.details.deleteTitle')}
+        confirmLabel={t('recipe.details.delete')}
+        cancelLabel={t('cancel')}
+        isSubmitting={deleteMutation.isPending}
+        onConfirm={() => {
+          if (dish.visibility === 'PUBLIC' && dish.likesCount > 0) {
+            setDeleteOpen(false)
+            showToast(t('recipe.details.deleteBlocked'), 'error')
+            return
+          }
+          deleteMutation.mutate()
+        }}
+      >
+        {t('recipe.details.deleteBody')}
+      </ConfirmationDialog>
 
       {viewerIndex !== null ? (
         <RecipePhotoViewer

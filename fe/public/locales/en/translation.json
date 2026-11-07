@@ -184,7 +184,8 @@
       "title": "Edit recipe",
       "save": "Save",
       "saving": "Saving…",
-      "saved": "Recipe updated"
+      "saved": "Recipe updated",
+      "cannotMakePrivate": "You cannot make this recipe private because someone has already saved it to favorites."
     },
     "details": {
       "library": "Library",
@@ -212,6 +213,11 @@
       "prevPhoto": "Previous photo",
       "nextPhoto": "Next photo",
       "edit": "Edit",
+      "delete": "Delete",
+      "deleteTitle": "Delete this recipe?",
+      "deleteBody": "This recipe will be removed from your book.",
+      "deleted": "Recipe deleted",
+      "deleteBlocked": "You cannot delete this recipe because it is public and saved in other people's favorites.",
       "editForbidden": "Only the owner can edit this recipe",
       "backToRecipe": "Back to recipe",
       "loading": "Loading recipe…",

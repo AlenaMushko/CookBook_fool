@@ -343,10 +343,17 @@ export class DishRepository {
         break;
       case DishListScope.SAVED:
         and.push({ id: { in: likedDishIds ?? [] } });
+        and.push({ visibility: DishVisibility.PUBLIC });
         break;
       case DishListScope.COOKBOOK:
         and.push({
-          OR: [{ ownerId: userId }, { id: { in: likedDishIds ?? [] } }],
+          OR: [
+            { ownerId: userId },
+            {
+              id: { in: likedDishIds ?? [] },
+              visibility: DishVisibility.PUBLIC,
+            },
+          ],
         });
         break;
       default:

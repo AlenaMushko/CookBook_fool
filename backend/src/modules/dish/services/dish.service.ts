@@ -109,6 +109,14 @@ export class DishService {
       await this.validateArea(dto.areaId);
     }
 
+    if (
+      dto.visibility === DishVisibility.PRIVATE &&
+      existing.visibility === DishVisibility.PUBLIC &&
+      (await this.isSavedByOthers(id, existing.ownerId))
+    ) {
+      throw new AppException(ErrorCode.DISH_CANNOT_MAKE_PRIVATE, 409);
+    }
+
     const dishData: Prisma.DishUncheckedUpdateInput = {
       ...(title !== undefined && { title }),
       ...(dto.description !== undefined && { description: dto.description }),
@@ -231,6 +239,14 @@ export class DishService {
 
   public async deleteDish(id: string, userData: IUserData): Promise<void> {
     const dish = await this.findOwnedOrThrow(id, userData.userId);
+
+    if (
+      dish.visibility === DishVisibility.PUBLIC &&
+      (await this.isSavedByOthers(id, dish.ownerId))
+    ) {
+      throw new AppException(ErrorCode.DISH_SAVED_BY_OTHERS, 409);
+    }
+
     const mediaKeys = extractDishMediaKeys(dish.steps, dish.photos);
 
     await this.dishRepository.deleteDishById(id);
@@ -265,6 +281,11 @@ export class DishService {
 
   public async dislikeDish(id: string, userData: IUserData): Promise<void> {
     await this.likeRepository.delete(userData.userId, id);
+  }
+
+  private async isSavedByOthers(dishId: string, ownerId: string) {
+    const saved = await this.likeRepository.countByOthers(dishId, ownerId);
+    return saved > 0;
   }
 
   private async assertOwnTitleAvailable(

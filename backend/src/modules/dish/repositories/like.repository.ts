@@ -20,6 +20,12 @@ export class LikeRepository {
     await this.prisma.like.deleteMany({ where: { userId, dishId } });
   }
 
+  public async countByOthers(dishId: string, ownerId: string): Promise<number> {
+    return await this.prisma.like.count({
+      where: { dishId, userId: { not: ownerId } },
+    });
+  }
+
   public async getLikedDishIds(userId: string): Promise<string[]> {
     const likes = await this.prisma.like.findMany({
       where: { userId },

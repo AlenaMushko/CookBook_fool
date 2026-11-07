@@ -59,6 +59,9 @@ export const EditRecipePage = ({ recipeId }: { recipeId: string }) => {
         recipeId={recipeId}
         initialValues={dishToFormValues(dishQuery.data)}
         ingredientGroups={dishQuery.data.ingredientGroups}
+        savedByOthers={
+          dishQuery.data.visibility === 'PUBLIC' && dishQuery.data.likesCount > 0
+        }
       />
     </div>
   )

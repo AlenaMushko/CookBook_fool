@@ -79,6 +79,10 @@ export const recipesApi = {
     })
   },
 
+  delete(id: string) {
+    return apiJson<void>(ApiRoutes.dish.byId(id), { method: 'DELETE' })
+  },
+
   update(
     id: string,
     payload: Omit<CreateDishPayload, 'description' | 'cookTime'> & {
