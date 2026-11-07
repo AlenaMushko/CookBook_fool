@@ -73,6 +73,13 @@ export class MenuRepository {
     });
   }
 
+  public async findDishIdsByOwner(ownerId: string) {
+    return await this.prisma.menuDish.findMany({
+      where: { menu: { ownerId } },
+      select: { menuId: true, dishId: true },
+    });
+  }
+
   public async existsOwnedName(
     ownerId: string,
     name: string,

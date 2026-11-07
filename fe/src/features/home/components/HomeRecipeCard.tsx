@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { Bookmark, Plus } from 'lucide-react'
+import { Bookmark } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { Button } from '@components/ui/button'
 import { Spinner } from '@components/ui/spinner'
+import { AddToMenuButton } from '@/features/menus/components/AddToMenuButton'
 import { Routes } from '@constants/routes'
 import { useAuthSession } from '@/hooks/useAuthSession'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
@@ -98,15 +98,7 @@ export const HomeRecipeCard = ({ dish }: { dish: DishListCard }) => {
         <p className="text-[12px] leading-4 text-muted-foreground">
           {t('homePage.saves', { count: dish.likesCount ?? 0 })}
         </p>
-        <Button
-          render={
-            <Link to={isAuthenticated ? Routes.MENUS : Routes.LOGIN} />
-          }
-          className="h-8 min-h-0 px-3 text-[12px]"
-        >
-          <Plus className="size-3.5" strokeWidth={1.5} />
-          {t('homePage.addToMenu')}
-        </Button>
+        <AddToMenuButton dishId={dish.id} appearance="label" />
       </div>
       {mine ? null : (
         <button

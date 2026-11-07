@@ -26,6 +26,7 @@ import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { showToast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 
+import { AddToMenuButton } from '@/features/menus/components/AddToMenuButton'
 import { recipesApi } from '../api/recipes.api'
 import { recipeQueryKeys } from '../api/recipes.queries'
 import {
@@ -285,6 +286,13 @@ export const RecipeDetails = ({
         >
           <ChevronLeft className="size-4" strokeWidth={1.5} />
         </button>
+        <AddToMenuButton
+          dishId={dish.id}
+          className={cn(
+            'absolute top-3 z-10 size-9 rounded-full',
+            isOwner ? 'right-3' : 'right-14',
+          )}
+        />
         {isOwner ? null : (
           <Tooltip>
             <TooltipTrigger

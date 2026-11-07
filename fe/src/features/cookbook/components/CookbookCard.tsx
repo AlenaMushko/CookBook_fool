@@ -12,6 +12,7 @@ import {
 import { DishDifficultyLevel } from '@constants/recipe'
 import { Routes } from '@constants/routes'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { AddToMenuButton } from '@/features/menus/components/AddToMenuButton'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
 import { syncDishSaved } from '@/features/recipes/lib/sync-dish-saved'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
@@ -181,6 +182,10 @@ export const CookbookCard = ({ dish }: { dish: DishListCard }) => {
           <div className="mt-auto">{meta}</div>
         </div>
       </Link>
+      <AddToMenuButton
+        dishId={dish.id}
+        className={cn('absolute top-2 z-10', mine ? 'right-2' : 'right-12')}
+      />
       {saveButton}
       {cardLoader}
     </article>

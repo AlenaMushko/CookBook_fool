@@ -427,6 +427,18 @@
     "shoppingTitle": "Shopping lists — coming soon",
     "shoppingBody": "Soon you will be able to generate a combined shopping list from all recipes in a menu.",
     "emptyBody": "Your menus for different occasions or a stretch of time can live here — a week of meals, a celebration, or a table already composed.",
+    "addDish": {
+      "title": "Add to menu",
+      "menu": "Menu",
+      "menuPlaceholder": "Choose a menu",
+      "noMenus": "You don't have a menu yet",
+      "alreadyInAll": "This recipe is already in every menu",
+      "stage": "Stage",
+      "stagePlaceholder": "Choose a stage",
+      "added": "Recipe added to the menu",
+      "already": "This recipe is already in this menu",
+      "failed": "Couldn't add the recipe to the menu"
+    },
     "createPage": {
       "back": "Back to My Menus",
       "title": "Create Menu",

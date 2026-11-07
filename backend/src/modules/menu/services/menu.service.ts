@@ -31,8 +31,21 @@ export class MenuService {
   ) {}
 
   public async findAll(userData: IUserData) {
-    const menus = await this.menuRepository.findAllByOwner(userData.userId);
-    const data = await Promise.all(menus.map((menu) => this.toPreview(menu)));
+    const [menus, links] = await Promise.all([
+      this.menuRepository.findAllByOwner(userData.userId),
+      this.menuRepository.findDishIdsByOwner(userData.userId),
+    ]);
+    const dishIdsByMenu = new Map<string, string[]>();
+    for (const link of links) {
+      const ids = dishIdsByMenu.get(link.menuId);
+      if (ids) ids.push(link.dishId);
+      else dishIdsByMenu.set(link.menuId, [link.dishId]);
+    }
+    const data = await Promise.all(
+      menus.map((menu) =>
+        this.toPreview(menu, dishIdsByMenu.get(menu.id) ?? []),
+      ),
+    );
     return { data };
   }
 
@@ -256,7 +269,7 @@ export class MenuService {
     };
   }
 
-  private async toPreview(menu: MenuListItem) {
+  private async toPreview(menu: MenuListItem, dishIds: string[]) {
     const dishCoverPhotoUrls = (
       await Promise.all(
         menu.dishes.map(async (menuDish) => {
@@ -274,6 +287,7 @@ export class MenuService {
       name: menu.name,
       occasion: menu.occasion,
       dishesCount: menu._count.dishes,
+      dishIds,
       dishCoverPhotoUrls,
     };
   }
