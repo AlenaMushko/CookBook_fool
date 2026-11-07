@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConversionModule } from './conversion/conversion.module';
 import { DishModule } from './dish/dish.module';
 import { EmailModule } from './email/email.module';
+import { FeedbackModule } from './feedback/feedback.module';
 import { HealthModule } from './health/health.module';
 import { IngredientModule } from './ingredient/ingredient.module';
 import { MeasurementUnitModule } from './measurement-unit/measurement-unit.module';
@@ -33,6 +34,7 @@ import { UserModule } from './user/user.module';
     DishModule,
     MenuModule,
     ConversionModule,
+    FeedbackModule,
   ],
 })
 export class AppModule {}

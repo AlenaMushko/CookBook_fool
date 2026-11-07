@@ -56,9 +56,8 @@ export const HomePage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuthSession()
-  const { q: search, category: categoryId } = homeStateFromSearch(
-    useSearch({ from: '/(public)/' }),
-  )
+  const homeSearch = useSearch({ from: '/(public)/' })
+  const { q: search, category: categoryId } = homeStateFromSearch(homeSearch)
   const commit = useCallback(
     (next: { q: string; category?: string }) => {
       void navigate({
@@ -94,7 +93,7 @@ export const HomePage = () => {
   })
 
   return (
-    <div className="-m-5 flex flex-col">
+    <div className="relative -m-5 flex flex-col">
       <HomeHero />
       <div className="flex flex-col gap-8 px-5 py-6 sm:px-7">
         <div className="flex flex-col gap-4">

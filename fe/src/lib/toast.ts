@@ -4,10 +4,14 @@ export type ToastType = 'success' | 'info' | 'warning' | 'error'
 
 const DEFAULT_TIMEOUT = 2000
 
-export function showToast(message: string, type: ToastType = 'info') {
+export function showToast(
+  message: string,
+  type: ToastType = 'info',
+  timeout = DEFAULT_TIMEOUT,
+) {
   toast.add({
     title: message,
     type,
-    timeout: DEFAULT_TIMEOUT,
+    timeout,
   })
 }

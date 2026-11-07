@@ -12,6 +12,7 @@ export const Routes = {
   RECIPE: '/recipes/$recipeId',
   // authenticated routes
   PROFILE: '/profile',
+  FEEDBACK: '/feedback',
   CHANGE_PASSWORD: '/change-password',
   MY_COOKBOOK: '/my-cookbook',
   RECIPE_NEW: '/recipes/new',

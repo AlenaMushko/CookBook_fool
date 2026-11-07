@@ -1,8 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
-import { LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { LogOut, MessageCircle, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { Routes } from '@constants/routes'
 import { signOut } from '@/features/auth/lib/sign-out'
 import { cn } from '@/lib/utils'
 
@@ -118,6 +119,23 @@ export const DesktopSidebar = () => {
                 )
               })}
             </ul>
+            <Link
+              to={Routes.FEEDBACK}
+              title={t('feedback.give')}
+              aria-label={t('feedback.give')}
+              aria-current={pathname === Routes.FEEDBACK ? 'page' : undefined}
+              className={cn(
+                'mt-3 inline-flex h-10 w-fit items-center gap-2 rounded-full border px-3',
+                'font-sans text-[13px] font-medium whitespace-nowrap',
+                'transition-[background-color,border-color] duration-200 ease-smooth',
+                pathname === Routes.FEEDBACK
+                  ? 'border-success bg-success-bg text-success'
+                  : 'border-success-border bg-success-bg text-success hover:border-success',
+              )}
+            >
+              <MessageCircle className="size-[17px] shrink-0" strokeWidth={1.5} aria-hidden />
+              <span>{t('feedback.give')}</span>
+            </Link>
           </nav>
 
           <div className="mt-auto border-t-[0.75px] border-secondary-border px-2.5 py-4">

@@ -10,6 +10,7 @@ export enum ApiRoute {
   S3 = 's3',
   CONVERSIONS = 'conversions',
   HEALTH = 'health',
+  FEEDBACK = 'feedback',
 }
 
 export const apiPath = (route: ApiRoute): string => `${ApiVersion.V1}/${route}`;

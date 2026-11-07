@@ -14,6 +14,7 @@ export const ApiRoutes = {
   user: {
     me: `/${ApiVersion.V1}/user/me`,
   },
+  feedback: `/${ApiVersion.V1}/feedback`,
   s3: {
     uploadFile: `/${ApiVersion.V1}/s3/upload-file`,
     deleteFile: `/${ApiVersion.V1}/s3/delete-file`,

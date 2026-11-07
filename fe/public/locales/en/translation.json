@@ -298,6 +298,18 @@
   "brand": {
     "tagline": "Culinary book"
   },
+  "feedback": {
+    "give": "Give Feedback",
+    "back": "Back",
+    "title": "Your Feedback Matters",
+    "description": "Your feedback is very important for the development of the app. I would be truly grateful if you could share your thoughts.",
+    "confidential": "It's completely confidential and will be used only to improve the app.",
+    "placeholder": "Share your feedback, ideas, or suggestions...",
+    "send": "Send Feedback",
+    "sending": "Sending...",
+    "thanks": "Thank you!",
+    "sent": "Thank you! Your feedback has been sent."
+  },
   "homePage": {
     "searchPlaceholder": "Search recipes, ingredients…",
     "popular": "Popular Recipes",
