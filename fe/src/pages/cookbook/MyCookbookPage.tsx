@@ -1,6 +1,6 @@
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ListPagination } from '@components/common/ListPagination'
@@ -22,6 +22,7 @@ import {
 import { RecipeCardSkeleton } from '@/features/recipes/components/RecipeCardSkeleton'
 import { useDishCategories } from '@/features/recipes/hooks/useDishCategories'
 import { useDishList } from '@/features/recipes/hooks/useDishList'
+import { useRecipeSearch } from '@/features/recipes/hooks/useRecipeSearch'
 
 const cardGridClass = [
   'grid w-full justify-center gap-3 sm:gap-4',
@@ -37,6 +38,8 @@ export const MyCookbookPage = () => {
     useSearch({ from: '/_authenticated/my-cookbook' }),
   )
   const { q: search, scope, category: categoryId, sort, order, page } = list
+  const [draft, setDraft] = useState(search)
+  const activeSearch = useRecipeSearch(draft)
   const commit = useCallback(
     (patch: Partial<CookbookListState>) => {
       void navigate({
@@ -49,14 +52,24 @@ export const MyCookbookPage = () => {
     [navigate],
   )
 
+  useEffect(() => {
+    setDraft(search)
+  }, [search])
+
+  useEffect(() => {
+    if (activeSearch === search) return
+    commit({ q: activeSearch, page: 1 })
+  }, [activeSearch, commit, search])
+
   const categories = useDishCategories()
   const { query: listQuery, total, pageCount } = useDishList({
     scopeKey: ['dishes', 'list'],
     scope,
     categoryId,
+    search: activeSearch,
     sort,
     order,
-    page,
+    page: activeSearch === search ? page : 1,
     pageSize: COOKBOOK_PAGE_SIZE,
   })
 
@@ -78,8 +91,8 @@ export const MyCookbookPage = () => {
           </div>
           <div className="flex w-full items-center gap-2.5 lg:w-auto lg:shrink-0">
             <SearchInput
-              value={search}
-              onChange={(event) => commit({ q: event.target.value })}
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
               placeholder={t('cookbook.searchPlaceholder')}
               aria-label={t('cookbook.searchPlaceholder')}
               containerClassName="w-full max-w-none flex-1 bg-background md:w-auto lg:w-[210px] lg:flex-none"

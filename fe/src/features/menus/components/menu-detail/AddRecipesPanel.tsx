@@ -24,6 +24,7 @@ import { DishListOrder, DishListScope, DishListSort } from '@constants/recipe'
 import { DishCategoryChips, DishSortChips } from '@/features/recipes/components/dish-filters'
 import { useDishCategories } from '@/features/recipes/hooks/useDishCategories'
 import { useDishList } from '@/features/recipes/hooks/useDishList'
+import { usePageForSearch, useRecipeSearch } from '@/features/recipes/hooks/useRecipeSearch'
 import type { DishListCard } from '@/features/recipes/types/recipe.types'
 
 import type { MenuStageDraft } from '../../types/menu.types'
@@ -51,7 +52,8 @@ export const AddRecipesPanel = ({
   const { t } = useTranslation()
   const [pending, setPending] = useState<DishListCard | null>(null)
   const [sectionId, setSectionId] = useState<string | null>(null)
-  const [search, setSearch] = useState('')
+  const [draft, setDraft] = useState('')
+  const activeSearch = useRecipeSearch(draft)
   const [categoryId, setCategoryId] = useState<string>()
   const [sort, setSort] = useState<DishListSort>(DishListSort.SAVED)
   const [order, setOrder] = useState<DishListOrder>(DishListOrder.DESC)
@@ -69,13 +71,15 @@ export const AddRecipesPanel = ({
     onAdd(pending, nextSectionId)
     closePicker()
   }
+  const listPage = usePageForSearch(activeSearch, page, setPage)
   const { query, total, pageCount } = useDishList({
     scopeKey: ['menu-picker'],
     scope: DishListScope.COOKBOOK,
     categoryId,
+    search: activeSearch,
     sort,
     order,
-    page,
+    page: listPage,
     pageSize: PAGE_SIZE,
   })
 
@@ -84,8 +88,8 @@ export const AddRecipesPanel = ({
       <h2 className="font-serif text-[22px] text-foreground">{t('menus.detail.addRecipes')}</h2>
       <p className="mt-1 text-[12px] text-subtle">{t('menus.detail.addingTo', { name: targetName })}</p>
       <SearchInput
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
+        value={draft}
+        onChange={(event) => setDraft(event.target.value)}
         placeholder={t('cookbook.searchPlaceholder')}
         aria-label={t('cookbook.searchPlaceholder')}
         containerClassName="mt-3 w-full max-w-none bg-background md:max-w-none"

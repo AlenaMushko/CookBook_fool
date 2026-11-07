@@ -66,9 +66,19 @@ export const Loader = () => {
       return typeof page === 'number' && page > 1 ? page : 1
     },
   })
-  const routerPending = useRouterState({ select: (state) => state.status === 'pending' })
+  const routerPending = useRouterState({
+    select: (state) => {
+      if (state.status !== 'pending') return false
+      const nextPath = state.resolvedLocation?.pathname
+      if (!nextPath) return true
+      return nextPath !== state.location.pathname
+    },
+  })
   const pageFetches = useIsFetching({
-    predicate: (query) => isContentQuery(query.queryKey),
+    predicate: (query) => {
+      if (query.meta?.skipGlobalLoader === true) return false
+      return isContentQuery(query.queryKey)
+    },
   })
   const mutations = useIsMutating({
     predicate: (mutation) => mutation.options.meta?.skipGlobalLoader !== true,

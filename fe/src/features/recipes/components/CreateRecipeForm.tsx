@@ -33,6 +33,7 @@ import { showToast } from '@/lib/toast'
 import { recipesApi } from '../api/recipes.api'
 import { recipeQueryKeys } from '../api/recipes.queries'
 import { toCreateDishPayload } from '../lib/create-dish-payload'
+import { syncUpdatedDish } from '../lib/sync-updated-dish'
 import { localizedName, unitSymbol } from '../lib/recipe-locale'
 import {
   RECIPE_DRAFT_AUTOSAVE_MS,
@@ -372,14 +373,12 @@ export const CreateRecipeForm = ({
 
     try {
       if (isEdit && recipeId) {
-        await recipesApi.update(recipeId, payload)
+        const updated = await recipesApi.update(recipeId, payload)
         const kept = new Set(photoKeys(values))
         await deleteStoredFiles(
           [...originalKeys].filter((key) => !kept.has(key)),
         )
-        void queryClient.invalidateQueries({
-          queryKey: recipeQueryKeys.dish(recipeId),
-        })
+        syncUpdatedDish(updated)
         showToast(t('recipe.edit.saved'), 'success')
         void navigate({
           to: Routes.RECIPE,
@@ -391,6 +390,7 @@ export const CreateRecipeForm = ({
       const dish = await recipesApi.create(toCreateDishPayload(values))
       draftAutosave.pause()
       clearRecipeDraft()
+      void queryClient.invalidateQueries({ queryKey: ['dishes', 'list'] })
 
       showToast(t('recipe.create.published'), 'success')
       void navigate({

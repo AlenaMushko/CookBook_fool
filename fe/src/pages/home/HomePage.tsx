@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ApiRoutes } from '@api/apiRoutes'
@@ -17,6 +17,7 @@ import { recipesApi } from '@/features/recipes/api/recipes.api'
 import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 import { DishCategoryChips } from '@/features/recipes/components/dish-filters'
 import { useDishCategories } from '@/features/recipes/hooks/useDishCategories'
+import { useRecipeSearch } from '@/features/recipes/hooks/useRecipeSearch'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
 import { formatMinutes } from '@/features/recipes/lib/recipe-measures'
 import type { DishListCard, DishListResult } from '@/features/recipes/types/recipe.types'
@@ -32,17 +33,26 @@ const homeList = (
   sort: DishListSort,
   categoryId: string | undefined,
   limit: number,
+  search?: string,
 ) => ({
   queryKey: [
     'dishes',
     'list',
     'home',
-    { scope, categoryId: categoryId ?? null, sort, order: DishListOrder.DESC, limit },
+    {
+      scope,
+      categoryId: categoryId ?? null,
+      sort,
+      order: DishListOrder.DESC,
+      limit,
+      search: search || null,
+    },
   ],
   queryFn: () =>
     recipesApi.list({
       scope,
       categoryId,
+      search: search || undefined,
       sort,
       order: DishListOrder.DESC,
       limit,
@@ -50,6 +60,7 @@ const homeList = (
     }),
   staleTime: Infinity,
   gcTime: 30 * 60 * 1000,
+  meta: { skipGlobalLoader: true },
 })
 
 export const HomePage = () => {
@@ -58,6 +69,9 @@ export const HomePage = () => {
   const { isAuthenticated } = useAuthSession()
   const homeSearch = useSearch({ from: '/(public)/' })
   const { q: search, category: categoryId } = homeStateFromSearch(homeSearch)
+  const [draft, setDraft] = useState(search)
+  const activeSearch = useRecipeSearch(draft)
+  const isSearching = activeSearch.length > 0
   const commit = useCallback(
     (next: { q: string; category?: string }) => {
       void navigate({
@@ -69,19 +83,41 @@ export const HomePage = () => {
     [navigate],
   )
 
+  useEffect(() => {
+    setDraft(search)
+  }, [search])
+
+  useEffect(() => {
+    if (activeSearch === search) return
+    commit({ q: activeSearch, category: categoryId })
+  }, [activeSearch, categoryId, commit, search])
+
   const categories = useDishCategories()
-  const popularQuery = useQuery(
-    homeList(DishListScope.PUBLIC, DishListSort.SAVED, categoryId, PREVIEW_COUNT),
-  )
-  const recentQuery = useQuery(
-    homeList(DishListScope.PUBLIC, DishListSort.CREATED, categoryId, PREVIEW_COUNT),
-  )
+  const popularQuery = useQuery({
+    ...homeList(DishListScope.PUBLIC, DishListSort.SAVED, categoryId, PREVIEW_COUNT),
+    enabled: !isSearching,
+  })
+  const recentQuery = useQuery({
+    ...homeList(DishListScope.PUBLIC, DishListSort.CREATED, categoryId, PREVIEW_COUNT),
+    enabled: !isSearching,
+  })
+  const resultsQuery = useQuery({
+    ...homeList(
+      DishListScope.PUBLIC,
+      DishListSort.SAVED,
+      categoryId,
+      12,
+      activeSearch,
+    ),
+    enabled: isSearching,
+  })
   const mineQuery = useQuery({
     ...homeList(
       DishListScope.CREATED_BY_ME,
       DishListSort.CREATED,
       categoryId,
       MINE_COUNT,
+      activeSearch,
     ),
     enabled: isAuthenticated,
   })
@@ -98,8 +134,8 @@ export const HomePage = () => {
       <div className="flex flex-col gap-8 px-5 py-6 sm:px-7">
         <div className="flex flex-col gap-4">
           <SearchInput
-            value={search}
-            onChange={(event) => commit({ q: event.target.value, category: categoryId })}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
             placeholder={t('homePage.searchPlaceholder')}
             aria-label={t('homePage.searchPlaceholder')}
             containerClassName="w-full max-w-none bg-card md:w-full"
@@ -111,20 +147,33 @@ export const HomePage = () => {
           />
         </div>
 
-        <RecipeSection
-          title={t('homePage.popular')}
-          viewAll={t('homePage.viewAll')}
-          dishes={popularQuery.data?.data}
-          pending={popularQuery.isPending}
-          empty={t('homePage.emptyRecipes')}
-        />
-        <RecipeSection
-          title={t('homePage.recent')}
-          viewAll={t('homePage.viewAll')}
-          dishes={recentQuery.data?.data}
-          pending={recentQuery.isPending}
-          empty={t('homePage.emptyRecipes')}
-        />
+        {isSearching ? (
+          <RecipeSection
+            title={t('homePage.results')}
+            viewAll={t('homePage.viewAll')}
+            search={{ q: activeSearch, category: categoryId }}
+            dishes={resultsQuery.data?.data}
+            pending={resultsQuery.isPending}
+            empty={t('homePage.emptyRecipes')}
+          />
+        ) : (
+          <>
+            <RecipeSection
+              title={t('homePage.popular')}
+              viewAll={t('homePage.viewAll')}
+              dishes={popularQuery.data?.data}
+              pending={popularQuery.isPending}
+              empty={t('homePage.emptyRecipes')}
+            />
+            <RecipeSection
+              title={t('homePage.recent')}
+              viewAll={t('homePage.viewAll')}
+              dishes={recentQuery.data?.data}
+              pending={recentQuery.isPending}
+              empty={t('homePage.emptyRecipes')}
+            />
+          </>
+        )}
 
         {isAuthenticated ? (
           <div className="grid gap-8 lg:grid-cols-2">
@@ -132,6 +181,9 @@ export const HomePage = () => {
               title={t('homePage.myCookbook')}
               to={Routes.MY_COOKBOOK}
               seeAll={t('homePage.seeAll')}
+              search={
+                activeSearch ? { q: activeSearch, category: categoryId } : undefined
+              }
               empty={t('homePage.emptyMine')}
               pending={mineQuery.isPending}
               dishes={mineQuery.data?.data ?? []}
@@ -154,10 +206,12 @@ const SectionHeading = ({
   title,
   to,
   action,
+  search,
 }: {
   title: string
   to: typeof Routes.MY_COOKBOOK | typeof Routes.MENUS
   action: string
+  search?: { q?: string; category?: string }
 }) => {
   return (
     <div className="mb-3 flex items-baseline justify-between gap-3">
@@ -166,6 +220,7 @@ const SectionHeading = ({
       </h2>
       <Link
         to={to}
+        search={search}
         className="inline-flex items-center gap-1 text-[13px] font-medium text-brand"
       >
         {action}
@@ -178,19 +233,26 @@ const SectionHeading = ({
 const RecipeSection = ({
   title,
   viewAll,
+  search,
   dishes,
   pending,
   empty,
 }: {
   title: string
   viewAll: string
+  search?: { q?: string; category?: string }
   dishes?: DishListResult['data']
   pending: boolean
   empty: string
 }) => {
   return (
     <section>
-      <SectionHeading title={title} to={Routes.MY_COOKBOOK} action={viewAll} />
+      <SectionHeading
+        title={title}
+        to={Routes.MY_COOKBOOK}
+        action={viewAll}
+        search={search}
+      />
       {pending ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: PREVIEW_COUNT }, (_, index) => (
@@ -219,6 +281,7 @@ const MineSection = ({
   title,
   to,
   seeAll,
+  search,
   empty,
   pending,
   dishes,
@@ -226,6 +289,7 @@ const MineSection = ({
   title: string
   to: typeof Routes.MY_COOKBOOK
   seeAll: string
+  search?: { q?: string; category?: string }
   empty: string
   pending: boolean
   dishes: DishListCard[]
@@ -234,7 +298,7 @@ const MineSection = ({
 
   return (
     <section>
-      <SectionHeading title={title} to={to} action={seeAll} />
+      <SectionHeading title={title} to={to} action={seeAll} search={search} />
       {pending ? <div className="h-28 animate-pulse rounded-2xl bg-card" /> : null}
       {!pending && dishes.length === 0 ? (
         <p className="text-[13px] text-muted-foreground">{empty}</p>

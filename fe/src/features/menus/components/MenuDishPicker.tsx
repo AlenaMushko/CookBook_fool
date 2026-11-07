@@ -14,6 +14,7 @@ import {
 } from '@/features/recipes/components/dish-filters'
 import { useDishCategories } from '@/features/recipes/hooks/useDishCategories'
 import { useDishList } from '@/features/recipes/hooks/useDishList'
+import { usePageForSearch, useRecipeSearch } from '@/features/recipes/hooks/useRecipeSearch'
 import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
 import { formatMinutes } from '@/features/recipes/lib/recipe-measures'
@@ -33,7 +34,8 @@ export const MenuDishPicker = ({
   onToggle: (dish: DishListCard) => void
 }) => {
   const { t } = useTranslation()
-  const [search, setSearch] = useState('')
+  const [draft, setDraft] = useState('')
+  const activeSearch = useRecipeSearch(draft)
   const [scope, setScope] = useState<DishListScope>(DishListScope.PUBLIC)
   const [categoryId, setCategoryId] = useState<string>()
   const [sort, setSort] = useState<DishListSort>(DishListSort.SAVED)
@@ -41,13 +43,15 @@ export const MenuDishPicker = ({
   const [page, setPage] = useState(1)
 
   const categories = useDishCategories()
+  const listPage = usePageForSearch(activeSearch, page, setPage)
   const { query: listQuery, total, pageCount } = useDishList({
     scopeKey: ['menu-picker'],
     scope,
     categoryId,
+    search: activeSearch,
     sort,
     order,
-    page,
+    page: listPage,
     pageSize: PAGE_SIZE,
   })
 
@@ -66,8 +70,8 @@ export const MenuDishPicker = ({
         />
         <div className="flex w-full min-w-0 flex-1 lg:justify-end">
           <SearchInput
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
             placeholder={t('cookbook.searchPlaceholder')}
             aria-label={t('cookbook.searchPlaceholder')}
             containerClassName="w-[80%] max-w-none bg-background md:w-[80%] md:max-w-none"

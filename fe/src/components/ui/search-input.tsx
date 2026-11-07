@@ -30,7 +30,10 @@ function SearchInput({
         className="size-3.5 shrink-0 text-foreground/50"
       />
       <InputPrimitive
-        type="search"
+        type="text"
+        role="searchbox"
+        enterKeyHint="search"
+        autoComplete="off"
         data-slot="search-input-control"
         className={cn(
           "min-w-0 flex-1 border-0 bg-transparent p-0",

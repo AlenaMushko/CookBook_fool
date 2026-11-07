@@ -311,7 +311,8 @@
     "sent": "Thank you! Your feedback has been sent."
   },
   "homePage": {
-    "searchPlaceholder": "Search recipes, ingredients…",
+    "searchPlaceholder": "Search by name or description…",
+    "results": "Search results",
     "popular": "Popular Recipes",
     "recent": "Recently Added",
     "viewAll": "View all",
@@ -401,7 +402,7 @@
   "cookbook": {
     "title": "My Cookbook",
     "subtitle": "Your saved and created recipes in one place.",
-    "searchPlaceholder": "Search recipes…",
+    "searchPlaceholder": "Search by name or description…",
     "create": "Create Recipe",
     "all": "All",
     "created": "Created by Me",

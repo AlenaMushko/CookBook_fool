@@ -316,6 +316,7 @@ export class DishRepository {
       and.push({
         OR: [
           { title: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
           {
             category: {
               OR: [

@@ -27,6 +27,7 @@ export const recipesApi = {
   list(params: {
     scope: DishListScope
     categoryId?: string
+    search?: string
     sort: DishListSort
     order: DishListOrder
     limit: number
@@ -40,6 +41,7 @@ export const recipesApi = {
       offset: String(params.offset),
     })
     if (params.categoryId) search.set('categoryId', params.categoryId)
+    if (params.search) search.set('search', params.search)
 
     return apiJson<DishListResult>(
       `${ApiRoutes.dish.all}?${search.toString()}`,
