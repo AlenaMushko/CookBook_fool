@@ -10,7 +10,7 @@ import type { CreateRecipeFormValues } from '../types/recipe.types'
 const emptyIngredient = {
   ingredient: null,
   unitId: '',
-  quantity: '1',
+  quantity: '',
 }
 
 export const createRecipeSchema = (

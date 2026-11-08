@@ -41,7 +41,7 @@ export const dishToFormValues = (dish: DishDetails): CreateRecipeFormValues => {
           quantity: formatAmount(item.quantity),
           ...(item.groupId ? { groupId: item.groupId } : {}),
         }))
-      : [{ ingredient: null, unitId: '', quantity: '1' }],
+      : [{ ingredient: null, unitId: '', quantity: '' }],
     steps: steps.length
       ? steps.map((step) => ({
           title: step.title ?? '',

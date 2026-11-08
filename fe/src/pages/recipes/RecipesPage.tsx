@@ -117,6 +117,7 @@ export const RecipesPage = () => {
             />
             {isAuthenticated ? (
               <Button
+                nativeButton={false}
                 render={<Link to={Routes.RECIPE_NEW} />}
                 className='hidden h-[38px] min-h-0 shrink-0 px-[18px] py-[9px] text-[13px] md:inline-flex'
               >

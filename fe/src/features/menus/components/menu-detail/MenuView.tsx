@@ -91,6 +91,7 @@ export const MenuView = ({ menu }: { menu: MenuDetail }) => {
             className="h-[42px] min-h-0 px-5 text-[13px]"
           />
           <Button
+            nativeButton={false}
             render={<Link to={Routes.MENU_EDIT} params={{ menuId: menu.id }} />}
             className="h-[42px] min-h-0 w-fit shrink-0 px-5 text-[13px]"
           >

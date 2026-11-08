@@ -495,6 +495,7 @@ export const RecipeDetails = ({
           <Button
             size="lg"
             className="w-full bg-brand text-white hover:bg-brand-active sm:flex-1"
+            nativeButton={false}
             render={<Link to={Routes.RECIPE_EDIT} params={{ recipeId: dish.id }} />}
           >
             <Pencil strokeWidth={1.5} />

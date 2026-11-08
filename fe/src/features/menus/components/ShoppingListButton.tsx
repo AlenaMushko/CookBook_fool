@@ -18,6 +18,7 @@ export const ShoppingListButton = ({
   return (
     <Button
       variant="outline"
+      nativeButton={false}
       render={<Link to={Routes.MENU_SHOPPING} params={{ menuId }} />}
       className={cn('w-fit shrink-0', className)}
     >

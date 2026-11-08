@@ -22,6 +22,7 @@ export const MenusPage = () => {
           <p className="text-[13px] leading-5 text-muted-foreground">{t('menus.subtitle')}</p>
         </div>
         <Button
+          nativeButton={false}
           render={<Link to={Routes.MENU_NEW} />}
           className="h-[42px] min-h-0 w-fit shrink-0 px-5 text-[13px]"
         >

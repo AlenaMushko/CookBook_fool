@@ -31,7 +31,6 @@ export const QuantityField = ({
         id={inputId}
         inputMode="decimal"
         autoComplete="off"
-        placeholder={t('recipe.create.qtyPlaceholder')}
         aria-invalid={Boolean(error)}
         disabled={disabled}
         value={value}

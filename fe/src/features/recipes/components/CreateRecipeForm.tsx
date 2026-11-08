@@ -62,7 +62,7 @@ const formLabelClass = 'text-label uppercase tracking-[0.12em]'
 const emptyIngredient = (): RecipeIngredientDraft => ({
   ingredient: null,
   unitId: '',
-  quantity: '1',
+  quantity: '',
 })
 
 const emptyStep = () => ({
@@ -111,7 +111,7 @@ const isRecipeStarted = (values: CreateRecipeFormValues) => {
   if (
     ingredient?.ingredient ||
     ingredient?.unitId ||
-    ingredient?.quantity.trim() !== '1'
+    ingredient?.quantity.trim()
   ) {
     return true
   }
@@ -699,9 +699,7 @@ export const CreateRecipeForm = ({
                           )}
                           aria-label={t('recipe.create.unit')}
                         >
-                          <SelectValue
-                            placeholder={t('recipe.create.unitPlaceholder')}
-                          />
+                          <SelectValue placeholder="" />
                         </SelectTrigger>
                         <SelectContent>
                           {units.map((unit) => (
