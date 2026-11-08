@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useId, useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import {
@@ -43,8 +43,13 @@ export const IngredientCombobox = ({
 }: IngredientComboboxProps) => {
   const { t, i18n } = useTranslation()
   const inputId = useId()
-  const [query, setQuery] = useState('')
-  const search = useDebounced(query.trim())
+  const selectedLabel = value ? localizedName(i18n.language, value) : ''
+  const [draft, setDraft] = useState<{ label: string; text: string } | null>(
+    null,
+  )
+  const query = draft?.label === selectedLabel ? draft.text : selectedLabel
+  const searching = query !== selectedLabel
+  const search = useDebounced(searching ? query.trim() : '')
 
   const { data, isFetching } = useQuery({
     queryKey: recipeQueryKeys.ingredients(search),
@@ -61,15 +66,7 @@ export const IngredientCombobox = ({
   }, [data, value])
 
   const label = (item: CatalogIngredient) => localizedName(i18n.language, item)
-  const showSelectedImage = Boolean(value?.image) && query.length === 0
-
-  useLayoutEffect(() => {
-    if (!value) return
-    const next = localizedName(i18n.language, value)
-    setQuery((current) =>
-      current === value.nameEn || current === value.nameUk ? next : current,
-    )
-  }, [i18n.language, value])
+  const showSelectedImage = Boolean(value?.image) && query === selectedLabel
 
   return (
     <Combobox
@@ -77,7 +74,15 @@ export const IngredientCombobox = ({
       value={value}
       inputValue={query}
       onValueChange={(next) => onChange(next)}
-      onInputValueChange={setQuery}
+      onInputValueChange={(next) => {
+        setDraft((current) => {
+          if (next === selectedLabel && current == null) return current
+          if (current?.label === selectedLabel && current.text === next) {
+            return current
+          }
+          return { label: selectedLabel, text: next }
+        })
+      }}
       filter={null}
       itemToStringLabel={label}
       isItemEqualToValue={(item, selected) => item.id === selected.id}
