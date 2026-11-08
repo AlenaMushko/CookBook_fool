@@ -25,7 +25,12 @@
     "uploadSuccess": "File uploaded successfully",
     "uploadFail": "File upload failed, please try again",
     "removeSuccess": "File removed successfully",
-    "removeFail": "File remove failed, please try again"
+    "removeFail": "File remove failed, please try again",
+    "dropTitle": "Drop your photo here",
+    "browse": "Browse files",
+    "hint": "Images up to {{size}} MB",
+    "unsupported": "This image format is not supported",
+    "tooLarge": "Max size is {{size}} MB"
   },
   "dish": {
     "addDish": "Add Dish",
@@ -359,6 +364,15 @@
     "hint": "Please try again in a moment.",
     "goBack": "Return to previous page"
   },
+  "footer": {
+    "rights": "All rights reserved."
+  },
+  "logo": {
+    "home": "Cookbook, go to the home page"
+  },
+  "language": {
+    "label": "Language"
+  },
   "home": "Home",
   "dashboard": "Dashboard",
   "update": "Update",
@@ -582,6 +596,9 @@
   },
   "pagination": {
     "label": "Pages",
-    "page": "Page {{page}}"
+    "page": "Page {{page}}",
+    "previous": "Go to previous page",
+    "next": "Go to next page",
+    "more": "More pages"
   }
 }

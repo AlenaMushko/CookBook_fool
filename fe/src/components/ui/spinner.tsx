@@ -1,5 +1,7 @@
-import { cn } from "@/lib/utils"
 import { Loader2 } from "lucide-react"
+import { useTranslation } from "react-i18next"
+
+import { cn } from "@/lib/utils"
 
 type SpinnerSize = "sm" | "default" | "lg" | "xl"
 
@@ -17,12 +19,14 @@ function Spinner({
   className?: string
   size?: SpinnerSize
 }) {
+  const { t } = useTranslation()
+
   return (
     <Loader2
       strokeWidth={1.5}
       data-slot="spinner"
       role="status"
-      aria-label="Loading"
+      aria-label={t("loader.loading")}
       className={cn(
         "shrink-0 animate-spin text-current",
         sizeClass[size],

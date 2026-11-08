@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next"
+
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 
@@ -45,11 +47,13 @@ const RecipeCardSkeletonGrid = ({
   count = 3,
   className,
 }: RecipeCardSkeletonGridProps) => {
+  const { t } = useTranslation()
+
   return (
     <div
       data-slot="recipe-card-skeleton-grid"
       role="status"
-      aria-label="Loading recipes"
+      aria-label={t("loader.loading")}
       aria-busy="true"
       className={cn(
         "grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-5",

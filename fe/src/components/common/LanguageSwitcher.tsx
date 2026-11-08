@@ -6,7 +6,7 @@ const buttonClassName =
   'flex flex-1 items-center justify-center px-[9px] py-2 font-sans text-[11px] leading-[1.5] font-medium tracking-[0.55px] uppercase transition-colors cursor-pointer'
 
 export const LanguageSwitcher = () => {
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
   const isUk = i18n.language.startsWith('uk')
 
   const setLang = (next: 'en' | 'uk') => {
@@ -17,7 +17,7 @@ export const LanguageSwitcher = () => {
   return (
     <div
       role="group"
-      aria-label="Language switch EN / УКР"
+      aria-label={t('language.label')}
       className="inline-flex items-stretch overflow-hidden rounded-md border-[0.75px] border-secondary-border"
     >
       <button

@@ -1,5 +1,6 @@
 import * as React from "react"
 import { Upload } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -43,20 +44,23 @@ function ImageUploader({
   maxSizeMb = MAX_SIZE_MB,
   disabled = false,
   multiple = false,
-  title = "Drop your photo here",
+  title,
   titleClassName,
   hint,
   hintClassName,
-  browseLabel = "Browse Files",
+  browseLabel,
   showBrowse = true,
   icon,
   onFileSelect,
   onFilesSelect,
 }: ImageUploaderProps) {
+  const { t } = useTranslation()
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
-  const hintText = hint ?? `Images up to ${maxSizeMb} MB`
+  const titleText = title ?? t("file.dropTitle")
+  const hintText = hint ?? t("file.hint", { size: maxSizeMb })
+  const browseText = browseLabel ?? t("file.browse")
 
   const isAllowed = (file: File) => {
     const type = file.type.toLowerCase()
@@ -86,11 +90,11 @@ function ImageUploader({
     const valid: File[] = []
     for (const file of files) {
       if (!isAllowed(file)) {
-        setError("This image format is not supported")
+        setError(t("file.unsupported"))
         continue
       }
       if (file.size > maxSizeMb * 1024 * 1024) {
-        setError(`Max size is ${maxSizeMb} MB`)
+        setError(t("file.tooLarge", { size: maxSizeMb }))
         continue
       }
       valid.push(file)
@@ -178,7 +182,7 @@ function ImageUploader({
             titleClassName
           )}
         >
-          {title}
+          {titleText}
         </p>
         <p
           className={cn(
@@ -206,7 +210,7 @@ function ImageUploader({
             openPicker()
           }}
         >
-          {browseLabel}
+          {browseText}
         </Button>
       ) : null}
 
