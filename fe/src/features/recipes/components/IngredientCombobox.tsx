@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useId, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import {
@@ -20,6 +20,7 @@ import type { CatalogIngredient } from '../types/recipe.types'
 type IngredientComboboxProps = {
   value: CatalogIngredient | null
   onChange: (value: CatalogIngredient | null) => void
+  onBlur?: () => void
   invalid?: boolean
   className?: string
 }
@@ -38,18 +39,29 @@ const useDebounced = (value: string, delay = 250) => {
 export const IngredientCombobox = ({
   value,
   onChange,
+  onBlur,
   invalid = false,
   className,
 }: IngredientComboboxProps) => {
   const { t, i18n } = useTranslation()
   const inputId = useId()
   const selectedLabel = value ? localizedName(i18n.language, value) : ''
-  const [draft, setDraft] = useState<{ label: string; text: string } | null>(
-    null,
-  )
-  const query = draft?.label === selectedLabel ? draft.text : selectedLabel
-  const searching = query !== selectedLabel
-  const search = useDebounced(searching ? query.trim() : '')
+  const [inputValue, setInputValue] = useState(selectedLabel)
+  const inputValueRef = useRef(inputValue)
+  const valueRef = useRef(value)
+  valueRef.current = value
+
+  const commitInput = (next: string) => {
+    inputValueRef.current = next
+    setInputValue(next)
+  }
+
+  useEffect(() => {
+    commitInput(selectedLabel)
+  }, [value?.id, selectedLabel])
+
+  const searching = inputValue !== selectedLabel
+  const search = useDebounced(searching ? inputValue.trim() : '')
 
   const { data, isFetching } = useQuery({
     queryKey: recipeQueryKeys.ingredients(search),
@@ -66,22 +78,29 @@ export const IngredientCombobox = ({
   }, [data, value])
 
   const label = (item: CatalogIngredient) => localizedName(i18n.language, item)
-  const showSelectedImage = Boolean(value?.image) && query === selectedLabel
+  const showSelectedImage = Boolean(value?.image) && inputValue === selectedLabel
 
   return (
     <Combobox
       items={items}
       value={value}
-      inputValue={query}
-      onValueChange={(next) => onChange(next)}
-      onInputValueChange={(next) => {
-        setDraft((current) => {
-          if (next === selectedLabel && current == null) return current
-          if (current?.label === selectedLabel && current.text === next) {
-            return current
-          }
-          return { label: selectedLabel, text: next }
-        })
+      inputValue={inputValue}
+      onValueChange={(next) => {
+        if (next == null && inputValueRef.current.trim() !== '') return
+        valueRef.current = next
+        onChange(next)
+      }}
+      onInputValueChange={commitInput}
+      onOpenChange={(open) => {
+        if (open) return
+        const selected = valueRef.current
+        if (inputValueRef.current.trim() === '') {
+          onChange(null)
+          commitInput('')
+        } else {
+          commitInput(selected ? localizedName(i18n.language, selected) : '')
+        }
+        onBlur?.()
       }}
       filter={null}
       itemToStringLabel={label}

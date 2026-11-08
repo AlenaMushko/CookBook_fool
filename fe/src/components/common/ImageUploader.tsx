@@ -3,10 +3,8 @@ import { Upload } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { Button } from "@/components/ui/button"
-import { IMAGE_ACCEPT, isAllowedImageFile } from "@/lib/image-file"
+import { IMAGE_ACCEPT, isAllowedImageFile, MAX_IMAGE_SIZE_MB } from "@/lib/image-file"
 import { cn } from "@/lib/utils"
-
-const MAX_SIZE_MB = 10
 
 type ImageUploaderProps = {
   className?: string
@@ -30,7 +28,7 @@ type ImageUploaderProps = {
 function ImageUploader({
   className,
   accept = IMAGE_ACCEPT,
-  maxSizeMb = MAX_SIZE_MB,
+  maxSizeMb = MAX_IMAGE_SIZE_MB,
   disabled = false,
   multiple = false,
   title,

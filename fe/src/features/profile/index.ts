@@ -10,5 +10,4 @@ export {
   createProfileSchema,
   type ProfileFormValues,
 } from './schemas/profile.schema'
-export { changePasswordSchema } from './schemas/change-password.schema'
 export type { Profile } from './types/profile.types'

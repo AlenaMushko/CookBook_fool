@@ -406,9 +406,9 @@ const MenuSection = ({
               className='flex items-center gap-3 rounded-2xl border border-border bg-card p-2.5'
             >
               <div className='grid size-14 shrink-0 grid-cols-2 gap-0.5 overflow-hidden rounded-lg bg-background'>
-                {menu.dishCoverPhotoUrls.slice(0, 4).map((photoUrl) => (
+                {menu.dishCoverPhotoUrls.slice(0, 4).map((photoUrl, index) => (
                   <RecipeImage
-                    key={photoUrl}
+                    key={`${menu.id}-${index}`}
                     src={photoUrl}
                     className='size-full object-cover'
                   />

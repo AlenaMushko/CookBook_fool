@@ -19,6 +19,8 @@ export const EditRecipePage = ({ recipeId }: { recipeId: string }) => {
     queryKey: [...recipeQueryKeys.dish(recipeId), viewer ?? 'pending'],
     queryFn: () => recipesApi.getById(recipeId),
     enabled: viewer != null,
+    staleTime: 0,
+    refetchOnMount: 'always',
   })
   const isOwner =
     dishQuery.data?.isOwner === true ||

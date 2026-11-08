@@ -142,8 +142,6 @@
       "photoTitle": "Drag photos here, or click to upload",
       "photoHint": "Add photos of the finished dish, up to 4",
       "photoLimit": "You can keep up to 4 photos. Delete one of the current photos and upload another.",
-      "photoInvalidType": "This image format is not supported",
-      "photoTooLarge": "Max size is 10 MB",
       "removePhoto": "Remove photo",
       "ingredients": "Ingredients",
       "ingredient": "Ingredient",

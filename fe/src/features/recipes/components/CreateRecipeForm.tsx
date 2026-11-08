@@ -625,6 +625,7 @@ export const CreateRecipeForm = ({
                       <IngredientCombobox
                         value={ingredientField.value}
                         onChange={ingredientField.onChange}
+                        onBlur={ingredientField.onBlur}
                         invalid={Boolean(
                           errors.ingredients?.[index]?.ingredient,
                         )}
@@ -683,7 +684,13 @@ export const CreateRecipeForm = ({
                           value: unit.id,
                           label: unitSymbol(i18n.language, unit),
                         }))}
-                        onValueChange={(value) => unitField.onChange(value ?? '')}
+                        onValueChange={(value) => {
+                          if (typeof value !== 'string' || !value) return
+                          unitField.onChange(value)
+                        }}
+                        onOpenChange={(open) => {
+                          if (!open) unitField.onBlur()
+                        }}
                         disabled={isSubmitting}
                       >
                         <SelectTrigger

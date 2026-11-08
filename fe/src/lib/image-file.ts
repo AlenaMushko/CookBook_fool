@@ -1,6 +1,10 @@
 export const IMAGE_ACCEPT =
   '.jpg,.jpeg,.png,.webp,.gif,.avif,.heic,.heif,.bmp,.tif,.tiff'
 
+/** Matches the S3 upload limit in the API (`imgConstants.MAX_FILE_SIZE`). */
+export const MAX_IMAGE_SIZE_MB = 8
+export const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024
+
 type ImageKind = {
   mime: string
   extensions: string[]

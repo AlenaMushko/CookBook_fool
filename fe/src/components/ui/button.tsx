@@ -90,6 +90,8 @@ function Button({
   text,
   children,
   disabled,
+  nativeButton,
+  render,
   ...props
 }: ButtonPrimitive.Props &
   VariantProps<typeof buttonVariants> & {
@@ -103,6 +105,8 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       disabled={disabled || isLoading}
       aria-busy={isLoading || undefined}
+      nativeButton={nativeButton ?? !render}
+      render={render}
       {...props}
     >
       {isLoading ? (

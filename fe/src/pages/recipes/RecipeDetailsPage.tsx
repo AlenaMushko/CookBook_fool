@@ -14,6 +14,8 @@ export const RecipeDetailsPage = ({ recipeId }: { recipeId: string }) => {
     queryKey: [...recipeQueryKeys.dish(recipeId), viewer ?? 'pending'],
     queryFn: () => recipesApi.getById(recipeId),
     enabled: viewer != null,
+    staleTime: 0,
+    refetchOnMount: 'always',
   })
   const unitsQuery = useQuery({
     queryKey: recipeQueryKeys.units(),

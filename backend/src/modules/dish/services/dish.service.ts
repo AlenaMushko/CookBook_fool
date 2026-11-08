@@ -78,11 +78,11 @@ export class DishService {
       dto.ingredients,
     );
 
-    return await this.withMeasureFactors(
-      DishMapper.toParsedResponseDto(dish, {
-        userId: userData.userId,
-      }),
-    );
+    const created = DishMapper.toParsedResponseDto(dish, {
+      userId: userData.userId,
+    });
+    await this.attachSignedPhotoUrls(created);
+    return await this.withMeasureFactors(created);
   }
 
   public async updateDish(
@@ -152,11 +152,11 @@ export class DishService {
       dto.ingredients,
     );
 
-    return await this.withMeasureFactors(
-      DishMapper.toParsedResponseDto(dish, {
-        userId: userData.userId,
-      }),
-    );
+    const updated = DishMapper.toParsedResponseDto(dish, {
+      userId: userData.userId,
+    });
+    await this.attachSignedPhotoUrls(updated);
+    return await this.withMeasureFactors(updated);
   }
 
   public async getAllDishes(
