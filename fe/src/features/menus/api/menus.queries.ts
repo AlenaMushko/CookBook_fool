@@ -1,8 +1,11 @@
 import { mutationOptions, type QueryClient, queryOptions } from '@tanstack/react-query'
+
+import { sessionViewerKey } from '@/lib/session-user'
+
 import { menusApi } from './menus.api'
 
 export const menuQueryKeys = {
-  all: () => ['menus'] as const,
+  all: () => ['menus', sessionViewerKey()] as const,
   lists: () => [...menuQueryKeys.all(), 'list'] as const,
   detail: (menuId: string) => [...menuQueryKeys.all(), 'detail', menuId] as const,
   shopping: (menuId: string) => [...menuQueryKeys.all(), 'shopping', menuId] as const,
@@ -12,10 +15,11 @@ export const forgetShoppingList = (queryClient: QueryClient, menuId: string) => 
   queryClient.removeQueries({ queryKey: menuQueryKeys.shopping(menuId) })
 }
 
-export const myMenusQueryOptions = queryOptions({
-  queryKey: menuQueryKeys.lists(),
-  queryFn: () => menusApi.listMine(),
-})
+export const myMenusQueryOptions = () =>
+  queryOptions({
+    queryKey: menuQueryKeys.lists(),
+    queryFn: () => menusApi.listMine(),
+  })
 
 export const menuDetailsQueryOptions = (menuId: string) =>
   queryOptions({

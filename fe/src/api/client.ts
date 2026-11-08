@@ -1,6 +1,9 @@
 import { CONFIG } from '@config'
 import { ApiRoutes } from '@api/apiRoutes'
-import { clearAuthSessionCookie } from '@/lib/auth-session'
+import i18n from '@/i18n'
+import { clearAuthSessionCookie, hasAuthSession } from '@/lib/auth-session'
+import { sessionEpoch, trackRequest } from '@/lib/inflight'
+import { alignSessionWithCookie, clearSessionUser } from '@/lib/session-user'
 
 type ApiErrorBody = {
   message?: string | string[]
@@ -34,6 +37,16 @@ async function readError(response: Response): Promise<ApiError> {
   } catch {
     // ignore
   }
+  if (response.status === 429) {
+    return new ApiError(
+      429,
+      i18n.t('error.rateLimited', {
+        defaultValue: 'Too many requests. Wait a minute and try again',
+      }),
+      body?.code ?? 'RATE_LIMITED',
+    )
+  }
+
   return new ApiError(
     response.status,
     parseErrorMessage(body, 'Request failed'),
@@ -42,27 +55,42 @@ async function readError(response: Response): Promise<ApiError> {
 }
 
 let refreshPromise: Promise<boolean> | null = null
+let refreshEpoch = -1
 
-async function refreshSession(): Promise<boolean> {
-  if (refreshPromise) return refreshPromise
+async function refreshSession(epoch: number): Promise<boolean> {
+  if (refreshPromise && refreshEpoch === epoch) return refreshPromise
 
-  refreshPromise = (async () => {
+  refreshEpoch = epoch
+  const promise = (async () => {
+    const controller = new AbortController()
+    const release = trackRequest(controller)
     try {
       const response = await fetch(`${CONFIG.API_URL}${ApiRoutes.auth.refresh}`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: '{}',
+        signal: controller.signal,
       })
+      if (sessionEpoch() !== epoch) return false
       return response.ok
     } catch {
       return false
     } finally {
-      refreshPromise = null
+      release()
     }
   })()
 
-  return refreshPromise
+  refreshPromise = promise
+  void promise.finally(() => {
+    if (refreshPromise === promise) refreshPromise = null
+  })
+
+  return promise
+}
+
+function sessionChanged(epoch: number): boolean {
+  return sessionEpoch() !== epoch
 }
 
 type ApiFetchOptions = RequestInit & {
@@ -74,28 +102,56 @@ export async function apiFetch(
   options: ApiFetchOptions = {},
 ): Promise<Response> {
   const { skipAuthRefresh = false, ...init } = options
+  alignSessionWithCookie()
+  const epoch = sessionEpoch()
+  const controller = new AbortController()
+  const release = trackRequest(controller)
 
-  const response = await fetch(`${CONFIG.API_URL}${path}`, {
-    ...init,
-    credentials: 'include',
-    headers: buildHeaders(init),
-  })
+  try {
+    const response = await fetch(`${CONFIG.API_URL}${path}`, {
+      ...init,
+      credentials: 'include',
+      headers: buildHeaders(init),
+      signal: controller.signal,
+    })
 
-  if (response.status !== 401 || skipAuthRefresh) {
-    return response
+    if (sessionChanged(epoch)) {
+      throw new DOMException('Account changed', 'AbortError')
+    }
+
+    if (response.status !== 401 || skipAuthRefresh) {
+      return response
+    }
+
+    const refreshed = await refreshSession(epoch)
+    if (sessionChanged(epoch)) {
+      throw new DOMException('Account changed', 'AbortError')
+    }
+    if (!refreshed) {
+      const hadSession = hasAuthSession()
+      clearAuthSessionCookie()
+      clearSessionUser()
+      if (hadSession) window.location.assign('/')
+      return response
+    }
+
+    if (sessionChanged(epoch)) {
+      throw new DOMException('Account changed', 'AbortError')
+    }
+
+    const retried = await fetch(`${CONFIG.API_URL}${path}`, {
+      ...init,
+      credentials: 'include',
+      headers: buildHeaders(init),
+      signal: controller.signal,
+    })
+    if (sessionChanged(epoch)) {
+      throw new DOMException('Account changed', 'AbortError')
+    }
+    return retried
+  } finally {
+    release()
   }
-
-  const refreshed = await refreshSession()
-  if (!refreshed) {
-    clearAuthSessionCookie()
-    return response
-  }
-
-  return fetch(`${CONFIG.API_URL}${path}`, {
-    ...init,
-    credentials: 'include',
-    headers: buildHeaders(init),
-  })
 }
 
 function buildHeaders(init: RequestInit): HeadersInit {

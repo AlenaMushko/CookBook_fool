@@ -11,6 +11,14 @@ import { GlobalExceptionFilter } from './common/expections/global-exception.filt
 import { SwaggerHelper } from './common/helpers/swagger.helper';
 import { formatValidationErrors } from './common/helpers/validation-error.helper';
 import { TrimPipe } from './common/pipes/trim.pipe';
+import {
+  apiBurstLimit,
+  apiSustainedLimit,
+  authBurstLimit,
+  authSustainedLimit,
+  expensiveBurstLimit,
+  expensiveSustainedLimit,
+} from './common/rate-limit';
 import { AppConfig, Config } from './config/config.type';
 import { assertProductionConfig } from './config/validate-production-config';
 import logger from './logger';
@@ -41,8 +49,15 @@ async function bootstrap() {
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['Content-Disposition'],
+    exposedHeaders: ['Content-Disposition', 'Retry-After'],
   });
+
+  app.use(authBurstLimit);
+  app.use(authSustainedLimit);
+  app.use(expensiveBurstLimit);
+  app.use(expensiveSustainedLimit);
+  app.use(apiBurstLimit);
+  app.use(apiSustainedLimit);
 
   app.use(
     pinoHttp({

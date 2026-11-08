@@ -1,15 +1,10 @@
-import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 
-import { hasAuthSession } from '@/lib/auth-session'
+import { requireAuthSession } from '@/lib/require-auth'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ location }) => {
-    if (!hasAuthSession()) {
-      throw redirect({
-        to: '/login',
-        search: { redirect: location.href },
-      })
-    }
+    requireAuthSession(location.href)
   },
   component: AuthenticatedLayout,
 })

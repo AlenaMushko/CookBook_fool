@@ -63,4 +63,8 @@ export class AccessTokenRepository {
   public async deleteAllByUserId(userId: string): Promise<void> {
     await this.prisma.accessToken.deleteMany({ where: { userId } });
   }
+
+  public async deleteByDeviceId(deviceId: string): Promise<void> {
+    await this.prisma.accessToken.deleteMany({ where: { deviceId } });
+  }
 }

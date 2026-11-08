@@ -76,6 +76,7 @@ export class AuthService {
       deviceId: dto.deviceId,
     });
 
+    await this.revokeDevice(dto.deviceId);
     await this.persistSession(user.id, dto.deviceId, tokens);
 
     return AuthMapper.toSessionWithTokens(user, tokens);
@@ -114,11 +115,7 @@ export class AuthService {
       deviceId: dto.deviceId,
     });
 
-    await Promise.all([
-      this.refreshRepository.deleteByUserAndDevice(user.id, dto.deviceId),
-      this.authCacheService.removeToken(user.id, dto.deviceId),
-    ]);
-
+    await this.revokeDevice(dto.deviceId);
     await this.persistSession(user.id, dto.deviceId, tokens);
 
     return AuthMapper.toSessionWithTokens(user, tokens);
@@ -298,10 +295,20 @@ export class AuthService {
       id: userData.userId,
     });
 
-    await Promise.all([
-      this.refreshRepository.deleteByUserAndDevice(user.id, userData.deviceId),
-      this.authCacheService.removeToken(user.id, userData.deviceId),
-    ]);
+    const consumed = await this.refreshRepository.consume(
+      user.id,
+      userData.deviceId,
+      userData.refreshToken,
+    );
+    if (!consumed) {
+      throw new AppException(
+        ErrorCode.AUTH_TOKEN_EXPIRED,
+        401,
+        'Session is no longer active',
+      );
+    }
+
+    await this.authCacheService.removeToken(user.id, userData.deviceId);
 
     const tokens = await this.tokenService.generateAuthTokens({
       userId: user.id,
@@ -310,6 +317,26 @@ export class AuthService {
 
     await this.persistSession(user.id, userData.deviceId, tokens);
     return tokens;
+  }
+
+  public async assertActiveRefreshToken(
+    rawRefreshToken: string,
+  ): Promise<void> {
+    const active = await this.refreshRepository.isActiveToken(rawRefreshToken);
+    if (!active) {
+      throw new AppException(
+        ErrorCode.AUTH_TOKEN_EXPIRED,
+        401,
+        'Session was replaced',
+      );
+    }
+  }
+
+  private async revokeDevice(deviceId: string): Promise<void> {
+    await Promise.all([
+      this.refreshRepository.deleteByDeviceId(deviceId),
+      this.authCacheService.removeDevice(deviceId),
+    ]);
   }
 
   public async invalidateAllSessions(userId: string): Promise<void> {

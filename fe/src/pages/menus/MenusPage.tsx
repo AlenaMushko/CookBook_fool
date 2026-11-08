@@ -10,7 +10,7 @@ import { myMenusQueryOptions } from '@/features/menus'
 
 export const MenusPage = () => {
   const { t } = useTranslation()
-  const { data } = useSuspenseQuery(myMenusQueryOptions)
+  const { data } = useSuspenseQuery(myMenusQueryOptions())
 
   return (
     <div className="-m-5 flex min-h-full flex-col px-5 pt-7 pb-12 sm:px-8">

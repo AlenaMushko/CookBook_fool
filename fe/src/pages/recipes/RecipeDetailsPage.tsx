@@ -5,14 +5,15 @@ import { PageTitle } from '@components/common'
 import { RecipeDetails } from '@/features/recipes/components/RecipeDetails'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
 import { recipeQueryKeys } from '@/features/recipes/api/recipes.queries'
-import { useAuthSession } from '@/hooks/useAuthSession'
+import { useViewerKey } from '@/lib/session-user'
 
 export const RecipeDetailsPage = ({ recipeId }: { recipeId: string }) => {
   const { t } = useTranslation()
-  const { isAuthenticated } = useAuthSession()
+  const viewer = useViewerKey()
   const dishQuery = useQuery({
-    queryKey: [...recipeQueryKeys.dish(recipeId), isAuthenticated ? 'me' : 'guest'],
+    queryKey: [...recipeQueryKeys.dish(recipeId), viewer ?? 'pending'],
     queryFn: () => recipesApi.getById(recipeId),
+    enabled: viewer != null,
   })
   const unitsQuery = useQuery({
     queryKey: recipeQueryKeys.units(),

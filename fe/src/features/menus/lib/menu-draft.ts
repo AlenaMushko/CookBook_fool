@@ -1,11 +1,8 @@
 import type { TFunction } from 'i18next'
 
 import { LocalStorageKey } from '@constants/localStorage'
-import {
-  getLocalStorage,
-  removeLocalStorage,
-  setLocalStorage,
-} from '@/lib/local-storage'
+import { getSessionUserId } from '@/lib/session-user'
+import { readUserScoped, writeUserScoped } from '@/lib/user-scoped-storage'
 import type { DishListCard } from '@/features/recipes/types/recipe.types'
 
 import { coverUrl } from './cover-url'
@@ -73,27 +70,27 @@ export const draftToDish = (dish: MenuDraftDish): DishListCard => ({
     : [],
 })
 
-export const readMenuDraft = (): MenuDraftRecord | null => {
-  const raw = getLocalStorage(LocalStorageKey.MenuDraft)
-  if (!raw) return null
+const parseMenuDraft = (value: unknown): MenuDraftRecord | null => {
+  const dishes = readDishes(value)
+  const parsed = draftSchema.safeParse(value)
+  if (parsed.success && dishes) return { ...parsed.data, dishes }
+  return null
+}
 
-  try {
-    const json: unknown = JSON.parse(raw)
-    const dishes = readDishes(json)
-    const parsed = draftSchema.safeParse(json)
-    if (parsed.success && dishes) return { ...parsed.data, dishes }
-    removeLocalStorage(LocalStorageKey.MenuDraft)
-    return null
-  } catch {
-    removeLocalStorage(LocalStorageKey.MenuDraft)
-    return null
-  }
+export const readMenuDraft = (): MenuDraftRecord | null => {
+  const userId = getSessionUserId()
+  if (!userId) return null
+  return readUserScoped(LocalStorageKey.MenuDraft, userId, parseMenuDraft)
 }
 
 export const saveMenuDraft = (draft: MenuDraftRecord) => {
-  setLocalStorage(LocalStorageKey.MenuDraft, JSON.stringify(draft))
+  const userId = getSessionUserId()
+  if (!userId) return
+  writeUserScoped(LocalStorageKey.MenuDraft, userId, draft)
 }
 
 export const clearMenuDraft = () => {
-  removeLocalStorage(LocalStorageKey.MenuDraft)
+  const userId = getSessionUserId()
+  if (!userId) return
+  writeUserScoped(LocalStorageKey.MenuDraft, userId, undefined)
 }

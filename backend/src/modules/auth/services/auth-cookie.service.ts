@@ -32,7 +32,11 @@ export class AuthCookieService {
       cookieSecure === undefined ? isProduction : cookieSecure === 'true';
   }
 
-  public setAuthCookies(res: Response, tokens: TokenResponseDto): void {
+  public setAuthCookies(
+    res: Response,
+    tokens: TokenResponseDto,
+    userId: string,
+  ): void {
     const baseOptions = {
       httpOnly: true,
       secure: this.secureCookies,
@@ -50,7 +54,7 @@ export class AuthCookieService {
       maxAge: this.jwtConfig.refreshTokenExpiration * 1000,
     });
 
-    res.cookie(AUTH_COOKIE_NAMES.SESSION, '1', {
+    res.cookie(AUTH_COOKIE_NAMES.SESSION, userId, {
       ...baseOptions,
       httpOnly: false,
       maxAge: this.jwtConfig.refreshTokenExpiration * 1000,

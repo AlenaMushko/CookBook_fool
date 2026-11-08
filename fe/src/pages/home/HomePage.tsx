@@ -13,6 +13,7 @@ import { HomeRecipeCard } from "@/features/home/components/HomeRecipeCard";
 import { homeStateFromSearch, toHomeSearch } from "@/features/home/home-search";
 import type { MenuPreview } from "@/features/menus/types/menu.types";
 import { useAuthSession } from "@/hooks/useAuthSession";
+import { useViewerKey } from "@/lib/session-user";
 import { recipesApi } from "@/features/recipes/api/recipes.api";
 import { RecipeImage } from "@/features/recipes/components/RecipeImage";
 import { DishCategoryChips } from "@/features/recipes/components/dish-filters";
@@ -32,6 +33,7 @@ const PREVIEW_COUNT = 3;
 const MINE_COUNT = 2;
 
 const homeList = (
+  viewer: string,
   scope: DishListScope,
   sort: DishListSort,
   categoryId: string | undefined,
@@ -42,6 +44,7 @@ const homeList = (
     "dishes",
     "list",
     "home",
+    viewer,
     {
       scope,
       categoryId: categoryId ?? null,
@@ -70,6 +73,8 @@ export const HomePage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthSession();
+  const viewer = useViewerKey();
+  const accountReady = isAuthenticated && viewer != null;
   const homeSearch = useSearch({ from: "/(public)/" });
   const { q: search, category: categoryId } = homeStateFromSearch(homeSearch);
   const [draft, setDraft] = useState(search);
@@ -98,46 +103,50 @@ export const HomePage = () => {
   const categories = useDishCategories();
   const popularQuery = useQuery({
     ...homeList(
+      viewer ?? "pending",
       DishListScope.PUBLIC,
       DishListSort.SAVED,
       categoryId,
       PREVIEW_COUNT
     ),
-    enabled: !isSearching,
+    enabled: viewer != null && !isSearching,
   });
   const recentQuery = useQuery({
     ...homeList(
+      viewer ?? "pending",
       DishListScope.PUBLIC,
       DishListSort.CREATED,
       categoryId,
       PREVIEW_COUNT
     ),
-    enabled: !isSearching,
+    enabled: viewer != null && !isSearching,
   });
   const resultsQuery = useQuery({
     ...homeList(
+      viewer ?? "pending",
       DishListScope.PUBLIC,
       DishListSort.SAVED,
       categoryId,
       12,
       activeSearch
     ),
-    enabled: isSearching,
+    enabled: viewer != null && isSearching,
   });
   const mineQuery = useQuery({
     ...homeList(
+      viewer ?? "pending",
       DishListScope.CREATED_BY_ME,
       DishListSort.CREATED,
       categoryId,
       MINE_COUNT,
       activeSearch
     ),
-    enabled: isAuthenticated,
+    enabled: accountReady,
   });
   const menusQuery = useQuery({
-    queryKey: ["menus", "home"],
+    queryKey: ["menus", viewer ?? "pending", "home"],
     queryFn: () => apiJson<{ data: MenuPreview[] }>(ApiRoutes.menu.all),
-    enabled: isAuthenticated,
+    enabled: accountReady,
     staleTime: Infinity,
   });
 
@@ -188,7 +197,7 @@ export const HomePage = () => {
           </>
         )}
 
-        {isAuthenticated ? (
+        {accountReady ? (
           <div className='grid gap-8 lg:grid-cols-2'>
             <MineSection
               title={t("homePage.myCookbook")}

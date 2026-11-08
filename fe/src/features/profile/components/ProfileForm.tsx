@@ -461,7 +461,7 @@ export const ProfileForm = ({ profile }: ProfileFormProps) => {
           type="button"
           className="text-body font-medium text-destructive underline-offset-4 hover:underline"
           onClick={() =>
-            void signOut().then(() => navigate({ to: Routes.LOGIN }))
+            void signOut()
           }
         >
           {t('logout')}

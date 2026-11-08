@@ -1,5 +1,6 @@
 import { LocalStorageKey } from '@constants/localStorage'
-import { getLocalStorage, removeLocalStorage, setLocalStorage } from '@/lib/local-storage'
+import { getSessionUserId } from '@/lib/session-user'
+import { readUserScoped, writeUserScoped } from '@/lib/user-scoped-storage'
 
 export const SHOPPING_CHECKS_TTL_MS = 60 * 60 * 1000
 
@@ -23,29 +24,27 @@ const isEntry = (value: unknown): value is ShoppingChecksEntry => {
   )
 }
 
-const readStore = (): ShoppingChecksStore => {
-  const raw = getLocalStorage(LocalStorageKey.ShoppingChecks)
-  if (!raw) return {}
-  try {
-    const parsed: unknown = JSON.parse(raw)
-    if (!parsed || typeof parsed !== 'object') return {}
-    const store: ShoppingChecksStore = {}
-    for (const [menuId, entry] of Object.entries(parsed)) {
-      if (isEntry(entry)) store[menuId] = entry
-    }
-    return store
-  } catch {
-    return {}
+const viewerKey = () => getSessionUserId() ?? 'guest'
+
+const parseStore = (value: unknown): ShoppingChecksStore | null => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null
+  const store: ShoppingChecksStore = {}
+  for (const [menuId, entry] of Object.entries(value)) {
+    if (isEntry(entry)) store[menuId] = entry
   }
+  return store
 }
+
+const readStore = (): ShoppingChecksStore =>
+  readUserScoped(LocalStorageKey.ShoppingChecks, viewerKey(), parseStore) ?? {}
 
 const writeStore = (store: ShoppingChecksStore) => {
   try {
-    if (Object.keys(store).length === 0) {
-      removeLocalStorage(LocalStorageKey.ShoppingChecks)
-      return
-    }
-    setLocalStorage(LocalStorageKey.ShoppingChecks, JSON.stringify(store))
+    writeUserScoped(
+      LocalStorageKey.ShoppingChecks,
+      viewerKey(),
+      Object.keys(store).length === 0 ? undefined : store,
+    )
   } catch {
     /* private mode or a full store */
   }

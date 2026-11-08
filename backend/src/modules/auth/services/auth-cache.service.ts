@@ -35,6 +35,10 @@ export class AuthCacheService {
     await this.accessTokenRepository.deleteByUserAndDevice(userId, deviceId);
   }
 
+  public async removeDevice(deviceId: string): Promise<void> {
+    await this.accessTokenRepository.deleteByDeviceId(deviceId);
+  }
+
   public async isAccessTokenExist(
     userId: string,
     deviceId: string,

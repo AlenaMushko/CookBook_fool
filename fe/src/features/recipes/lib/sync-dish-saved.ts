@@ -2,6 +2,7 @@ import type { QueryKey } from '@tanstack/react-query'
 
 import { queryClient } from '@api/queryClient'
 import { DishListScope } from '@constants/recipe'
+import { sessionViewerKey } from '@/lib/session-user'
 
 import { recipeQueryKeys } from '../api/recipes.queries'
 import type { DishDetails, DishListResult } from '../types/recipe.types'
@@ -18,14 +19,25 @@ function readScope(value: unknown): string | undefined {
 }
 
 function listScope(queryKey: QueryKey): string | undefined {
-  return readScope(queryKey[2]) ?? readScope(queryKey[3])
+  for (const part of queryKey) {
+    const scope = readScope(part)
+    if (scope) return scope
+  }
+  return undefined
+}
+
+function isCurrentViewer(queryKey: QueryKey): boolean {
+  return queryKey.includes(sessionViewerKey())
 }
 
 export function captureDishSavedState(dishId: string): DishSavedSnapshot {
   return {
-    lists: queryClient.getQueriesData<DishListResult>({ queryKey: ['dishes', 'list'] }),
+    lists: queryClient.getQueriesData<DishListResult>({
+      queryKey: ['dishes', 'list'],
+      predicate: (query) => isCurrentViewer(query.queryKey),
+    }),
     details: queryClient.getQueriesData<DishDetails>({
-      queryKey: recipeQueryKeys.dish(dishId),
+      queryKey: [...recipeQueryKeys.dish(dishId), sessionViewerKey()],
     }),
   }
 }
@@ -36,7 +48,10 @@ export function restoreDishSavedState(snapshot: DishSavedSnapshot) {
 }
 
 export function syncDishSaved(dishId: string, nextSaved: boolean) {
-  const lists = queryClient.getQueriesData<DishListResult>({ queryKey: ['dishes', 'list'] })
+  const lists = queryClient.getQueriesData<DishListResult>({
+    queryKey: ['dishes', 'list'],
+    predicate: (query) => isCurrentViewer(query.queryKey),
+  })
   const refreshSavedLists = lists.some(([key, current]) => {
     if (!current || !nextSaved || listScope(key) !== DishListScope.SAVED) return false
     return !current.data.some((item) => item.id === dishId)
@@ -71,7 +86,9 @@ export function syncDishSaved(dishId: string, nextSaved: boolean) {
   }
 
   queryClient.setQueriesData<DishDetails>(
-    { queryKey: recipeQueryKeys.dish(dishId) },
+    {
+      queryKey: [...recipeQueryKeys.dish(dishId), sessionViewerKey()],
+    },
     (current) => {
       if (!current) return current
       const delta = Number(nextSaved) - Number(Boolean(current.isLiked))
@@ -87,6 +104,7 @@ export function syncDishSaved(dishId: string, nextSaved: boolean) {
   void queryClient.invalidateQueries({
     queryKey: ['dishes', 'list'],
     refetchType: 'none',
-    predicate: (query) => listScope(query.queryKey) === DishListScope.SAVED,
+    predicate: (query) =>
+      isCurrentViewer(query.queryKey) && listScope(query.queryKey) === DishListScope.SAVED,
   })
 }

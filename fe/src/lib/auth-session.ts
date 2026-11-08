@@ -6,9 +6,11 @@ export const AUTH_CHANGED_EVENT = 'auth:changed'
 
 export function hasAuthSession(): boolean {
   if (typeof document === 'undefined') return false
-  return document.cookie
-    .split(';')
-    .some((part) => part.trim().startsWith(`${AUTH_COOKIES.SESSION}=`))
+  return document.cookie.split(';').some((part) => {
+    const [name, ...rest] = part.trim().split('=')
+    if (name !== AUTH_COOKIES.SESSION) return false
+    return decodeURIComponent(rest.join('=')).length > 0
+  })
 }
 
 export function notifyAuthChanged(): void {

@@ -53,4 +53,20 @@ export class RefreshTokenRepository {
   public async deleteAllByUserId(userId: string): Promise<void> {
     await this.prisma.refreshToken.deleteMany({ where: { userId } });
   }
+
+  public async deleteByDeviceId(deviceId: string): Promise<void> {
+    await this.prisma.refreshToken.deleteMany({ where: { deviceId } });
+  }
+
+  public async consume(
+    userId: string,
+    deviceId: string,
+    rawRefreshToken: string,
+  ): Promise<boolean> {
+    const tokenHash = hashToken(rawRefreshToken);
+    const deleted = await this.prisma.refreshToken.deleteMany({
+      where: { userId, deviceId, tokenHash },
+    });
+    return deleted.count > 0;
+  }
 }

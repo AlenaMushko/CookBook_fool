@@ -1,12 +1,18 @@
 import { queryClient } from '@api/queryClient'
+import { sessionViewerKey } from '@/lib/session-user'
 
 import { recipeQueryKeys } from '../api/recipes.queries'
 import type { DishDetails, DishListResult } from '../types/recipe.types'
 
 export const syncUpdatedDish = (dish: DishDetails) => {
-  queryClient.setQueryData([...recipeQueryKeys.dish(dish.id), 'me'], dish)
-  queryClient.setQueryData([...recipeQueryKeys.dish(dish.id), 'guest'], dish)
-  queryClient.setQueriesData<DishListResult>({ queryKey: ['dishes', 'list'] }, (current) => {
+  const viewer = sessionViewerKey()
+  queryClient.setQueryData([...recipeQueryKeys.dish(dish.id), viewer], dish)
+  queryClient.setQueriesData<DishListResult>(
+    {
+      queryKey: ['dishes', 'list'],
+      predicate: (query) => query.queryKey.includes(viewer),
+    },
+    (current) => {
     if (!current) return current
     let changed = false
     const data = current.data.map((item) => {
@@ -29,5 +35,8 @@ export const syncUpdatedDish = (dish: DishDetails) => {
     })
     return changed ? { ...current, data } : current
   })
-  void queryClient.invalidateQueries({ queryKey: ['dishes', 'list'] })
+  void queryClient.invalidateQueries({
+    queryKey: ['dishes', 'list'],
+    predicate: (query) => query.queryKey.includes(viewer),
+  })
 }

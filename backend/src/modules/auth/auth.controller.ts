@@ -44,7 +44,10 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<AuthSessionResponseDto> {
     const session = await this.authService.signUp(dto);
-    this.authCookieService.setAuthCookies(res, session.tokens);
+    await this.authService.assertActiveRefreshToken(
+      session.tokens.refreshToken,
+    );
+    this.authCookieService.setAuthCookies(res, session.tokens, session.user.id);
     return { user: session.user };
   }
 
@@ -56,7 +59,10 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<AuthSessionResponseDto> {
     const session = await this.authService.signIn(dto);
-    this.authCookieService.setAuthCookies(res, session.tokens);
+    await this.authService.assertActiveRefreshToken(
+      session.tokens.refreshToken,
+    );
+    this.authCookieService.setAuthCookies(res, session.tokens, session.user.id);
     return { user: session.user };
   }
 
@@ -119,7 +125,8 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<RefreshSessionResponseDto> {
     const tokens = await this.authService.refreshToken(userData);
-    this.authCookieService.setAuthCookies(res, tokens);
+    await this.authService.assertActiveRefreshToken(tokens.refreshToken);
+    this.authCookieService.setAuthCookies(res, tokens, userData.userId);
     return { success: true };
   }
 }

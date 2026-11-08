@@ -13,6 +13,7 @@ import { Routes } from '@constants/routes'
 import { URLS } from '@constants/url'
 import { profileQueryKeys } from '@/features/profile/api/profile.queries'
 import { notifyAuthChanged } from '@/lib/auth-session'
+import { adoptSessionUser, beginAccountSwitch } from '@/lib/session-user'
 import { getDeviceId } from '@/lib/device'
 
 import { authApi } from '../api/auth.api'
@@ -47,6 +48,7 @@ export const RegisterForm = () => {
 
   const onSubmit = handleSubmit(async (values) => {
     try {
+      beginAccountSwitch()
       const { user } = await authApi.signUp({
         firstName: values.firstName.trim(),
         lastName: values.lastName.trim(),
@@ -56,6 +58,7 @@ export const RegisterForm = () => {
         deviceId: getDeviceId(),
       })
 
+      adoptSessionUser(user.id)
       queryClient.setQueryData(profileQueryKeys.me(), user)
       await queryClient.invalidateQueries({ queryKey: profileQueryKeys.me() })
       notifyAuthChanged()

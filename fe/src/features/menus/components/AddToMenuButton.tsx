@@ -132,7 +132,7 @@ const AddToMenuDialog = ({
   const [sectionId, setSectionId] = useState<string | null>(null)
 
   const menusQuery = useQuery({
-    ...myMenusQueryOptions,
+    ...myMenusQueryOptions(),
     enabled: open,
     staleTime: 0,
   })

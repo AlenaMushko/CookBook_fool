@@ -9,13 +9,16 @@ import { recipeQueryKeys } from '@/features/recipes/api/recipes.queries'
 import { CreateRecipeForm } from '@/features/recipes/components/CreateRecipeForm'
 import { dishToFormValues } from '@/features/recipes/lib/dish-to-form'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { useViewerKey } from '@/lib/session-user'
 
 export const EditRecipePage = ({ recipeId }: { recipeId: string }) => {
   const { t } = useTranslation()
   const { user, isLoading } = useCurrentUser()
+  const viewer = useViewerKey()
   const dishQuery = useQuery({
-    queryKey: [...recipeQueryKeys.dish(recipeId), 'me'],
+    queryKey: [...recipeQueryKeys.dish(recipeId), viewer ?? 'pending'],
     queryFn: () => recipesApi.getById(recipeId),
+    enabled: viewer != null,
   })
   const isOwner =
     dishQuery.data?.isOwner === true ||

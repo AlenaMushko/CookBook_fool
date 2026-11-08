@@ -1,11 +1,8 @@
 import type { TFunction } from 'i18next'
 
 import { LocalStorageKey } from '@constants/localStorage'
-import {
-  getLocalStorage,
-  removeLocalStorage,
-  setLocalStorage,
-} from '@/lib/local-storage'
+import { getSessionUserId } from '@/lib/session-user'
+import { readUserScoped, writeUserScoped } from '@/lib/user-scoped-storage'
 
 import { createRecipeSchema } from '../schemas/recipe.schema'
 import type { CreateRecipeFormValues } from '../types/recipe.types'
@@ -33,34 +30,34 @@ const hasDraftShape = (value: unknown): value is CreateRecipeFormValues => {
   )
 }
 
-export const readRecipeDraft = (): CreateRecipeFormValues | null => {
-  const raw = getLocalStorage(LocalStorageKey.RecipeDraft)
-  if (!raw) return null
-
-  try {
-    const json: unknown = JSON.parse(raw)
-    if (json && typeof json === 'object') {
-      const record = json as { servings?: string; prepTime?: string; cookTime?: string }
-      if (!('servings' in record)) record.servings = '6'
-      if (typeof record.prepTime === 'string' && typeof record.cookTime !== 'string') {
-        record.cookTime = record.prepTime
-      }
+const parseRecipeDraft = (value: unknown): CreateRecipeFormValues | null => {
+  if (value && typeof value === 'object') {
+    const record = value as { servings?: string; prepTime?: string; cookTime?: string }
+    if (!('servings' in record)) record.servings = '6'
+    if (typeof record.prepTime === 'string' && typeof record.cookTime !== 'string') {
+      record.cookTime = record.prepTime
     }
-    const parsed = draftSchema.safeParse(json)
-    if (parsed.success) return parsed.data
-    if (hasDraftShape(json)) return json
-    removeLocalStorage(LocalStorageKey.RecipeDraft)
-    return null
-  } catch {
-    removeLocalStorage(LocalStorageKey.RecipeDraft)
-    return null
   }
+  const parsed = draftSchema.safeParse(value)
+  if (parsed.success) return parsed.data
+  if (hasDraftShape(value)) return value
+  return null
+}
+
+export const readRecipeDraft = (): CreateRecipeFormValues | null => {
+  const userId = getSessionUserId()
+  if (!userId) return null
+  return readUserScoped(LocalStorageKey.RecipeDraft, userId, parseRecipeDraft)
 }
 
 export const saveRecipeDraft = (values: CreateRecipeFormValues) => {
-  setLocalStorage(LocalStorageKey.RecipeDraft, JSON.stringify(values))
+  const userId = getSessionUserId()
+  if (!userId) return
+  writeUserScoped(LocalStorageKey.RecipeDraft, userId, values)
 }
 
 export const clearRecipeDraft = () => {
-  removeLocalStorage(LocalStorageKey.RecipeDraft)
+  const userId = getSessionUserId()
+  if (!userId) return
+  writeUserScoped(LocalStorageKey.RecipeDraft, userId, undefined)
 }

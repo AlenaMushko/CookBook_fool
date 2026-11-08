@@ -12,6 +12,7 @@ import { Routes } from '@constants/routes'
 import { URLS } from '@constants/url'
 import { profileQueryKeys } from '@/features/profile/api/profile.queries'
 import { notifyAuthChanged } from '@/lib/auth-session'
+import { adoptSessionUser, beginAccountSwitch } from '@/lib/session-user'
 import { getDeviceId } from '@/lib/device'
 import { showToast } from '@/lib/toast'
 
@@ -46,12 +47,14 @@ export const LoginForm = ({ redirectTo }: LoginFormProps) => {
 
   const onSubmit = handleSubmit(async (values) => {
     try {
+      beginAccountSwitch()
       const { user } = await authApi.signIn({
         email: values.email.trim(),
         password: values.password,
         deviceId: getDeviceId(),
       })
 
+      adoptSessionUser(user.id)
       queryClient.setQueryData(profileQueryKeys.me(), user)
       // Refetch /user/me so private avatars include a signed imageUrl
       await queryClient.invalidateQueries({ queryKey: profileQueryKeys.me() })

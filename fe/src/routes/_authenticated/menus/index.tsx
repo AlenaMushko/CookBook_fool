@@ -3,6 +3,6 @@ import { MenusPage } from '@pages/menus'
 import { myMenusQueryOptions } from '@/features/menus'
 
 export const Route = createFileRoute('/_authenticated/menus/')({
-  loader: ({ context }) => context.queryClient.ensureQueryData(myMenusQueryOptions),
+  loader: ({ context }) => context.queryClient.ensureQueryData(myMenusQueryOptions()),
   component: MenusPage,
 })
