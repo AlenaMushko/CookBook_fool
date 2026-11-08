@@ -12,6 +12,7 @@ import { Routes } from '@constants/routes'
 import { URLS } from '@constants/url'
 import { profileQueryKeys } from '@/features/profile/api/profile.queries'
 import { notifyAuthChanged } from '@/lib/auth-session'
+import { safeRedirectPath } from '@/lib/safe-redirect'
 import { adoptSessionUser, beginAccountSwitch } from '@/lib/session-user'
 import { getDeviceId } from '@/lib/device'
 import { showToast } from '@/lib/toast'
@@ -61,8 +62,9 @@ export const LoginForm = ({ redirectTo }: LoginFormProps) => {
       notifyAuthChanged()
       showToast(t('auth.login.success'), 'success')
 
-      if (redirectTo?.startsWith('/')) {
-        window.location.assign(redirectTo)
+      const next = safeRedirectPath(redirectTo)
+      if (next) {
+        window.location.assign(next)
         return
       }
 

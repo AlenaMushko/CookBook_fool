@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { LoginPage } from '@pages/auth/LoginPage'
+import { safeRedirectPath } from '@/lib/safe-redirect'
 
 type LoginSearch = {
   redirect?: string
@@ -8,8 +9,7 @@ type LoginSearch = {
 
 export const Route = createFileRoute('/(auth)/login')({
   validateSearch: (search: Record<string, unknown>): LoginSearch => ({
-    redirect:
-      typeof search.redirect === 'string' ? search.redirect : undefined,
+    redirect: safeRedirectPath(search.redirect),
   }),
   component: LoginRoutePage,
 })
