@@ -33,6 +33,8 @@ type ImageUploaderProps = {
   hintClassName?: string
   browseLabel?: string
   showBrowse?: boolean
+  inputId?: string
+  ariaLabel?: string
   icon?: React.ReactNode
   onFileSelect?: (file: File | null) => void
   onFilesSelect?: (files: File[]) => void
@@ -50,6 +52,8 @@ function ImageUploader({
   hintClassName,
   browseLabel,
   showBrowse = true,
+  inputId,
+  ariaLabel,
   icon,
   onFileSelect,
   onFilesSelect,
@@ -216,6 +220,8 @@ function ImageUploader({
 
       <input
         ref={inputRef}
+        id={inputId}
+        aria-label={ariaLabel}
         type="file"
         accept={accept}
         multiple={multiple}

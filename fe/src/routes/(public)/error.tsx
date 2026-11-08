@@ -7,5 +7,5 @@ export const Route = createFileRoute('/(public)/error')({
 })
 
 function ErrorRoutePage() {
-  return <ErrorPage error={new Error('Something went wrong')} reset={() => undefined} />
+  return <ErrorPage error={new Error('')} reset={() => window.location.assign('/')} />
 }

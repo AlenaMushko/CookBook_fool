@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Field, FieldError, FieldLabel } from '@components/ui/field'
@@ -32,6 +33,7 @@ export const QuantityField = ({
   error?: string
 }) => {
   const { t } = useTranslation()
+  const inputId = useId()
   const current = parseQuantity(value)
   const canDecrease = current != null && current > 1
 
@@ -45,9 +47,12 @@ export const QuantityField = ({
 
   return (
     <Field data-invalid={Boolean(error)}>
-      <FieldLabel className="sr-only">{t('recipe.create.qty')}</FieldLabel>
+      <FieldLabel htmlFor={inputId} className="sr-only">
+        {t('recipe.create.qty')}
+      </FieldLabel>
       <InputGroup className="md:h-[41.5px]">
         <InputGroupInput
+          id={inputId}
           inputMode="decimal"
           placeholder={t('recipe.create.qtyPlaceholder')}
           aria-invalid={Boolean(error)}

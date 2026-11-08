@@ -319,6 +319,9 @@
     "description": "Your feedback is very important for the development of the app. I would be truly grateful if you could share your thoughts.",
     "confidential": "It's completely confidential and will be used only to improve the app.",
     "placeholder": "Share your feedback, ideas, or suggestions...",
+    "message": "Feedback",
+    "required": "Write your feedback before sending",
+    "tooLong": "Use at most 2000 characters",
     "send": "Send Feedback",
     "sending": "Sending...",
     "thanks": "Thank you!",
@@ -362,6 +365,7 @@
     "title": "We couldn't finish that.",
     "description": "Something unexpected happened while loading this page. Your recipes and changes are safe.",
     "hint": "Please try again in a moment.",
+    "retry": "Try again",
     "goBack": "Return to previous page"
   },
   "footer": {

@@ -10,6 +10,7 @@ import {
   IsString,
   IsUUID,
   Max,
+  MaxLength,
   Min,
   MinLength,
   ValidateNested,
@@ -98,9 +99,10 @@ export class DishIngredientInputDto {
 
 /** Shared writable fields. */
 export class DishWritableDto {
-  @ApiProperty({ example: 'Борщ' })
+  @ApiProperty({ example: 'Борщ', minLength: 3, maxLength: 30 })
   @IsString()
-  @MinLength(1)
+  @MinLength(3)
+  @MaxLength(30)
   title: string;
 
   @ApiPropertyOptional()

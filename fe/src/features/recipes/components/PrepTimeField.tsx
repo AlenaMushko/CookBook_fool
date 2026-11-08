@@ -61,7 +61,9 @@ export const PrepTimeField = ({
 
   return (
     <Field data-invalid={invalid}>
-      <FieldLabel className={formLabelClass}>{t('recipe.create.cookTime')}</FieldLabel>
+      <FieldLabel htmlFor="recipe-cook-time" className={formLabelClass}>
+        {t('recipe.create.cookTime')}
+      </FieldLabel>
       <div className="flex items-center gap-2">
         <Button
           type="button"
@@ -74,6 +76,7 @@ export const PrepTimeField = ({
           <Minus strokeWidth={1.5} />
         </Button>
         <Input
+          id="recipe-cook-time"
           value={shown}
           inputMode="numeric"
           placeholder={t('recipe.create.cookTimePlaceholder')}

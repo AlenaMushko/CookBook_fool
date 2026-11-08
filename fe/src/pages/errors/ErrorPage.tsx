@@ -7,10 +7,16 @@ import { PageSection } from '@components/layout'
 
 import errorIllustration from '@/assets/images/error-page-illustration.png'
 
+function errorMessage(error: unknown) {
+  if (error instanceof Error) return error.message.trim()
+  if (typeof error === 'string') return error.trim()
+  return ''
+}
+
 export function ErrorPage(props: ErrorComponentProps) {
-  void props
   const { t } = useTranslation()
   const router = useRouter()
+  const message = errorMessage(props.error)
 
   const handleGoBack = () => {
     if (window.history.length > 1) {
@@ -53,10 +59,27 @@ export function ErrorPage(props: ErrorComponentProps) {
             {t('errorPage.hint')}
           </p>
 
+          {message ? (
+            <p
+              role="alert"
+              className="mt-4 max-w-[460px] text-body text-foreground break-words"
+            >
+              {message}
+            </p>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={() => props.reset()}
+            className="mt-8 inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-body font-medium text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+          >
+            {t('errorPage.retry')}
+          </button>
+
           <button
             type="button"
             onClick={handleGoBack}
-            className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-md text-body font-medium text-outline-foreground underline-offset-4 transition-colors hover:text-primary-hover hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background md:mt-10"
+            className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md text-body font-medium text-outline-foreground underline-offset-4 transition-colors hover:text-primary-hover hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background"
           >
             <ArrowLeft
               aria-hidden="true"

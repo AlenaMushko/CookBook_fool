@@ -32,7 +32,9 @@ export const ServingsField = ({
 
   return (
     <Field data-invalid={invalid}>
-      <FieldLabel className={formLabelClass}>{t('recipe.create.servings')}</FieldLabel>
+      <FieldLabel htmlFor="recipe-servings" className={formLabelClass}>
+        {t('recipe.create.servings')}
+      </FieldLabel>
       <div className="flex items-center gap-2">
         <Button
           type="button"
@@ -45,6 +47,7 @@ export const ServingsField = ({
           <Minus strokeWidth={1.5} />
         </Button>
         <Input
+          id="recipe-servings"
           value={value}
           inputMode="numeric"
           aria-invalid={invalid}

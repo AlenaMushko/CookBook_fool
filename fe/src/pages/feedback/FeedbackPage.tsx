@@ -1,32 +1,48 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { ChevronLeft, Heart, Lock, MessageCircle, Send } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@components/ui/button'
+import { Field, FieldError, FieldLabel } from '@components/ui/field'
+import { Textarea } from '@components/ui/textarea'
 import { Routes } from '@constants/routes'
 import { feedbackApi } from '@/features/feedback/api/feedback.api'
+import {
+  createFeedbackSchema,
+  FEEDBACK_MESSAGE_MAX,
+  type FeedbackFormValues,
+} from '@/features/feedback/schemas/feedback.schema'
 import { showToast } from '@/lib/toast'
 
 export const FeedbackPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const [message, setMessage] = useState('')
   const [sending, setSending] = useState(false)
-  const canSend = message.trim().length > 0 && !sending
+  const schema = useMemo(() => createFeedbackSchema(t), [t])
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FeedbackFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { message: '' },
+    mode: 'onBlur',
+  })
 
-  const submit = async () => {
-    if (!canSend) return
+  const submit = handleSubmit(async ({ message }) => {
     setSending(true)
     try {
-      await feedbackApi.send(message.trim())
+      await feedbackApi.send(message)
       showToast(t('feedback.sent'), 'success', 5000)
       await navigate({ to: Routes.HOME })
     } catch {
       setSending(false)
       showToast(t('error.serverError'), 'error')
     }
-  }
+  })
 
   return (
     <div className="relative -m-5 flex min-h-[calc(100svh-8rem)] flex-col overflow-hidden px-5 py-6 sm:px-8">
@@ -49,10 +65,8 @@ export const FeedbackPage = () => {
 
       <form
         className="relative z-10 mx-auto flex w-full max-w-[560px] flex-1 flex-col items-center pt-8 md:pt-14"
-        onSubmit={(event) => {
-          event.preventDefault()
-          void submit()
-        }}
+        onSubmit={(event) => void submit(event)}
+        noValidate
       >
         <div className="relative mb-5 h-[72px] w-[88px] text-[#c4a574]" aria-hidden>
           <MessageCircle className="absolute top-3 left-0 size-12" strokeWidth={1.4} />
@@ -75,21 +89,27 @@ export const FeedbackPage = () => {
           {t('feedback.confidential')}
         </p>
 
-        <textarea
-          value={message}
-          onChange={(event) => setMessage(event.target.value)}
-          maxLength={2000}
-          placeholder={t('feedback.placeholder')}
-          aria-label={t('feedback.placeholder')}
-          disabled={sending}
-          className="mt-4 min-h-36 w-full resize-none rounded-xl border border-secondary-border bg-card px-4 py-3 text-[15px] text-foreground outline-none placeholder:text-subtle focus-visible:border-primary disabled:opacity-70"
-        />
+        <Field className="mt-4" data-invalid={Boolean(errors.message)}>
+          <FieldLabel htmlFor="feedback-message" className="sr-only">
+            {t('feedback.message')}
+          </FieldLabel>
+          <Textarea
+            id="feedback-message"
+            maxLength={FEEDBACK_MESSAGE_MAX}
+            placeholder={t('feedback.placeholder')}
+            aria-invalid={Boolean(errors.message)}
+            disabled={sending}
+            className="min-h-36 w-full resize-none rounded-xl border border-secondary-border bg-card px-4 py-3 text-[15px] text-foreground outline-none placeholder:text-subtle focus-visible:border-primary disabled:opacity-70"
+            {...register('message')}
+          />
+          {errors.message?.message ? <FieldError>{errors.message.message}</FieldError> : null}
+        </Field>
 
         <Button
           type="submit"
           size="lg"
           className="mt-4 w-full"
-          disabled={!canSend}
+          disabled={sending}
           isLoading={sending}
           loadingText={t('feedback.sending')}
         >

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import {
@@ -42,6 +42,7 @@ export const IngredientCombobox = ({
   className,
 }: IngredientComboboxProps) => {
   const { t, i18n } = useTranslation()
+  const inputId = useId()
   const [query, setQuery] = useState('')
   const search = useDebounced(query.trim())
 
@@ -89,7 +90,11 @@ export const IngredientCombobox = ({
             className="pointer-events-none absolute top-1/2 left-2 z-10 size-6 -translate-y-1/2 rounded object-cover"
           />
         ) : null}
+        <label htmlFor={inputId} className="sr-only">
+          {t('recipe.create.ingredient')}
+        </label>
         <ComboboxInput
+          id={inputId}
           aria-invalid={invalid}
           placeholder={t('recipe.create.ingredientPlaceholder')}
           className={cn(

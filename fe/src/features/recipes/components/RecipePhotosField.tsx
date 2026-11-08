@@ -13,6 +13,8 @@ export const RecipePhotosField = ({
   photos,
   hint,
   label,
+  inputId,
+  ariaLabel,
   error,
   notice,
   multiple = false,
@@ -23,6 +25,8 @@ export const RecipePhotosField = ({
   photos: { key: string; url: string }[]
   hint: string
   label?: string
+  inputId?: string
+  ariaLabel?: string
   error?: string
   notice?: string
   multiple?: boolean
@@ -34,8 +38,14 @@ export const RecipePhotosField = ({
 
   return (
     <Field>
-      {label ? <FieldLabel className={formLabelClass}>{label}</FieldLabel> : null}
+      {label ? (
+        <FieldLabel htmlFor={inputId} className={formLabelClass}>
+          {label}
+        </FieldLabel>
+      ) : null}
       <ImageUploader
+        inputId={inputId}
+        ariaLabel={ariaLabel}
         multiple={multiple}
         showBrowse={false}
         disabled={disabled}

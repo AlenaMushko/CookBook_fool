@@ -6,13 +6,19 @@ export const SegmentedChoice = <T extends string,>({
   value,
   onChange,
   options,
+  labelId,
 }: {
   value: T
   onChange: (value: T) => void
   options: { value: T; label: string; icon?: ReactNode }[]
+  labelId: string
 }) => {
   return (
-    <div className="flex gap-2 md:gap-1.5 min-[881px]:gap-2">
+    <div
+      role="group"
+      aria-labelledby={labelId}
+      className="flex gap-2 md:gap-1.5 min-[881px]:gap-2"
+    >
       {options.map((option) => {
         const selected = value === option.value
         return (

@@ -468,7 +468,7 @@ export const CreateRecipeForm = ({
               />
 
               <Field data-invalid={Boolean(errors.categoryId)}>
-                <FieldLabel className={formLabelClass}>
+                <FieldLabel htmlFor="recipe-category" className={formLabelClass}>
                   {t('recipe.create.category')}
                 </FieldLabel>
                 <Controller
@@ -484,7 +484,10 @@ export const CreateRecipeForm = ({
                       onValueChange={(value) => field.onChange(value ?? '')}
                       disabled={isSubmitting}
                     >
-                      <SelectTrigger aria-invalid={Boolean(errors.categoryId)}>
+                      <SelectTrigger
+                        id="recipe-category"
+                        aria-invalid={Boolean(errors.categoryId)}
+                      >
                         <SelectValue
                           placeholder={t('recipe.create.categoryPlaceholder')}
                         />
@@ -505,7 +508,7 @@ export const CreateRecipeForm = ({
               </Field>
 
               <Field>
-                <FieldLabel className={formLabelClass}>
+                <FieldLabel id="recipe-difficulty" className={formLabelClass}>
                   {t('recipe.create.difficulty')}
                 </FieldLabel>
                 <Controller
@@ -513,6 +516,7 @@ export const CreateRecipeForm = ({
                   control={control}
                   render={({ field }) => (
                     <SegmentedChoice<DishDifficulty>
+                      labelId="recipe-difficulty"
                       value={field.value}
                       onChange={field.onChange}
                       options={[
@@ -526,7 +530,7 @@ export const CreateRecipeForm = ({
               </Field>
 
               <Field>
-                <FieldLabel className={formLabelClass}>
+                <FieldLabel id="recipe-visibility" className={formLabelClass}>
                   {t('recipe.create.visibility')}
                 </FieldLabel>
                 <Controller
@@ -534,6 +538,7 @@ export const CreateRecipeForm = ({
                   control={control}
                   render={({ field }) => (
                     <SegmentedChoice<DishVisibility>
+                      labelId="recipe-visibility"
                       value={field.value}
                       onChange={(next) => {
                         if (savedByOthers && next === 'PRIVATE') {
@@ -566,6 +571,8 @@ export const CreateRecipeForm = ({
           <div className="pt-1">
             <RecipePhotosField
               multiple
+              inputId="recipe-photos"
+              ariaLabel={t('recipe.create.photos')}
               hint={t('recipe.create.photoHint')}
               photos={galleryPhotos}
               error={errors.photos?.message}
@@ -735,12 +742,17 @@ export const CreateRecipeForm = ({
                       placeholder={t('recipe.create.stepTitlePlaceholder')}
                       disabled={isSubmitting}
                       {...register(`steps.${index}.title`)}
+                      id={`recipe-step-${index}-title`}
                     />
                     <Field data-invalid={Boolean(errors.steps?.[index]?.description)}>
-                      <FieldLabel className={formLabelClass}>
+                      <FieldLabel
+                        htmlFor={`recipe-step-${index}-description`}
+                        className={formLabelClass}
+                      >
                         {t('recipe.create.stepDescription')}
                       </FieldLabel>
                       <Textarea
+                        id={`recipe-step-${index}-description`}
                         placeholder={t('recipe.create.stepDescriptionPlaceholder')}
                         aria-invalid={Boolean(errors.steps?.[index]?.description)}
                         disabled={isSubmitting}
@@ -754,6 +766,7 @@ export const CreateRecipeForm = ({
                     </Field>
                     <RecipePhotosField
                       multiple
+                      inputId={`recipe-step-${index}-photos`}
                       label={t('recipe.create.stepPhoto')}
                       hint={t('recipe.create.stepPhotoHint')}
                       photos={stepValues[index]?.photos ?? []}
