@@ -16,9 +16,12 @@ import {
   apiSustainedLimit,
   authBurstLimit,
   authSustainedLimit,
+  docsBurstLimit,
+  docsSustainedLimit,
   expensiveBurstLimit,
   expensiveSustainedLimit,
 } from './common/rate-limit';
+import { swaggerAuth, swaggerCredentials } from './common/swagger-auth';
 import { AppConfig, Config } from './config/config.type';
 import { assertProductionConfig } from './config/validate-production-config';
 import logger from './logger';
@@ -54,6 +57,8 @@ async function bootstrap() {
 
   app.use(authBurstLimit);
   app.use(authSustainedLimit);
+  app.use(docsBurstLimit);
+  app.use(docsSustainedLimit);
   app.use(expensiveBurstLimit);
   app.use(expensiveSustainedLimit);
   app.use(apiBurstLimit);
@@ -98,6 +103,9 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerHelper.setDefaultResponses(document);
+  const swagger = swaggerCredentials();
+  app.use(swaggerAuth(swagger.user, swagger.password));
+  logger.info('Swagger docs require basic auth at /docs');
   SwaggerModule.setup('docs', app, document, {
     swaggerOptions: {
       docExpansion: 'none',

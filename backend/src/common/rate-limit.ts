@@ -19,7 +19,11 @@ const AUTH_PATHS = new Set([
 ]);
 
 function isUnmetered(req: Request): boolean {
-  return req.path === '/health' || req.path.startsWith('/docs');
+  return req.path === '/health';
+}
+
+function isDocs(req: Request): boolean {
+  return req.path.startsWith('/docs');
 }
 
 function isAuthWrite(req: Request): boolean {
@@ -60,6 +64,16 @@ export const apiSustainedLimit = limiter(
   10 * 60_000,
   1_200,
   () => true,
+);
+
+/** Docs password guesses. The Swagger page itself stays under this. */
+export const docsBurstLimit = limiter('docs-burst', 60_000, 30, isDocs);
+
+export const docsSustainedLimit = limiter(
+  'docs-sustained',
+  10 * 60_000,
+  120,
+  isDocs,
 );
 
 /** Login, signup, and password mail are the paths worth spamming. */

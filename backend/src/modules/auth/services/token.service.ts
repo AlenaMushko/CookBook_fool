@@ -1,7 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
+import { ErrorCode } from '../../../common/constants/error-codes';
+import { AppException } from '../../../common/expections/app.exception';
 import { Config, JWTConfig } from '../../../config/config.type';
 import { TokenResponseDto } from '../dto/response/token.response.dto';
 import { TokenType } from '../enums/token-type.enum';
@@ -39,8 +41,19 @@ export class TokenService {
     try {
       const secret = this.getSecret(type);
       return await this.jwtService.verifyAsync(token, { secret });
-    } catch {
-      throw new UnauthorizedException();
+    } catch (error) {
+      if (error instanceof Error && error.name === 'TokenExpiredError') {
+        throw new AppException(
+          ErrorCode.AUTH_TOKEN_EXPIRED,
+          HttpStatus.UNAUTHORIZED,
+          'Token has expired',
+        );
+      }
+      throw new AppException(
+        ErrorCode.AUTH_TOKEN_INVALID,
+        HttpStatus.UNAUTHORIZED,
+        'Invalid token',
+      );
     }
   }
 

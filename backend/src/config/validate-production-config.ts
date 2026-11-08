@@ -15,6 +15,8 @@ const REQUIRED_PRODUCTION_ENV = [
   'AWS_S3_REGION',
   'AWS_S3_BUCKET_NAME',
   'SES_FROM_EMAIL',
+  'SWAGGER_USER',
+  'SWAGGER_PASSWORD',
 ] as const;
 
 export function assertProductionConfig(): void {
@@ -43,6 +45,13 @@ export function assertProductionConfig(): void {
   ) {
     throw new Error(
       'Production JWT secrets must be strong unique values (min 32 chars), not defaults',
+    );
+  }
+
+  const swaggerPassword = process.env.SWAGGER_PASSWORD!.trim();
+  if (swaggerPassword.length < 12 || swaggerPassword === 'cookbook') {
+    throw new Error(
+      'Production SWAGGER_PASSWORD must be at least 12 characters and not the local default',
     );
   }
 }

@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
 
 import logger from '../../logger';
@@ -40,15 +41,32 @@ export class GlobalExceptionFilter implements ExceptionFilter {
             ? (exceptionResponse as { message: string | string[] }).message
             : exception.message;
 
+        const message = Array.isArray(messages)
+          ? messages.join(', ')
+          : messages;
+
         body = {
           statusCode: status,
           code:
             status === HttpStatus.UNAUTHORIZED
-              ? ErrorCode.AUTH_TOKEN_EXPIRED
+              ? ErrorCode.AUTH_REQUIRED
               : undefined,
-          message: Array.isArray(messages) ? messages.join(', ') : messages,
+          message:
+            status === HttpStatus.UNAUTHORIZED && message === 'Unauthorized'
+              ? 'Authentication required'
+              : message,
         };
       }
+    } else if (
+      exception instanceof Prisma.PrismaClientKnownRequestError &&
+      exception.code === 'P2023'
+    ) {
+      status = HttpStatus.BAD_REQUEST;
+      body = {
+        statusCode: status,
+        code: ErrorCode.VALIDATION_ERROR,
+        message: 'Invalid id',
+      };
     } else {
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       body = {

@@ -302,7 +302,7 @@ export class AuthService {
     );
     if (!consumed) {
       throw new AppException(
-        ErrorCode.AUTH_TOKEN_EXPIRED,
+        ErrorCode.AUTH_SESSION_INACTIVE,
         401,
         'Session is no longer active',
       );
@@ -325,7 +325,7 @@ export class AuthService {
     const active = await this.refreshRepository.isActiveToken(rawRefreshToken);
     if (!active) {
       throw new AppException(
-        ErrorCode.AUTH_TOKEN_EXPIRED,
+        ErrorCode.AUTH_SESSION_INACTIVE,
         401,
         'Session was replaced',
       );

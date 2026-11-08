@@ -45,6 +45,7 @@ docker push "$ECR_REGISTRY/cookbook-web:$IMAGE_TAG"
 |---|---|
 | `DATABASE_URL` | RDS endpoint + DB user/password |
 | `FRONTEND_URL` / `ALLOWED_ORIGINS` | EB environment CNAME (or custom domain) |
+| `SWAGGER_USER` / `SWAGGER_PASSWORD` | Basic auth for `/docs` (password at least 12 characters) |
 | `ECR_REGISTRY` | Account ID + `dkr.ecr.eu-west-1.amazonaws.com` |
 | Instance role | S3 + SES + ECR pull (no static keys on EB) |
 

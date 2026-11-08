@@ -11,6 +11,7 @@ import {
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { apiPath, ApiRoute } from '../../common/constants/api-route.enum';
+import { uuidPipe } from '../../common/pipes/uuid.pipe';
 import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { OptionalAuth } from '../auth/decorators/optional-auth.decorator';
@@ -76,7 +77,7 @@ export class DishController {
   @Get(':id')
   @ApiOperation({ summary: 'Get dish by id' })
   public async getDishById(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @CurrentUser() userData?: IUserData,
   ): Promise<ParsedDishResDto> {
     return await this.dishService.getDishById(id, userData);
@@ -86,7 +87,7 @@ export class DishController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update dish' })
   public async updateDish(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @Body() dto: UpdateDishDto,
     @CurrentUser() userData: IUserData,
   ): Promise<ParsedDishResDto> {
@@ -97,7 +98,7 @@ export class DishController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete dish' })
   public async deleteDish(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @CurrentUser() userData: IUserData,
   ): Promise<void> {
     return await this.dishService.deleteDish(id, userData);
@@ -107,7 +108,7 @@ export class DishController {
   @Post(':id/like')
   @ApiOperation({ summary: 'Like a dish' })
   public async likeDish(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @CurrentUser() userData: IUserData,
   ): Promise<void> {
     return await this.dishService.likeDish(id, userData);
@@ -117,7 +118,7 @@ export class DishController {
   @Delete(':id/like')
   @ApiOperation({ summary: 'Remove like from a dish' })
   public async dislikeDish(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @CurrentUser() userData: IUserData,
   ): Promise<void> {
     return await this.dishService.dislikeDish(id, userData);

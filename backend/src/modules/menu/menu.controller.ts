@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -14,6 +13,7 @@ import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { apiPath, ApiRoute } from '../../common/constants/api-route.enum';
+import { uuidPipe } from '../../common/pipes/uuid.pipe';
 import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
@@ -56,7 +56,7 @@ export class MenuController {
   @SkipAuth()
   @Get(':id/shopping-list')
   @ApiOperation({ summary: 'Public shopping list for a menu' })
-  public async shoppingList(@Param('id', ParseUUIDPipe) id: string) {
+  public async shoppingList(@Param('id', uuidPipe) id: string) {
     return await this.shoppingListService.getList(id);
   }
 
@@ -64,7 +64,7 @@ export class MenuController {
   @Get(':id/shopping-list/pdf')
   @ApiOperation({ summary: 'Download the shopping list as a PDF' })
   public async shoppingListPdf(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', uuidPipe) id: string,
     @Query('lang') lang: string | undefined,
     @Res() res: Response,
   ) {
@@ -74,7 +74,7 @@ export class MenuController {
   @Get(':id')
   @ApiOperation({ summary: 'Get menu detail' })
   public async findById(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @CurrentUser() userData: IUserData,
   ) {
     return await this.menuService.findById(id, userData);
@@ -83,7 +83,7 @@ export class MenuController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update menu' })
   public async update(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @Body() dto: UpdateMenuDto,
     @CurrentUser() userData: IUserData,
   ) {
@@ -93,7 +93,7 @@ export class MenuController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete menu' })
   public async delete(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @CurrentUser() userData: IUserData,
   ) {
     return await this.menuService.delete(id, userData);
@@ -102,7 +102,7 @@ export class MenuController {
   @Post(':id/sections')
   @ApiOperation({ summary: 'Create optional menu section' })
   public async createSection(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @Body() dto: CreateMenuSectionDto,
     @CurrentUser() userData: IUserData,
   ) {
@@ -112,8 +112,8 @@ export class MenuController {
   @Patch(':id/sections/:sectionId')
   @ApiOperation({ summary: 'Update menu section' })
   public async updateSection(
-    @Param('id') id: string,
-    @Param('sectionId') sectionId: string,
+    @Param('id', uuidPipe) id: string,
+    @Param('sectionId', uuidPipe) sectionId: string,
     @Body() dto: UpdateMenuSectionDto,
     @CurrentUser() userData: IUserData,
   ) {
@@ -123,8 +123,8 @@ export class MenuController {
   @Delete(':id/sections/:sectionId')
   @ApiOperation({ summary: 'Delete menu section' })
   public async deleteSection(
-    @Param('id') id: string,
-    @Param('sectionId') sectionId: string,
+    @Param('id', uuidPipe) id: string,
+    @Param('sectionId', uuidPipe) sectionId: string,
     @CurrentUser() userData: IUserData,
   ) {
     return await this.menuService.deleteSection(id, sectionId, userData);
@@ -136,7 +136,7 @@ export class MenuController {
       'Add dishes to menu: existing dishIds and/or create dish, optional section',
   })
   public async addDishes(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @Body() dto: AddMenuDishesDto,
     @CurrentUser() userData: IUserData,
   ) {
@@ -146,8 +146,8 @@ export class MenuController {
   @Patch(':id/dishes/:dishId')
   @ApiOperation({ summary: 'Update menu dish (section / order)' })
   public async updateDish(
-    @Param('id') id: string,
-    @Param('dishId') dishId: string,
+    @Param('id', uuidPipe) id: string,
+    @Param('dishId', uuidPipe) dishId: string,
     @Body() dto: UpdateMenuDishDto,
     @CurrentUser() userData: IUserData,
   ) {
@@ -157,8 +157,8 @@ export class MenuController {
   @Delete(':id/dishes/:dishId')
   @ApiOperation({ summary: 'Remove dish from menu (does not delete recipe)' })
   public async removeDish(
-    @Param('id') id: string,
-    @Param('dishId') dishId: string,
+    @Param('id', uuidPipe) id: string,
+    @Param('dishId', uuidPipe) dishId: string,
     @CurrentUser() userData: IUserData,
   ) {
     return await this.menuService.removeDish(id, dishId, userData);

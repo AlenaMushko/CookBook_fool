@@ -12,6 +12,7 @@ import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { ApiRoute } from '../../common/constants/api-route.enum';
 import { ApiVersion } from '../../common/constants/api-version.enum';
+import { uuidPipe } from '../../common/pipes/uuid.pipe';
 import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
@@ -78,7 +79,7 @@ export class ConversionController {
   @Patch(`${ApiRoute.USER}/me/${ApiRoute.CONVERSIONS}/:id`)
   @ApiOperation({ summary: 'Update personal conversion rule by id' })
   public async updateUserConversion(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @Body() dto: UpdateUserConversionDto,
     @CurrentUser() userData: IUserData,
   ): Promise<UserConversionResDto> {
@@ -90,7 +91,7 @@ export class ConversionController {
     summary: 'Delete your personal rule — falls back to global default',
   })
   public async deleteUserConversion(
-    @Param('id') id: string,
+    @Param('id', uuidPipe) id: string,
     @CurrentUser() userData: IUserData,
   ): Promise<DeleteUserConversionResDto> {
     return await this.conversionService.deleteUserConversion(id, userData);

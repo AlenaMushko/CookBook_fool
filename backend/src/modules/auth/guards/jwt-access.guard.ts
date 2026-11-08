@@ -1,11 +1,8 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
+import { ErrorCode } from '../../../common/constants/error-codes';
+import { AppException } from '../../../common/expections/app.exception';
 import { UserRepository } from '../../user/repositories/user.repository';
 import { SKIP_AUTH } from '../constants/constants';
 import { OPTIONAL_AUTH } from '../decorators/optional-auth.decorator';
@@ -42,7 +39,11 @@ export class JwtAccessGuard implements CanActivate {
 
     if (!accessToken) {
       if (optionalAuth) return true;
-      throw new UnauthorizedException();
+      throw new AppException(
+        ErrorCode.AUTH_REQUIRED,
+        401,
+        'Authentication required',
+      );
     }
 
     if (optionalAuth) {
@@ -67,7 +68,11 @@ export class JwtAccessGuard implements CanActivate {
       TokenType.ACCESS,
     );
     if (!payload) {
-      throw new UnauthorizedException();
+      throw new AppException(
+        ErrorCode.AUTH_TOKEN_INVALID,
+        401,
+        'Invalid token',
+      );
     }
 
     const isActiveSession = await this.authCacheService.isAccessTokenExist(
@@ -76,12 +81,20 @@ export class JwtAccessGuard implements CanActivate {
       accessToken,
     );
     if (!isActiveSession) {
-      throw new UnauthorizedException();
+      throw new AppException(
+        ErrorCode.AUTH_SESSION_INACTIVE,
+        401,
+        'Session is no longer active',
+      );
     }
 
     const user = await this.userRepository.findOneBy({ id: payload.userId });
     if (!user) {
-      throw new UnauthorizedException();
+      throw new AppException(
+        ErrorCode.AUTH_SESSION_INACTIVE,
+        401,
+        'Session is no longer active',
+      );
     }
 
     request.user = {
