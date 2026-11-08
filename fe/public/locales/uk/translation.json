@@ -154,10 +154,8 @@
       "ingredientEmpty": "Почніть вводити, щоб шукати",
       "ingredientRequired": "Додайте хоча б один інгредієнт",
       "qty": "К-сть",
-      "qtyPlaceholder": "1",
-      "quantityInvalid": "Вкажіть кількість не менше 1",
-      "quantityDecrease": "Зменшити кількість",
-      "quantityIncrease": "Збільшити кількість",
+      "qtyPlaceholder": "1/2",
+      "quantityInvalid": "Вкажіть додатне ціле або дробове число",
       "unit": "Одиниця",
       "unitPlaceholder": "шт",
       "removeIngredient": "Видалити інгредієнт",
@@ -377,6 +375,9 @@
     "hint": "Спробуйте ще раз через мить.",
     "retry": "Спробувати ще раз",
     "goBack": "Повернутися назад"
+  },
+  "search": {
+    "minLength": "Пошук починається від 3 символів"
   },
   "footer": {
     "rights": "Усі права захищено."

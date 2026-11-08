@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ListPagination } from '@components/common/ListPagination'
-import { SearchInput } from '@components/ui/search-input'
+import { RecipeSearchField } from '@/features/recipes/components/RecipeSearchField'
 import { DishDifficultyLevel, DishListOrder, DishListScope, DishListSort } from '@constants/recipe'
 import { Routes } from '@constants/routes'
 import {
@@ -69,12 +69,12 @@ export const MenuDishPicker = ({
           }}
         />
         <div className="flex w-full min-w-0 flex-1 lg:justify-end">
-          <SearchInput
+          <RecipeSearchField
             value={draft}
-            onChange={(event) => setDraft(event.target.value)}
+            onChange={setDraft}
             placeholder={t('cookbook.searchPlaceholder')}
-            aria-label={t('cookbook.searchPlaceholder')}
-            containerClassName="w-[80%] max-w-none bg-background md:w-[80%] md:max-w-none"
+            className="w-[80%]"
+            containerClassName="w-full max-w-none bg-background md:w-full md:max-w-none"
           />
         </div>
       </div>

@@ -151,10 +151,8 @@
       "ingredientEmpty": "Start typing to search",
       "ingredientRequired": "Add at least one ingredient",
       "qty": "Qty",
-      "qtyPlaceholder": "1",
-      "quantityInvalid": "Enter a quantity of at least 1",
-      "quantityDecrease": "Decrease quantity",
-      "quantityIncrease": "Increase quantity",
+      "qtyPlaceholder": "1/2",
+      "quantityInvalid": "Enter a positive whole or fractional number",
       "unit": "Unit",
       "unitPlaceholder": "pcs",
       "removeIngredient": "Remove ingredient",
@@ -368,6 +366,9 @@
     "hint": "Please try again in a moment.",
     "retry": "Try again",
     "goBack": "Return to previous page"
+  },
+  "search": {
+    "minLength": "Search starts from 3 characters"
   },
   "footer": {
     "rights": "All rights reserved."

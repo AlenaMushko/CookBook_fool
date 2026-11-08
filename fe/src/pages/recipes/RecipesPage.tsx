@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { ListPagination } from "@components/common/ListPagination";
 import { Button } from "@components/ui/button";
-import { SearchInput } from "@components/ui/search-input";
+import { RecipeSearchField } from "@/features/recipes/components/RecipeSearchField";
 import { DishListScope } from "@constants/recipe";
 import { Routes } from "@constants/routes";
 import { CookbookCard } from "@/features/cookbook/components/CookbookCard";
@@ -107,13 +107,13 @@ export const RecipesPage = () => {
               {t("recipe.list.subtitle")}
             </p>
           </div>
-          <div className='flex w-full items-center gap-2.5 lg:w-auto lg:shrink-0'>
-            <SearchInput
+          <div className='flex w-full items-start gap-2.5 lg:w-auto lg:shrink-0'>
+            <RecipeSearchField
               value={draft}
-              onChange={(event) => setDraft(event.target.value)}
+              onChange={setDraft}
               placeholder={t("cookbook.searchPlaceholder")}
-              aria-label={t("cookbook.searchPlaceholder")}
-              containerClassName='w-full max-w-none flex-1 bg-background md:w-auto lg:w-[210px] lg:flex-none'
+              className='w-full min-w-0 flex-1 lg:w-[210px] lg:flex-none'
+              containerClassName='w-full max-w-none bg-background md:w-full'
             />
             {isAuthenticated ? (
               <Button

@@ -1,9 +1,8 @@
 type Translate = (key: string, options?: Record<string, number>) => string
 
 export const formatAmount = (value: number) => {
-  const rounded = Math.round(value * 100) / 100
-  if (Number.isInteger(rounded)) return String(rounded)
-  return rounded.toFixed(2).replace(/\.?0+$/, '')
+  const rounded = Math.round(value * 1000) / 1000
+  return String(rounded)
 }
 
 export const formatMinutes = (minutes: number | undefined, t: Translate) => {

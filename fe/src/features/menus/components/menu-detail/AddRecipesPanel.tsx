@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@components/ui/dialog'
-import { SearchInput } from '@components/ui/search-input'
+import { RecipeSearchField } from '@/features/recipes/components/RecipeSearchField'
 import {
   Select,
   SelectContent,
@@ -87,12 +87,12 @@ export const AddRecipesPanel = ({
     <section className="flex h-full flex-col rounded-2xl border border-border bg-card p-4">
       <h2 className="font-serif text-[22px] text-foreground">{t('menus.detail.addRecipes')}</h2>
       <p className="mt-1 text-[12px] text-subtle">{t('menus.detail.addingTo', { name: targetName })}</p>
-      <SearchInput
+      <RecipeSearchField
         value={draft}
-        onChange={(event) => setDraft(event.target.value)}
+        onChange={setDraft}
         placeholder={t('cookbook.searchPlaceholder')}
-        aria-label={t('cookbook.searchPlaceholder')}
-        containerClassName="mt-3 w-full max-w-none bg-background md:max-w-none"
+        className="mt-3"
+        containerClassName="w-full max-w-none bg-background md:max-w-none"
       />
       <DishCategoryChips
         className="py-3"

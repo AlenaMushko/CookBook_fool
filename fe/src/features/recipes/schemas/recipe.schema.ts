@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { DISH_PHOTO_LIMIT, MAX_SERVINGS, STEP_PHOTO_LIMIT } from '@constants/recipe'
 import { TEXT } from '@messages/validation'
 
+import { parseIngredientQuantity } from '../lib/ingredient-quantity'
 import type { CreateRecipeFormValues } from '../types/recipe.types'
 
 const emptyIngredient = {
@@ -139,10 +140,9 @@ export const createRecipeSchema = (
         }
 
         const quantityText = row.quantity.trim()
-        const quantity = Number(quantityText.replace(',', '.'))
         if (
           (draft ? quantityText.length > 0 : true) &&
-          (!quantityText || !Number.isFinite(quantity) || quantity < 1)
+          parseIngredientQuantity(quantityText) == null
         ) {
           ctx.addIssue({
             code: 'custom',

@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 
 import { ApiRoutes } from "@api/apiRoutes";
 import { apiJson } from "@api/client";
-import { SearchInput } from "@components/ui/search-input";
+import { RecipeSearchField } from "@/features/recipes/components/RecipeSearchField";
 import { DishListOrder, DishListScope, DishListSort } from "@constants/recipe";
 import { Routes } from "@constants/routes";
 import { HomeRecipeCard } from "@/features/home/components/HomeRecipeCard";
@@ -155,11 +155,10 @@ export const HomePage = () => {
       <HomeHero />
       <div className='flex flex-col gap-8 px-5 py-6 sm:px-7'>
         <div className='flex flex-col gap-4'>
-          <SearchInput
+          <RecipeSearchField
             value={draft}
-            onChange={(event) => setDraft(event.target.value)}
+            onChange={setDraft}
             placeholder={t("homePage.searchPlaceholder")}
-            aria-label={t("homePage.searchPlaceholder")}
             containerClassName='w-full max-w-none bg-card md:w-full'
           />
           <DishCategoryChips

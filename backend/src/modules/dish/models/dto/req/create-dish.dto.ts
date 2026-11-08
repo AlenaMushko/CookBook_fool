@@ -81,9 +81,24 @@ export class DishIngredientInputDto {
   @IsUUID()
   unitId: string;
 
-  @ApiProperty()
-  @IsNumber()
-  @Min(0.001)
+  @ApiProperty({
+    minimum: 0.001,
+    maximum: 9999999.999,
+    example: 0.5,
+    description:
+      'Positive whole or fractional number with up to 3 decimal places. 1/2 is sent as 0.5, 1/3 as 0.333.',
+  })
+  @Type(() => Number)
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    { message: 'Quantity must be a positive whole or fractional number' },
+  )
+  @Min(0.001, {
+    message: 'Quantity must be a positive whole or fractional number',
+  })
+  @Max(9999999.999, {
+    message: 'Quantity must be a positive whole or fractional number',
+  })
   quantity: number;
 
   @ApiPropertyOptional()

@@ -1,3 +1,4 @@
+import { parseIngredientQuantity } from './ingredient-quantity'
 import type {
   CreateDishPayload,
   CreateRecipeFormValues,
@@ -16,14 +17,15 @@ const toIngredients = (
 ): CreateDishPayload['ingredients'] => {
   return rows
     .flatMap((row) => {
-      if (!row.ingredient || !row.unitId || !row.quantity.trim()) return []
+      const quantity = parseIngredientQuantity(row.quantity)
+      if (!row.ingredient || !row.unitId || quantity == null) return []
       const groupTempId =
         row.groupId && groupIds.has(row.groupId) ? row.groupId : undefined
       return [
         {
           ingredientId: row.ingredient.id,
           unitId: row.unitId,
-          quantity: Number(row.quantity.replace(',', '.')),
+          quantity,
           ...(groupTempId ? { groupTempId } : {}),
         },
       ]
