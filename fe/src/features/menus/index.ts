@@ -2,8 +2,10 @@ export { menusApi } from './api/menus.api'
 export { menusQueries } from './api/menus.queries'
 export {
   menuQueryKeys,
+  forgetShoppingList,
   myMenusQueryOptions,
   menuDetailsQueryOptions,
+  shoppingListQueryOptions,
   updateMenuMutationOptions,
   deleteMenuMutationOptions,
 } from './api/menus.queries'

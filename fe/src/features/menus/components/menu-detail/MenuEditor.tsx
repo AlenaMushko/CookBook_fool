@@ -9,7 +9,7 @@ import { ConfirmationDialog } from '@components/common/ConfirmationDialog'
 import { Button } from '@components/ui/button'
 import { Sheet, SheetContent } from '@components/ui/sheet'
 import { Routes } from '@constants/routes'
-import { menuQueryKeys, menusApi } from '@/features/menus'
+import { forgetShoppingList, menuQueryKeys, menusApi } from '@/features/menus'
 import { useIsDesktop } from '@/features/menus/hooks/useIsDesktop'
 import { placeDish, placementFromDish, toBoardDraft } from '@/features/menus/lib/menu-board'
 import type { MenuBoardDraft, MenuDetail } from '@/features/menus/types/menu.types'
@@ -96,6 +96,7 @@ export const MenuEditor = ({ menu }: { menu: MenuDetail }) => {
       setDraft(toBoardDraft(next))
       setSelectedSectionId(next.sections[0]?.id ?? null)
       queryClient.setQueryData(menuQueryKeys.detail(menu.id), next)
+      forgetShoppingList(queryClient, menu.id)
       await queryClient.invalidateQueries({ queryKey: menuQueryKeys.lists() })
       showToast(t('menus.detail.saved'), 'success')
       await navigate({ to: Routes.MENU, params: { menuId: menu.id } })
@@ -121,6 +122,7 @@ export const MenuEditor = ({ menu }: { menu: MenuDetail }) => {
     setDeleting(true)
     try {
       await menusApi.delete(menu.id)
+      forgetShoppingList(queryClient, menu.id)
       await queryClient.invalidateQueries({ queryKey: menuQueryKeys.lists() })
       showToast(t('menus.detail.deleted'), 'success')
       await navigate({ to: Routes.MENUS })

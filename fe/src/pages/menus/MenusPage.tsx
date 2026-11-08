@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { Plus, ShoppingBag } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@components/ui/button'
@@ -49,14 +49,6 @@ export const MenusPage = () => {
           </Link>
         </li>
       </ul>
-
-      <aside className="mt-9 flex gap-3.5 rounded-[10px] border border-border bg-card px-5 py-[18px]">
-        <ShoppingBag className="mt-px size-[18px] shrink-0 text-brand" strokeWidth={1.5} />
-        <div>
-          <p className="text-[13px] leading-5 font-medium text-foreground">{t('menus.shoppingTitle')}</p>
-          <p className="mt-0.5 text-[13px] leading-5 text-muted-foreground">{t('menus.shoppingBody')}</p>
-        </div>
-      </aside>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { ApiRoutes } from '@api/apiRoutes'
-import { apiJson } from '@api/client'
+import { apiFetch, apiJson } from '@api/client'
 
 import type {
   CreateMenuInput,
@@ -8,6 +8,7 @@ import type {
   MenuPreview,
   UpdateMenuInput,
 } from '../types/menu.types'
+import type { ShoppingList } from '../types/shopping-list.types'
 
 const isNewStage = (id: string) => id.startsWith('tmp:')
 
@@ -18,6 +19,29 @@ export const menusApi = {
 
   getById(menuId: string) {
     return apiJson<MenuDetail>(ApiRoutes.menu.byId(menuId))
+  },
+
+  shoppingList(menuId: string) {
+    return apiJson<ShoppingList>(ApiRoutes.menu.shopping(menuId))
+  },
+
+  async downloadShoppingPdf(menuId: string, lang: string, menuName: string) {
+    const language = lang.toLowerCase().startsWith('uk') ? 'uk' : 'en'
+    const response = await apiFetch(
+      `${ApiRoutes.menu.shoppingPdf(menuId)}?lang=${language}`,
+    )
+    if (!response.ok) {
+      throw new Error('Could not download the shopping list')
+    }
+    const blob = await response.blob()
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = shoppingPdfFilename(menuName)
+    document.body.append(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
   },
 
   create(input: CreateMenuInput) {
@@ -190,4 +214,9 @@ export const menusApi = {
 
     return this.getById(menuId)
   },
+}
+
+const shoppingPdfFilename = (menuName: string) => {
+  const clean = menuName.replace(/[\\/:*?"<>|\r\n]+/g, ' ').replace(/\s+/g, ' ').trim()
+  return `shopping-list-${clean || 'menu'}.pdf`
 }

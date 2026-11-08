@@ -39,12 +39,10 @@ export const ApiRoutes = {
     sections: (menuId: string) => `/${ApiVersion.V1}/menu/${menuId}/sections`,
     section: (menuId: string, sectionId: string) =>
       `/${ApiVersion.V1}/menu/${menuId}/sections/${sectionId}`,
+    shopping: (menuId: string) => `/${ApiVersion.V1}/menu/${menuId}/shopping-list`,
+    shoppingPdf: (menuId: string) =>
+      `/${ApiVersion.V1}/menu/${menuId}/shopping-list/pdf`,
   },
-
-   // menus: {
-    //   byId: (menuId: string) =>
-    //     `/api/menus/${menuId}`,
-    // },
 
 } as const
 

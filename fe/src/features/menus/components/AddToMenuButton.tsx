@@ -32,7 +32,12 @@ import { showToast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 
 import { menusApi } from '../api/menus.api'
-import { menuDetailsQueryOptions, menuQueryKeys, myMenusQueryOptions } from '../api/menus.queries'
+import {
+  forgetShoppingList,
+  menuDetailsQueryOptions,
+  menuQueryKeys,
+  myMenusQueryOptions,
+} from '../api/menus.queries'
 
 const stageSlotClass = 'h-[70px]'
 
@@ -181,6 +186,7 @@ const AddToMenuDialog = ({
     },
     onSuccess: async () => {
       if (menuId) {
+        forgetShoppingList(queryClient, menuId)
         await queryClient.invalidateQueries({ queryKey: menuQueryKeys.detail(menuId) })
       }
       await queryClient.invalidateQueries({ queryKey: menuQueryKeys.lists() })

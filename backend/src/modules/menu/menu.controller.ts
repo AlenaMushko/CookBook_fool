@@ -4,14 +4,19 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
+  Query,
+  Res,
 } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
 import { apiPath, ApiRoute } from '../../common/constants/api-route.enum';
 import { AUTH_COOKIE_NAMES } from '../auth/constants/constants';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
 import {
   AddMenuDishesDto,
@@ -22,12 +27,16 @@ import {
   UpdateMenuSectionDto,
 } from './models/menu.dto';
 import { MenuService } from './services/menu.service';
+import { ShoppingListService } from './shopping/shopping-list.service';
 
 @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
 @ApiTags('Menu')
 @Controller(apiPath(ApiRoute.MENU))
 export class MenuController {
-  constructor(private readonly menuService: MenuService) {}
+  constructor(
+    private readonly menuService: MenuService,
+    private readonly shoppingListService: ShoppingListService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'List my menus' })
@@ -42,6 +51,24 @@ export class MenuController {
     @CurrentUser() userData: IUserData,
   ) {
     return await this.menuService.create(dto, userData);
+  }
+
+  @SkipAuth()
+  @Get(':id/shopping-list')
+  @ApiOperation({ summary: 'Public shopping list for a menu' })
+  public async shoppingList(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.shoppingListService.getList(id);
+  }
+
+  @SkipAuth()
+  @Get(':id/shopping-list/pdf')
+  @ApiOperation({ summary: 'Download the shopping list as a PDF' })
+  public async shoppingListPdf(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query('lang') lang: string | undefined,
+    @Res() res: Response,
+  ) {
+    await this.shoppingListService.sendPdf(id, lang, res);
   }
 
   @Get(':id')

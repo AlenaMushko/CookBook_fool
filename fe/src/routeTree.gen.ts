@@ -25,6 +25,7 @@ import { Route as publicRecipesRecipeIdRouteImport } from './routes/(public)/rec
 import { Route as AuthenticatedMenusIndexRouteImport } from './routes/_authenticated/menus/index'
 import { Route as AuthenticatedMenusNewRouteImport } from './routes/_authenticated/menus/new'
 import { Route as AuthenticatedRecipesNewRouteImport } from './routes/_authenticated/recipes/new'
+import { Route as publicMenusMenuIdShoppingListRouteImport } from './routes/(public)/menus/$menuId/shopping-list'
 import { Route as AuthenticatedMenusMenuIdIndexRouteImport } from './routes/_authenticated/menus/$menuId/index'
 import { Route as AuthenticatedMenusMenuIdEditRouteImport } from './routes/_authenticated/menus/$menuId/edit'
 import { Route as AuthenticatedRecipesRecipeIdEditRouteImport } from './routes/_authenticated/recipes/$recipeId/edit'
@@ -109,6 +110,12 @@ const AuthenticatedRecipesNewRoute = AuthenticatedRecipesNewRouteImport.update({
   path: '/recipes/new',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const publicMenusMenuIdShoppingListRoute =
+  publicMenusMenuIdShoppingListRouteImport.update({
+    id: '/(public)/menus/$menuId/shopping-list',
+    path: '/menus/$menuId/shopping-list',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedMenusMenuIdIndexRoute =
   AuthenticatedMenusMenuIdIndexRouteImport.update({
     id: '/menus/$menuId/',
@@ -144,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/recipes/new': typeof AuthenticatedRecipesNewRoute
   '/recipes/': typeof publicRecipesIndexRoute
   '/menus/': typeof AuthenticatedMenusIndexRoute
+  '/menus/$menuId/shopping-list': typeof publicMenusMenuIdShoppingListRoute
   '/menus/$menuId/edit': typeof AuthenticatedMenusMenuIdEditRoute
   '/recipes/$recipeId/edit': typeof AuthenticatedRecipesRecipeIdEditRoute
   '/menus/$menuId/': typeof AuthenticatedMenusMenuIdIndexRoute
@@ -164,6 +172,7 @@ export interface FileRoutesByTo {
   '/recipes/new': typeof AuthenticatedRecipesNewRoute
   '/recipes': typeof publicRecipesIndexRoute
   '/menus': typeof AuthenticatedMenusIndexRoute
+  '/menus/$menuId/shopping-list': typeof publicMenusMenuIdShoppingListRoute
   '/menus/$menuId/edit': typeof AuthenticatedMenusMenuIdEditRoute
   '/recipes/$recipeId/edit': typeof AuthenticatedRecipesRecipeIdEditRoute
   '/menus/$menuId': typeof AuthenticatedMenusMenuIdIndexRoute
@@ -186,6 +195,7 @@ export interface FileRoutesById {
   '/_authenticated/recipes/new': typeof AuthenticatedRecipesNewRoute
   '/(public)/recipes/': typeof publicRecipesIndexRoute
   '/_authenticated/menus/': typeof AuthenticatedMenusIndexRoute
+  '/(public)/menus/$menuId/shopping-list': typeof publicMenusMenuIdShoppingListRoute
   '/_authenticated/menus/$menuId/edit': typeof AuthenticatedMenusMenuIdEditRoute
   '/_authenticated/recipes/$recipeId/edit': typeof AuthenticatedRecipesRecipeIdEditRoute
   '/_authenticated/menus/$menuId/': typeof AuthenticatedMenusMenuIdIndexRoute
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/recipes/new'
     | '/recipes/'
     | '/menus/'
+    | '/menus/$menuId/shopping-list'
     | '/menus/$menuId/edit'
     | '/recipes/$recipeId/edit'
     | '/menus/$menuId/'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/recipes/new'
     | '/recipes'
     | '/menus'
+    | '/menus/$menuId/shopping-list'
     | '/menus/$menuId/edit'
     | '/recipes/$recipeId/edit'
     | '/menus/$menuId'
@@ -249,6 +261,7 @@ export interface FileRouteTypes {
     | '/_authenticated/recipes/new'
     | '/(public)/recipes/'
     | '/_authenticated/menus/'
+    | '/(public)/menus/$menuId/shopping-list'
     | '/_authenticated/menus/$menuId/edit'
     | '/_authenticated/recipes/$recipeId/edit'
     | '/_authenticated/menus/$menuId/'
@@ -265,6 +278,7 @@ export interface RootRouteChildren {
   publicIndexRoute: typeof publicIndexRoute
   publicRecipesRecipeIdRoute: typeof publicRecipesRecipeIdRoute
   publicRecipesIndexRoute: typeof publicRecipesIndexRoute
+  publicMenusMenuIdShoppingListRoute: typeof publicMenusMenuIdShoppingListRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -381,6 +395,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRecipesNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/(public)/menus/$menuId/shopping-list': {
+      id: '/(public)/menus/$menuId/shopping-list'
+      path: '/menus/$menuId/shopping-list'
+      fullPath: '/menus/$menuId/shopping-list'
+      preLoaderRoute: typeof publicMenusMenuIdShoppingListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/menus/$menuId/': {
       id: '/_authenticated/menus/$menuId/'
       path: '/menus/$menuId'
@@ -444,6 +465,7 @@ const rootRouteChildren: RootRouteChildren = {
   publicIndexRoute: publicIndexRoute,
   publicRecipesRecipeIdRoute: publicRecipesRecipeIdRoute,
   publicRecipesIndexRoute: publicRecipesIndexRoute,
+  publicMenusMenuIdShoppingListRoute: publicMenusMenuIdShoppingListRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

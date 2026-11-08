@@ -57,6 +57,41 @@ export type MenuListItem = Prisma.MenuGetPayload<{
   select: typeof menuListSelect;
 }>;
 
+const menuShoppingSelect = {
+  id: true,
+  name: true,
+  occasion: true,
+  dishes: {
+    orderBy: { order: 'asc' as const },
+    select: {
+      dish: {
+        select: {
+          id: true,
+          title: true,
+          baseServings: true,
+          ingredients: {
+            orderBy: { order: 'asc' as const },
+            select: {
+              quantity: true,
+              ingredientId: true,
+              ingredient: { select: { en: true, uk: true, image: true } },
+              unit: {
+                select: {
+                  code: true,
+                  nameEn: true,
+                  nameUk: true,
+                  symbolEn: true,
+                  symbolUk: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+} as const;
+
 export type MenuWithRelations = Prisma.MenuGetPayload<{
   select: typeof menuDetailSelect;
 }>;
@@ -197,6 +232,13 @@ export class MenuRepository {
 
   public async removeDish(menuId: string, dishId: string): Promise<void> {
     await this.prisma.menuDish.deleteMany({ where: { menuId, dishId } });
+  }
+
+  public async findShoppingSource(id: string) {
+    return await this.prisma.menu.findUnique({
+      where: { id },
+      select: menuShoppingSelect,
+    });
   }
 
   public async updateDish(

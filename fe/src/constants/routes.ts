@@ -20,4 +20,5 @@ export const Routes = {
   MENU_NEW: '/menus/new',
   MENU: '/menus/$menuId',
   MENU_EDIT: '/menus/$menuId/edit',
+  MENU_SHOPPING: '/menus/$menuId/shopping-list',
 } as const satisfies Record<string, AppPath>
