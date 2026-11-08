@@ -100,19 +100,45 @@ export type MenuWithRelations = Prisma.MenuGetPayload<{
 export class MenuRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  public async findAllByOwner(ownerId: string): Promise<MenuListItem[]> {
+  public async findAllByOwner(
+    ownerId: string,
+    options?: { limit?: number; offset?: number; excludeDishId?: string },
+  ): Promise<MenuListItem[]> {
     return await this.prisma.menu.findMany({
-      where: { ownerId },
+      where: this.ownerWhere(ownerId, options?.excludeDishId),
       orderBy: [{ order: 'asc' }, { created: 'desc' }],
       select: menuListSelect,
+      ...(options?.limit != null
+        ? { take: options.limit, skip: options.offset ?? 0 }
+        : {}),
     });
   }
 
-  public async findDishIdsByOwner(ownerId: string) {
+  public async countByOwner(
+    ownerId: string,
+    excludeDishId?: string,
+  ): Promise<number> {
+    return await this.prisma.menu.count({
+      where: this.ownerWhere(ownerId, excludeDishId),
+    });
+  }
+
+  public async findDishIdsByMenuIds(menuIds: string[]) {
+    if (menuIds.length === 0) return [];
     return await this.prisma.menuDish.findMany({
-      where: { menu: { ownerId } },
+      where: { menuId: { in: menuIds } },
       select: { menuId: true, dishId: true },
     });
+  }
+
+  private ownerWhere(
+    ownerId: string,
+    excludeDishId?: string,
+  ): Prisma.MenuWhereInput {
+    return {
+      ownerId,
+      ...(excludeDishId ? { dishes: { none: { dishId: excludeDishId } } } : {}),
+    };
   }
 
   public async existsOwnedName(

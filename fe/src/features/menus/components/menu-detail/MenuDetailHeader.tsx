@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@components/ui/dropdown-menu'
 import { Routes } from '@constants/routes'
+import { ShoppingListButton } from '@/features/menus/components/ShoppingListButton'
 import {
   MENU_DESCRIPTION_MAX,
   MENU_NAME_MAX,
@@ -18,6 +19,7 @@ import {
 } from '@/features/menus/schemas/menu.schema'
 
 export const MenuDetailHeader = ({
+  menuId,
   name,
   description,
   occasion,
@@ -38,6 +40,7 @@ export const MenuDetailHeader = ({
   onSave,
   onAskDelete,
 }: {
+  menuId: string
   name: string
   description: string
   occasion: string
@@ -148,7 +151,8 @@ export const MenuDetailHeader = ({
             <span>{t('menus.detail.updated', { date: updated })}</span>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <ShoppingListButton menuId={menuId} />
           <DropdownMenu>
             <DropdownMenuTrigger
               render={<Button variant="outline" size="icon-sm" aria-label={t('menus.detail.more')} />}

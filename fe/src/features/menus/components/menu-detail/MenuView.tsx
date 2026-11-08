@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { Button } from '@components/ui/button'
 import { Routes } from '@constants/routes'
+import { ShoppingListButton } from '@/features/menus/components/ShoppingListButton'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
 import { cn } from '@/lib/utils'
 
@@ -84,13 +85,19 @@ export const MenuView = ({ menu }: { menu: MenuDetail }) => {
             <span>{t('menus.detail.updated', { date: updated })}</span>
           </div>
         </div>
-        <Button
-          render={<Link to={Routes.MENU_EDIT} params={{ menuId: menu.id }} />}
-          className="h-[42px] min-h-0 w-fit shrink-0 px-5 text-[13px]"
-        >
-          <Pencil className="size-3.5" strokeWidth={1.5} />
-          {t('menus.view.edit')}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <ShoppingListButton
+            menuId={menu.id}
+            className="h-[42px] min-h-0 px-5 text-[13px]"
+          />
+          <Button
+            render={<Link to={Routes.MENU_EDIT} params={{ menuId: menu.id }} />}
+            className="h-[42px] min-h-0 w-fit shrink-0 px-5 text-[13px]"
+          >
+            <Pencil className="size-3.5" strokeWidth={1.5} />
+            {t('menus.view.edit')}
+          </Button>
+        </div>
       </header>
 
       <p className="mt-5 max-w-2xl text-[14px] leading-5 text-muted-foreground">

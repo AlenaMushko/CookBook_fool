@@ -3,23 +3,10 @@ import { Upload } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { Button } from "@/components/ui/button"
+import { IMAGE_ACCEPT, isAllowedImageFile } from "@/lib/image-file"
 import { cn } from "@/lib/utils"
 
 const MAX_SIZE_MB = 10
-const ACCEPT = "image/*"
-const IMAGE_EXTENSIONS = [
-  ".png",
-  ".jpg",
-  ".jpeg",
-  ".webp",
-  ".gif",
-  ".avif",
-  ".heic",
-  ".heif",
-  ".bmp",
-  ".tif",
-  ".tiff",
-]
 
 type ImageUploaderProps = {
   className?: string
@@ -42,7 +29,7 @@ type ImageUploaderProps = {
 
 function ImageUploader({
   className,
-  accept = ACCEPT,
+  accept = IMAGE_ACCEPT,
   maxSizeMb = MAX_SIZE_MB,
   disabled = false,
   multiple = false,
@@ -60,30 +47,15 @@ function ImageUploader({
 }: ImageUploaderProps) {
   const { t } = useTranslation()
   const inputRef = React.useRef<HTMLInputElement>(null)
+  const requestRef = React.useRef(0)
   const [isDragging, setIsDragging] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const titleText = title ?? t("file.dropTitle")
   const hintText = hint ?? t("file.hint", { size: maxSizeMb })
   const browseText = browseLabel ?? t("file.browse")
 
-  const isAllowed = (file: File) => {
-    const type = file.type.toLowerCase()
-    const name = file.name.toLowerCase()
-    return accept.split(",").some((rule) => {
-      const token = rule.trim().toLowerCase()
-      if (token === "image/*") {
-        return (
-          (type.startsWith("image/") && type !== "image/svg+xml") ||
-          IMAGE_EXTENSIONS.some((ext) => name.endsWith(ext))
-        )
-      }
-      if (token.endsWith("/*")) return type.startsWith(token.slice(0, -1))
-      if (token.startsWith(".")) return name.endsWith(token)
-      return type === token
-    })
-  }
-
-  const acceptFiles = (files: File[]) => {
+  const acceptFiles = async (files: File[]) => {
+    const request = ++requestRef.current
     setError(null)
     if (files.length === 0) {
       onFileSelect?.(null)
@@ -93,16 +65,20 @@ function ImageUploader({
 
     const valid: File[] = []
     for (const file of files) {
-      if (!isAllowed(file)) {
+      if (!(await isAllowedImageFile(file))) {
+        if (request !== requestRef.current) return
         setError(t("file.unsupported"))
         continue
       }
       if (file.size > maxSizeMb * 1024 * 1024) {
+        if (request !== requestRef.current) return
         setError(t("file.tooLarge", { size: maxSizeMb }))
         continue
       }
       valid.push(file)
     }
+
+    if (request !== requestRef.current) return
 
     if (multiple) {
       onFilesSelect?.(valid)
@@ -113,7 +89,7 @@ function ImageUploader({
   }
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    acceptFiles(Array.from(e.target.files ?? []))
+    void acceptFiles(Array.from(e.target.files ?? []))
     e.target.value = ""
   }
 
@@ -123,7 +99,7 @@ function ImageUploader({
     setIsDragging(false)
     if (disabled) return
     const files = Array.from(e.dataTransfer.files ?? [])
-    acceptFiles(multiple ? files : files.slice(0, 1))
+    void acceptFiles(multiple ? files : files.slice(0, 1))
   }
 
   const openPicker = () => {

@@ -151,6 +151,7 @@ export const MenuEditor = ({ menu }: { menu: MenuDetail }) => {
     <MenuBoardDnd draft={draft} setDraft={setDraft} onPickPlaced={setSelectedSectionId}>
     <div className="-m-5 flex min-h-full flex-col px-5 pt-5 pb-20 sm:px-8 md:pb-8">
       <MenuDetailHeader
+        menuId={menu.id}
         name={draft.name}
         description={draft.description}
         occasion={draft.occasion}

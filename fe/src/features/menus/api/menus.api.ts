@@ -5,7 +5,7 @@ import type {
   CreateMenuInput,
   MenuBoardDraft,
   MenuDetail,
-  MenuPreview,
+  MenuListResponse,
   UpdateMenuInput,
 } from '../types/menu.types'
 import type { ShoppingList } from '../types/shopping-list.types'
@@ -13,8 +13,15 @@ import type { ShoppingList } from '../types/shopping-list.types'
 const isNewStage = (id: string) => id.startsWith('tmp:')
 
 export const menusApi = {
-  listMine() {
-    return apiJson<{ data: MenuPreview[] }>(ApiRoutes.menu.all)
+  listMine(params?: { limit?: number; offset?: number; excludeDishId?: string }) {
+    const search = new URLSearchParams()
+    if (params?.limit != null) search.set('limit', String(params.limit))
+    if (params?.offset != null) search.set('offset', String(params.offset))
+    if (params?.excludeDishId) search.set('excludeDishId', params.excludeDishId)
+    const query = search.toString()
+    return apiJson<MenuListResponse>(
+      query ? `${ApiRoutes.menu.all}?${query}` : ApiRoutes.menu.all,
+    )
   },
 
   getById(menuId: string) {

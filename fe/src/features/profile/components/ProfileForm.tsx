@@ -19,6 +19,7 @@ import { FieldError } from '@components/ui/field'
 import { FormFieldInput } from '@components/ui/form-field-input'
 import { Routes } from '@constants/routes'
 import { signOut } from '@/features/auth/lib/sign-out'
+import { IMAGE_ACCEPT, isAllowedImageFile } from '@/lib/image-file'
 import { resolveMediaUrl } from '@/lib/media-url'
 import { showToast } from '@/lib/toast'
 import { getUserDisplayName, getUserInitials } from '@/lib/user-display'
@@ -189,6 +190,10 @@ export const ProfileForm = ({ profile }: ProfileFormProps) => {
     const file = event.target.files?.[0]
     event.target.value = ''
     if (!file) return
+    if (!(await isAllowedImageFile(file))) {
+      showToast(t('file.unsupported'), 'error')
+      return
+    }
 
     setIsUploading(true)
     clearErrors('root')
@@ -339,7 +344,7 @@ export const ProfileForm = ({ profile }: ProfileFormProps) => {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept={IMAGE_ACCEPT}
               className="hidden"
               onChange={(event) => void onPhotoSelected(event)}
             />

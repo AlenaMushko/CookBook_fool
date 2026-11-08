@@ -11,6 +11,7 @@ import {
   AddMenuDishesDto,
   CreateMenuDto,
   CreateMenuSectionDto,
+  MenuListQueryDto,
   UpdateMenuDishDto,
   UpdateMenuDto,
   UpdateMenuSectionDto,
@@ -30,11 +31,23 @@ export class MenuService {
     private readonly s3Service: S3Service,
   ) {}
 
-  public async findAll(userData: IUserData) {
-    const [menus, links] = await Promise.all([
-      this.menuRepository.findAllByOwner(userData.userId),
-      this.menuRepository.findDishIdsByOwner(userData.userId),
+  public async findAll(userData: IUserData, query: MenuListQueryDto) {
+    const offset = query.offset ?? 0;
+    const [menusTotal, filteredTotal, menus] = await Promise.all([
+      this.menuRepository.countByOwner(userData.userId),
+      query.excludeDishId
+        ? this.menuRepository.countByOwner(userData.userId, query.excludeDishId)
+        : Promise.resolve(undefined),
+      this.menuRepository.findAllByOwner(userData.userId, {
+        limit: query.limit,
+        offset,
+        excludeDishId: query.excludeDishId,
+      }),
     ]);
+    const total = filteredTotal ?? menusTotal;
+    const links = await this.menuRepository.findDishIdsByMenuIds(
+      menus.map((menu) => menu.id),
+    );
     const dishIdsByMenu = new Map<string, string[]>();
     for (const link of links) {
       const ids = dishIdsByMenu.get(link.menuId);
@@ -46,7 +59,15 @@ export class MenuService {
         this.toPreview(menu, dishIdsByMenu.get(menu.id) ?? []),
       ),
     );
-    return { data };
+    return {
+      data,
+      meta: {
+        limit: query.limit ?? total,
+        offset,
+        total,
+        menusTotal,
+      },
+    };
   }
 
   public async create(dto: CreateMenuDto, userData: IUserData) {

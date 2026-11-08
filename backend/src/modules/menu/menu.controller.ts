@@ -22,6 +22,7 @@ import {
   AddMenuDishesDto,
   CreateMenuDto,
   CreateMenuSectionDto,
+  MenuListQueryDto,
   UpdateMenuDishDto,
   UpdateMenuDto,
   UpdateMenuSectionDto,
@@ -40,8 +41,11 @@ export class MenuController {
 
   @Get()
   @ApiOperation({ summary: 'List my menus' })
-  public async findAll(@CurrentUser() userData: IUserData) {
-    return await this.menuService.findAll(userData);
+  public async findAll(
+    @CurrentUser() userData: IUserData,
+    @Query() query: MenuListQueryDto,
+  ) {
+    return await this.menuService.findAll(userData, query);
   }
 
   @Post()

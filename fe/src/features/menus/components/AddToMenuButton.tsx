@@ -1,10 +1,11 @@
-import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { useState, type MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ApiError } from '@api/client'
+import { ListPagination } from '@components/common/ListPagination'
 import { Button } from '@components/ui/button'
 import {
   Dialog,
@@ -36,10 +37,10 @@ import {
   forgetShoppingList,
   menuDetailsQueryOptions,
   menuQueryKeys,
-  myMenusQueryOptions,
 } from '../api/menus.queries'
 
 const stageSlotClass = 'h-[70px]'
+const MENU_PAGE_SIZE = 9
 
 export const AddToMenuButton = ({
   dishId,
@@ -128,11 +129,18 @@ const AddToMenuDialog = ({
 }) => {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
+  const [page, setPage] = useState(1)
   const [menuId, setMenuId] = useState<string | null>(null)
   const [sectionId, setSectionId] = useState<string | null>(null)
 
   const menusQuery = useQuery({
-    ...myMenusQueryOptions(),
+    queryKey: [...menuQueryKeys.lists(), 'picker', dishId, page, MENU_PAGE_SIZE],
+    queryFn: () =>
+      menusApi.listMine({
+        limit: MENU_PAGE_SIZE,
+        offset: (page - 1) * MENU_PAGE_SIZE,
+        excludeDishId: dishId,
+      }),
     enabled: open,
     staleTime: 0,
   })
@@ -141,30 +149,12 @@ const AddToMenuDialog = ({
     enabled: open && Boolean(menuId),
   })
 
-  const allMenus = menusQuery.data?.data ?? []
-  const detailQueries = useQueries({
-    queries: allMenus.map((menu) => ({
-      ...menuDetailsQueryOptions(menu.id),
-      enabled: open,
-      staleTime: 0,
-    })),
-  })
-  const detailsReady =
-    allMenus.length === 0
-      ? menusQuery.isSuccess && !menusQuery.isFetching
-      : detailQueries.every((query) => query.isSuccess && !query.isFetching)
-  const waitingForMenus = !detailsReady
-  const menus = detailsReady
-    ? allMenus.filter(
-        (menu) =>
-          !menu.dishIds?.includes(dishId) &&
-          !detailQueries.some(
-            (query) =>
-              query.data?.id === menu.id &&
-              query.data.dishes.some((dish) => dish.dishId === dishId),
-          ),
-      )
-    : []
+  const menus = menusQuery.data?.data ?? []
+  const total = menusQuery.data?.meta.total ?? 0
+  const menusTotal = menusQuery.data?.meta.menusTotal ?? 0
+  const pageCount = Math.max(1, Math.ceil(total / MENU_PAGE_SIZE))
+  const waitingForMenus = menusQuery.isPending
+  if (menusQuery.data && page > pageCount) setPage(pageCount)
   const sections = [...(detailQuery.data?.sections ?? [])].sort(
     (a, b) => a.order - b.order,
   )
@@ -173,9 +163,16 @@ const AddToMenuDialog = ({
   const canSave = Boolean(menuId) && !waitingForStages && (!needsStage || Boolean(sectionId))
 
   const close = () => {
+    setPage(1)
     setMenuId(null)
     setSectionId(null)
     onOpenChange(false)
+  }
+
+  const showPage = (next: number) => {
+    setPage(next)
+    setMenuId(null)
+    setSectionId(null)
   }
 
   const save = useMutation({
@@ -214,38 +211,60 @@ const AddToMenuDialog = ({
           <DialogTitle>{t('menus.addDish.title')}</DialogTitle>
         </DialogHeader>
         <DialogBody>
-          <div className="flex flex-col gap-1.5">
-            <span className="text-[13px] leading-5 font-medium">{t('menus.addDish.menu')}</span>
-            <Select
-              value={menuId}
-              items={menus.map((menu) => ({ value: menu.id, label: menu.name }))}
-              onValueChange={(value) => {
-                setMenuId(value)
-                setSectionId(null)
-              }}
-              disabled={waitingForMenus || menus.length === 0 || save.isPending}
-            >
-              <SelectTrigger>
-                <SelectValue
-                  placeholder={
-                    waitingForMenus
-                      ? t('menus.addDish.menuPlaceholder')
-                      : allMenus.length === 0
-                        ? t('menus.addDish.noMenus')
-                        : menus.length === 0
-                          ? t('menus.addDish.alreadyInAll')
-                          : t('menus.addDish.menuPlaceholder')
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {menus.map((menu) => (
-                  <SelectItem key={menu.id} value={menu.id}>
-                    {menu.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col gap-1.5" role="group" aria-labelledby="add-to-menu-menus">
+            <span id="add-to-menu-menus" className="text-[13px] leading-5 font-medium">
+              {t('menus.addDish.menu')}
+            </span>
+            {waitingForMenus ? (
+              <p className="text-[13px] leading-5 text-muted-foreground">
+                {t('menus.addDish.menuPlaceholder')}
+              </p>
+            ) : null}
+            {menusQuery.isError ? (
+              <p className="text-[13px] leading-5 text-destructive">{t('error.serverError')}</p>
+            ) : null}
+            {!waitingForMenus && !menusQuery.isError && menus.length === 0 ? (
+              <p className="text-[13px] leading-5 text-muted-foreground">
+                {menusTotal === 0
+                  ? t('menus.addDish.noMenus')
+                  : t('menus.addDish.alreadyInAll')}
+              </p>
+            ) : null}
+            {menus.length > 0 ? (
+              <ul className="flex flex-col gap-1.5">
+                {menus.map((menu) => {
+                  const selected = menuId === menu.id
+                  return (
+                    <li key={menu.id}>
+                      <button
+                        type="button"
+                        aria-pressed={selected}
+                        disabled={save.isPending}
+                        onClick={() => {
+                          setMenuId(menu.id)
+                          setSectionId(null)
+                        }}
+                        className={cn(
+                          'w-full cursor-pointer rounded-lg border px-3 py-2 text-left text-[14px] leading-5',
+                          selected
+                            ? 'border-primary bg-primary/10 text-foreground'
+                            : 'border-border bg-background text-foreground hover:border-primary',
+                        )}
+                      >
+                        {menu.name}
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            ) : null}
+            <ListPagination
+              page={page}
+              pageCount={pageCount}
+              onPageChange={showPage}
+              className="mt-3"
+              label={t('menus.addDish.pages')}
+            />
           </div>
           <div className={stageSlotClass} aria-hidden={!needsStage}>
             {needsStage ? (

@@ -9,6 +9,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Max,
   MaxLength,
   Min,
   ValidateIf,
@@ -141,4 +142,26 @@ export class UpdateMenuDishDto {
   @IsInt()
   @Min(0)
   order?: number;
+}
+
+export class MenuListQueryDto {
+  @ApiPropertyOptional({ minimum: 1, maximum: 50 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(50)
+  limit?: number;
+
+  @ApiPropertyOptional({ default: 0 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  offset?: number = 0;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUUID()
+  excludeDishId?: string;
 }

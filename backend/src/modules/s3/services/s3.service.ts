@@ -1,5 +1,3 @@
-import * as path from 'node:path';
-
 import {
   DeleteObjectCommand,
   GetObjectCommand,
@@ -8,6 +6,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import {
+  BadRequestException,
   ForbiddenException,
   forwardRef,
   Global,
@@ -20,6 +19,7 @@ import * as crypto from 'crypto';
 import { AWSConfig } from '../../../config/config.type';
 import { DishService } from '../../dish/services/dish.service';
 import { UserService } from '../../user/services/user.service';
+import { imageExtension, matchedImage } from '../constants/constants';
 import { S3_FOLDERS, S3Folder } from '../constants/s3-folder.enum';
 
 @Global()
@@ -47,19 +47,23 @@ export class S3Service {
       throw new ForbiddenException('Invalid folder name');
     }
 
+    const image = matchedImage(file);
+    if (!image) {
+      throw new BadRequestException('Invalid file type');
+    }
+
     const randomName = crypto
       .randomBytes(Math.ceil(12))
       .toString('hex')
       .slice(0, 24);
-    const fileExtension = path.extname(file.originalname);
-    const key = `${folderName}/${randomName}${fileExtension}`;
+    const key = `${folderName}/${randomName}${imageExtension(file.originalname)}`;
 
     await this.s3Client.send(
       new PutObjectCommand({
         Bucket: this.awsConfig.bucketName,
         Key: key,
         Body: file.buffer,
-        ContentType: file.mimetype,
+        ContentType: image.mime,
       }),
     );
 

@@ -46,6 +46,16 @@ export type MenuBoardDraft = {
   dishes: MenuDishDraft[]
 }
 
+export type MenuListResponse = {
+  data: MenuPreview[]
+  meta: {
+    limit: number
+    offset: number
+    total: number
+    menusTotal: number
+  }
+}
+
 export type MenuPreview = {
   id: string
   name: string
