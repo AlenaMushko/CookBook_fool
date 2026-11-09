@@ -1,5 +1,7 @@
 # AWS Elastic Beanstalk deploy (Docker Compose)
 
+Production hosting is Cloudflare Pages and a Render Docker service, with Neon PostgreSQL. Both hosts deploy from GitHub. Use [docs/production/CI_CD_GUIDE.md](../docs/production/CI_CD_GUIDE.md). The steps below are the earlier Elastic Beanstalk layout.
+
 Cheap educational setup: **ALB + Auto Scaling (1–3)** · **ECR images** · **private RDS** (auth sessions in PostgreSQL) · **S3 + SES** via instance IAM role.
 
 Region: **eu-west-1**.

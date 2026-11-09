@@ -1,5 +1,7 @@
 # Cookbook
 
+[![CI](https://github.com/AlenaMushko/CookBook_fool/actions/workflows/ci.yml/badge.svg)](https://github.com/AlenaMushko/CookBook_fool/actions/workflows/ci.yml)
+
 A personal digital cookbook: discover recipes, save favourites, create your own, and keep everything you love to cook in one place.
 
 Plan menus for events and for the week — the app automatically builds a shopping list.
@@ -28,8 +30,15 @@ The language switcher is available in the app header.
 | Frontend | React 19, TypeScript, Vite, TanStack Router, TanStack Query, Tailwind CSS, React Hook Form, Zod, i18next |
 | Backend | NestJS, TypeScript, Prisma, Zod, JWT (auth), Swagger |
 | Infrastructure | Docker Compose, PostgreSQL, AWS S3, Amazon SES |
+| Production | Cloudflare Pages, Render, Neon PostgreSQL, AWS S3, Amazon SES |
 
 Auth sessions (access / refresh tokens) are stored in **PostgreSQL** (hashed + expiry).
+
+## CI/CD
+
+[CI](.github/workflows/ci.yml) runs on pull requests and on pushes to `main`. Frontend and backend jobs run in parallel: lint, TypeScript, tests, and a production build. The backend job also validates the Prisma schema and generates the client. A separate job builds the backend Docker image.
+
+Cloudflare Pages and Render deploy from `main` through their own Git integrations. The Pages project proxies `/api` to Render so auth cookies stay on one site. Setup is in [docs/production/CI_CD_GUIDE.md](docs/production/CI_CD_GUIDE.md).
 
 ## Prerequisites
 
@@ -43,7 +52,7 @@ cp .env.example .env
 
 Fill in your passwords/secrets in `.env`. Backend env is also loaded from `backend/environments/local.env` in development only (never overrides production / Elastic Beanstalk env).
 
-AWS deploy template: [`.env.aws.example`](.env.aws.example) · step-by-step: [`deployment/README.md`](deployment/README.md).
+Production setup: [`docs/production/CI_CD_GUIDE.md`](docs/production/CI_CD_GUIDE.md). Earlier Elastic Beanstalk notes: [`.env.aws.example`](.env.aws.example) · [`deployment/README.md`](deployment/README.md).
 
 ---
 
@@ -136,4 +145,5 @@ Verify both the sender (`SES_FROM_EMAIL`) and any test recipient in SES. Mail to
 | API | http://localhost:3000 |
 | Swagger | http://localhost:3000/docs |
 | Prisma Studio | http://localhost:5555 |
-| AWS EB deploy notes | [deployment/README.md](deployment/README.md) |
+| Production CI/CD | [docs/production/CI_CD_GUIDE.md](docs/production/CI_CD_GUIDE.md) |
+| Earlier EB notes | [deployment/README.md](deployment/README.md) |

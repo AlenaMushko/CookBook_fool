@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import path from 'path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
@@ -7,6 +8,10 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 const src = path.resolve(__dirname, './src')
 
 export default defineConfig({
+  test: {
+    environment: 'node',
+    include: ['src/**/*.test.ts'],
+  },
   plugins: [
     tanstackRouter({
       target: 'react',

@@ -8,6 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "typecheck": "tsc -b --pretty false",
+    "test": "vitest run && node --test functions/*.test.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "preview": "vite preview"
@@ -54,6 +56,7 @@
     "prettier": "^3.9.6",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.65.0",
-    "vite": "^8.2.0"
+    "vite": "^8.2.0",
+    "vitest": "^4.1.12"
   }
 }

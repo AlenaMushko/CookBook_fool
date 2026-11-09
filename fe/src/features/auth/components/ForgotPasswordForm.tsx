@@ -37,6 +37,7 @@ export const ForgotPasswordForm = () => {
     try {
       await authApi.forgotPassword(values.email)
     } catch {
+      // Stay on the sent screen. The API must not reveal whether the account exists.
     } finally {
       setIsSent(true)
     }
@@ -50,6 +51,7 @@ export const ForgotPasswordForm = () => {
     try {
       await authApi.forgotPassword(email)
     } catch {
+      // Resend uses the same generic result as the first request.
     } finally {
       setIsResending(false)
       showToast(t('auth.forgotPassword.success'), 'success')
