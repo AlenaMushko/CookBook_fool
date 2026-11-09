@@ -5,6 +5,10 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 COPY prisma ./prisma
+# prisma generate resolves env("DATABASE_URL") and does not open a connection.
+# This dummy stays in the build stages. The production stage below does not
+# inherit it; Render injects the Neon pooled URL at runtime.
+ENV DATABASE_URL="postgresql://build:build@127.0.0.1:5432/build?schema=public"
 RUN npm ci
 
 FROM deps AS build

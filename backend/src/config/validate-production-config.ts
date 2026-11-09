@@ -1,3 +1,5 @@
+import { assertProductionDatabaseUrl } from './database-url';
+
 const WEAK_JWT_SECRETS = new Set([
   'access secret',
   'refresh secret',
@@ -54,4 +56,6 @@ export function assertProductionConfig(): void {
       'Production SWAGGER_PASSWORD must be at least 12 characters and not the local default',
     );
   }
+
+  assertProductionDatabaseUrl(process.env.DATABASE_URL!.trim());
 }

@@ -74,7 +74,7 @@ Environment variables, set in the Render dashboard:
 | `NODE_ENV` | `production` |
 | `APP_HOST` | `0.0.0.0` |
 | `APP_PORT` | `3000` |
-| `DATABASE_URL` | Neon **pooled** URL for the `production` branch, database `neondb`, with `sslmode=require` |
+| `DATABASE_URL` | Neon **pooled** URL for the `production` branch, database `neondb`. The hostname contains `-pooler`. Include `sslmode=require`. Keep `channel_binding=require` when Neon includes it |
 | `AUTH_ACCESS_TOKEN_SECRET` | unique, at least 32 characters, not a sample value |
 | `AUTH_REFRESH_TOKEN_SECRET` | a different secret, same rules |
 | `FRONTEND_URL` | Pages origin, no trailing slash |
@@ -89,7 +89,7 @@ Environment variables, set in the Render dashboard:
 | `SWAGGER_USER` | your choice |
 | `SWAGGER_PASSWORD` | at least 12 characters, not `cookbook` |
 
-Do not set `COOKIE_SECURE`. In production the auth cookies are already `Secure`. Do not commit these values. Do not point `DATABASE_URL` at the Neon direct host for the running service; the app uses the pooled host. Migrations use the direct host from a laptop, below.
+Do not set `COOKIE_SECURE`. In production the auth cookies are already `Secure`. Do not commit these values. Do not set `DIRECT_URL` on Render: Prisma 6.19 in this project does not read it. Do not point `DATABASE_URL` at the Neon direct host for the running service; the app uses the pooled host. Keep `channel_binding=require` if the Neon string includes it. Prisma 6.19.3 accepts `disable`, `prefer`, and `require`. The process adds `connect_timeout=15` and `pool_timeout=20` when they are missing, so a suspended Neon compute can wake up before Prisma gives up. Migrations use the direct host from a laptop, below.
 
 The boot check refuses to start when a required variable is missing, a JWT secret is short or still a placeholder, or the Swagger password is `cookbook`.
 
@@ -97,12 +97,12 @@ The boot check refuses to start when a required variable is missing, a JWT secre
 
 The Launch database already exists in Frankfurt: branch `production`, database `neondb`. Nothing in CI or in the container applies migrations.
 
-When you explicitly decide to create the tables, run this once from one machine. Use the **direct** Neon connection string, not the pooled URL the service uses:
+When you explicitly decide to create the tables, run this once from one machine. Use the **direct** Neon connection string, not the pooled URL the service uses. The hostname must not contain `-pooler`. Keep `sslmode=require` and keep `channel_binding` when Neon includes it. Prisma CLI reads only `DATABASE_URL` from the schema, so the direct string replaces that variable for these two commands. It is not saved, and it does not change the local `.env`.
 
 ```bash
 cd backend
-DATABASE_URL='postgresql://USER:PASSWORD@DIRECT_HOST/neondb?sslmode=require' npm run prisma:migrate:deploy
-DATABASE_URL='postgresql://USER:PASSWORD@DIRECT_HOST/neondb?sslmode=require' npm run prisma:seed:catalogs
+DATABASE_URL='postgresql://USER:PASSWORD@DIRECT_HOST/neondb?sslmode=require&connect_timeout=15' npm run prisma:migrate:deploy
+DATABASE_URL='postgresql://USER:PASSWORD@DIRECT_HOST/neondb?sslmode=require&connect_timeout=15' npm run prisma:seed:catalogs
 ```
 
 Do not run `prisma migrate dev`, `prisma migrate reset`, or `prisma db push` against Neon. Do not seed demo users. `/health` can return 200 before the tables exist. Recipe and auth routes need the migration first.

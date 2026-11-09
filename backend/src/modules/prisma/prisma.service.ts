@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
 
 import { Config, PostgresConfig } from '../../config/config.type';
+import { databaseUrlForPrisma } from '../../config/database-url';
 
 @Injectable()
 export class PrismaService
@@ -11,9 +12,10 @@ export class PrismaService
 {
   constructor(configService: ConfigService<Config>) {
     const postgres = configService.get<PostgresConfig>('postgres');
-    const databaseUrl =
+    const databaseUrl = databaseUrlForPrisma(
       process.env.DATABASE_URL ||
-      `postgresql://${encodeURIComponent(postgres.user)}:${encodeURIComponent(postgres.password)}@${postgres.host}:${postgres.port}/${postgres.dbName}?schema=public`;
+        `postgresql://${encodeURIComponent(postgres.user)}:${encodeURIComponent(postgres.password)}@${postgres.host}:${postgres.port}/${postgres.dbName}?schema=public`,
+    );
 
     super({
       datasources: {
