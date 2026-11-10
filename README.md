@@ -6,6 +6,8 @@ A personal digital cookbook: discover recipes, save favourites, create your own,
 
 Plan menus for events and for the week — the app automatically builds a shopping list.
 
+Live demo: https://mycookbook.dev
+
 ![Cookbook landing page](fe/src/assets/images/readme.png)
 
 ## Features
@@ -50,9 +52,9 @@ Cloudflare Pages and Render deploy from `main` through their own Git integration
 cp .env.example .env
 ```
 
-Fill in your passwords/secrets in `.env`. Backend env is also loaded from `backend/environments/local.env` in development only (never overrides production / Elastic Beanstalk env).
+Fill in your passwords/secrets in `.env`. In development the backend also loads `backend/environments/local.env` when that file exists. It is gitignored, and the loader skips it when `NODE_ENV` is `production`.
 
-Production setup: [`docs/production/CI_CD_GUIDE.md`](docs/production/CI_CD_GUIDE.md). Earlier Elastic Beanstalk notes: [`.env.aws.example`](.env.aws.example) · [`deployment/README.md`](deployment/README.md).
+Production setup: [`docs/production/CI_CD_GUIDE.md`](docs/production/CI_CD_GUIDE.md).
 
 ---
 
@@ -137,7 +139,7 @@ Verify both the sender (`SES_FROM_EMAIL`) and any test recipient in SES. Mail to
 4. `cd fe && npm install && npm run dev` → http://localhost:5173  
 5. (optional) `cd backend && npm run prisma:studio` → http://localhost:5555  
 
-## Useful links
+## Local development links
 
 | What | URL |
 |---|---|
@@ -145,5 +147,5 @@ Verify both the sender (`SES_FROM_EMAIL`) and any test recipient in SES. Mail to
 | API | http://localhost:3000 |
 | Swagger | http://localhost:3000/docs |
 | Prisma Studio | http://localhost:5555 |
-| Production CI/CD | [docs/production/CI_CD_GUIDE.md](docs/production/CI_CD_GUIDE.md) |
-| Earlier EB notes | [deployment/README.md](deployment/README.md) |
+| Live site | https://mycookbook.dev |
+| Production setup | [docs/production/CI_CD_GUIDE.md](docs/production/CI_CD_GUIDE.md) |
