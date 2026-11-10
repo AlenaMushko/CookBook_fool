@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { useState, type MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -27,7 +26,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@components/ui/tooltip'
-import { Routes } from '@constants/routes'
 import { useAuthSession } from '@/hooks/useAuthSession'
 import { showToast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
@@ -44,65 +42,45 @@ const MENU_PAGE_SIZE = 9
 
 export const AddToMenuButton = ({
   dishId,
-  appearance = 'icon',
+  label,
   className,
 }: {
   dishId: string
-  appearance?: 'icon' | 'label'
+  label?: string
   className?: string
 }) => {
   const { t } = useTranslation()
-  const navigate = useNavigate()
   const { isAuthenticated } = useAuthSession()
   const [open, setOpen] = useState(false)
 
   const openDialog = (event: MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
-    if (!isAuthenticated) {
-      void navigate({ to: Routes.LOGIN })
-      return
-    }
     setOpen(true)
   }
 
-  const trigger =
-    appearance === 'label' ? (
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <Button
-              type="button"
-              onClick={openDialog}
-              className={cn('h-8 min-h-0 px-3 text-[12px]', className)}
-            >
-              <Plus className="size-3.5" strokeWidth={1.5} />
-              {t('homePage.addToMenu')}
-            </Button>
-          }
-        />
-        <TooltipContent side="top">{t('menus.addDish.title')}</TooltipContent>
-      </Tooltip>
-    ) : (
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <button
-              type="button"
-              aria-label={t('menus.addDish.title')}
-              onClick={openDialog}
-              className={cn(
-                'flex size-8 cursor-pointer items-center justify-center rounded-lg bg-card/95 text-foreground shadow-[0_1px_2px_rgba(43,38,32,0.12)] transition-colors duration-200 ease-smooth hover:bg-card hover:text-brand',
-                className,
-              )}
-            >
-              <Plus className="size-4" strokeWidth={1.5} />
-            </button>
-          }
-        />
-        <TooltipContent side="bottom">{t('menus.addDish.title')}</TooltipContent>
-      </Tooltip>
-    )
+  if (!isAuthenticated) return null
+
+  const trigger = (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Button
+            type="button"
+            onClick={openDialog}
+            className={cn(
+              'h-8 min-h-0 w-fit max-w-full px-2.5 text-[12px]',
+              className,
+            )}
+          >
+            <Plus className="size-3.5" strokeWidth={1.5} />
+            {label ?? t('homePage.addToMenu')}
+          </Button>
+        }
+      />
+      <TooltipContent side="top">{t('menus.addDish.title')}</TooltipContent>
+    </Tooltip>
+  )
 
   return (
     <>

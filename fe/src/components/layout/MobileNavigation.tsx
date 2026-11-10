@@ -31,7 +31,7 @@ export const MobileNavigation = () => {
       <div className='h-[5.5rem] shrink-0 md:hidden' aria-hidden='true' />
       <nav
         aria-label={t("nav.mobile")}
-        className='fixed inset-x-0 bottom-0 z-40 border-t-[0.75px] border-secondary-border bg-background md:hidden'
+        className='fixed inset-x-0 bottom-0 z-40 w-full max-w-full overflow-x-clip border-t-[0.75px] border-secondary-border bg-background md:hidden'
       >
         <ul className='mx-auto flex max-w-page items-center justify-around gap-1 px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]'>
           {mobileNavItems.map(

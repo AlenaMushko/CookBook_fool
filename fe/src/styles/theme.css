@@ -259,8 +259,11 @@
   --spacing-page-x: var(--page-padding-x);
   --spacing-sidebar: var(--sidebar-width);
 
-  /* Breakpoints → sm: md: lg: xl: */
-  --breakpoint-sm: 390px;
+  /* Breakpoints → sm: md: lg: xl:
+     sm sits below every current iPhone portrait width. 390px is exactly
+     iPhone 12/13/14, so a 1px viewport change while the address bar hides
+     was flipping two-column layouts and the page jumped in width. */
+  --breakpoint-sm: 360px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1280px;
   --breakpoint-xl: 1440px;

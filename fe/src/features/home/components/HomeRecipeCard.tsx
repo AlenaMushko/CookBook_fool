@@ -55,7 +55,7 @@ export const HomeRecipeCard = ({ dish }: { dish: DishListCard }) => {
   return (
     <article
       className={cn(
-        'relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_3px_rgba(43,38,32,0.06)]',
+        '@container relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_3px_rgba(43,38,32,0.06)]',
         recipeCardInteractiveClass,
       )}
     >
@@ -93,11 +93,14 @@ export const HomeRecipeCard = ({ dish }: { dish: DishListCard }) => {
           </div>
         </div>
       </Link>
-      <div className="mt-auto flex items-center justify-between gap-3 px-3.5 pb-3.5">
+      <div className="mt-auto flex min-w-0 items-center justify-between gap-2 px-3.5 pb-3.5 @max-[280px]:flex-col @max-[280px]:items-stretch">
         <p className="text-[12px] leading-4 text-muted-foreground">
           {t('homePage.saves', { count: dish.likesCount ?? 0 })}
         </p>
-        <AddToMenuButton dishId={dish.id} appearance="label" />
+        <AddToMenuButton
+          dishId={dish.id}
+          className="@max-[280px]:w-full"
+        />
       </div>
       {mine ? null : (
         <button

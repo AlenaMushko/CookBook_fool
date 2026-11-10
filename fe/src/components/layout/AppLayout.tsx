@@ -10,7 +10,7 @@ export const AppLayout = () => {
   const viewer = useSessionUserId() ?? "guest";
 
   return (
-    <div className='flex min-h-svh flex-col bg-background'>
+    <div className='flex min-h-svh w-full max-w-full flex-col overflow-x-clip bg-background'>
       <Loader />
       <Header />
 

@@ -11,6 +11,7 @@ import {
 } from '@components/ui/tooltip'
 import { DishDifficultyLevel } from '@constants/recipe'
 import { Routes } from '@constants/routes'
+import { useAuthSession } from '@/hooks/useAuthSession'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { AddToMenuButton } from '@/features/menus/components/AddToMenuButton'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
@@ -25,6 +26,7 @@ import { cn } from '@/lib/utils'
 
 export const CookbookCard = ({ dish }: { dish: DishListCard }) => {
   const { t, i18n } = useTranslation()
+  const { isAuthenticated } = useAuthSession()
   const { user } = useCurrentUser()
   const cover = [...(dish.photos ?? [])].sort((a, b) => a.order - b.order)[0]
   const totalTime = dish.cookTime ?? 0
@@ -181,10 +183,15 @@ export const CookbookCard = ({ dish }: { dish: DishListCard }) => {
           <div className="mt-auto">{meta}</div>
         </div>
       </Link>
-      <AddToMenuButton
-        dishId={dish.id}
-        className={cn('absolute top-2 z-10', mine ? 'right-2' : 'right-12')}
-      />
+      {isAuthenticated ? (
+        <div className="px-3 pb-3">
+          <AddToMenuButton
+            dishId={dish.id}
+            label={t('menus.addDish.title')}
+            className="h-8 w-full px-1.5 text-[11px]"
+          />
+        </div>
+      ) : null}
       {saveButton}
       {cardLoader}
     </article>

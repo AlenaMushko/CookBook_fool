@@ -314,13 +314,6 @@ export const RecipeDetails = ({
         >
           <ChevronLeft className="size-4" strokeWidth={1.5} />
         </button>
-        <AddToMenuButton
-          dishId={dish.id}
-          className={cn(
-            'absolute top-3 z-10 size-9 rounded-full',
-            isOwner ? 'right-3' : 'right-14',
-          )}
-        />
         {isOwner ? null : (
           <Tooltip>
             <TooltipTrigger
@@ -458,6 +451,15 @@ export const RecipeDetails = ({
           </button>
         </div>
       </div>
+
+      {isAuthenticated ? (
+        <div className="mt-5">
+          <AddToMenuButton
+            dishId={dish.id}
+            className="w-full max-w-full md:w-fit"
+          />
+        </div>
+      ) : null}
 
       <div className="mt-5 grid grid-cols-2 gap-1 rounded-full bg-secondary p-1 lg:hidden">
         {(['ingredients', 'instructions'] as const).map((item) => (

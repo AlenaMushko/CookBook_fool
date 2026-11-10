@@ -14,11 +14,11 @@ import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as publicIndexRouteImport } from './routes/(public)/index'
 import { Route as publicErrorRouteImport } from './routes/(public)/error'
+import { Route as publicFeedbackRouteImport } from './routes/(public)/feedback'
 import { Route as publicForgotPasswordRouteImport } from './routes/(public)/forgot-password'
 import { Route as publicNotFoundRouteImport } from './routes/(public)/not-found'
 import { Route as publicResetPasswordRouteImport } from './routes/(public)/reset-password'
 import { Route as AuthenticatedChangePasswordRouteImport } from './routes/_authenticated/change-password'
-import { Route as AuthenticatedFeedbackRouteImport } from './routes/_authenticated/feedback'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as publicRecipesIndexRouteImport } from './routes/(public)/recipes/index'
 import { Route as publicRecipesRecipeIdRouteImport } from './routes/(public)/recipes/$recipeId'
@@ -54,6 +54,11 @@ const publicErrorRoute = publicErrorRouteImport.update({
   path: '/error',
   getParentRoute: () => rootRouteImport,
 } as any)
+const publicFeedbackRoute = publicFeedbackRouteImport.update({
+  id: '/(public)/feedback',
+  path: '/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const publicForgotPasswordRoute = publicForgotPasswordRouteImport.update({
   id: '/(public)/forgot-password',
   path: '/forgot-password',
@@ -75,11 +80,6 @@ const AuthenticatedChangePasswordRoute =
     path: '/change-password',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedFeedbackRoute = AuthenticatedFeedbackRouteImport.update({
-  id: '/feedback',
-  path: '/feedback',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -140,11 +140,11 @@ export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/error': typeof publicErrorRoute
+  '/feedback': typeof publicFeedbackRoute
   '/forgot-password': typeof publicForgotPasswordRoute
   '/not-found': typeof publicNotFoundRoute
   '/reset-password': typeof publicResetPasswordRoute
   '/change-password': typeof AuthenticatedChangePasswordRoute
-  '/feedback': typeof AuthenticatedFeedbackRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/recipes/$recipeId': typeof publicRecipesRecipeIdRoute
   '/menus/new': typeof AuthenticatedMenusNewRoute
@@ -161,11 +161,11 @@ export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/error': typeof publicErrorRoute
+  '/feedback': typeof publicFeedbackRoute
   '/forgot-password': typeof publicForgotPasswordRoute
   '/not-found': typeof publicNotFoundRoute
   '/reset-password': typeof publicResetPasswordRoute
   '/change-password': typeof AuthenticatedChangePasswordRoute
-  '/feedback': typeof AuthenticatedFeedbackRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/recipes/$recipeId': typeof publicRecipesRecipeIdRoute
   '/menus/new': typeof AuthenticatedMenusNewRoute
@@ -183,11 +183,11 @@ export interface FileRoutesById {
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
   '/(public)/error': typeof publicErrorRoute
+  '/(public)/feedback': typeof publicFeedbackRoute
   '/(public)/forgot-password': typeof publicForgotPasswordRoute
   '/(public)/not-found': typeof publicNotFoundRoute
   '/(public)/reset-password': typeof publicResetPasswordRoute
   '/_authenticated/change-password': typeof AuthenticatedChangePasswordRoute
-  '/_authenticated/feedback': typeof AuthenticatedFeedbackRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/(public)/': typeof publicIndexRoute
   '/(public)/recipes/$recipeId': typeof publicRecipesRecipeIdRoute
@@ -207,11 +207,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/error'
+    | '/feedback'
     | '/forgot-password'
     | '/not-found'
     | '/reset-password'
     | '/change-password'
-    | '/feedback'
     | '/profile'
     | '/recipes/$recipeId'
     | '/menus/new'
@@ -228,11 +228,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/error'
+    | '/feedback'
     | '/forgot-password'
     | '/not-found'
     | '/reset-password'
     | '/change-password'
-    | '/feedback'
     | '/profile'
     | '/recipes/$recipeId'
     | '/menus/new'
@@ -249,11 +249,11 @@ export interface FileRouteTypes {
     | '/(auth)/login'
     | '/(auth)/register'
     | '/(public)/error'
+    | '/(public)/feedback'
     | '/(public)/forgot-password'
     | '/(public)/not-found'
     | '/(public)/reset-password'
     | '/_authenticated/change-password'
-    | '/_authenticated/feedback'
     | '/_authenticated/profile'
     | '/(public)/'
     | '/(public)/recipes/$recipeId'
@@ -272,6 +272,7 @@ export interface RootRouteChildren {
   authLoginRoute: typeof authLoginRoute
   authRegisterRoute: typeof authRegisterRoute
   publicErrorRoute: typeof publicErrorRoute
+  publicFeedbackRoute: typeof publicFeedbackRoute
   publicForgotPasswordRoute: typeof publicForgotPasswordRoute
   publicNotFoundRoute: typeof publicNotFoundRoute
   publicResetPasswordRoute: typeof publicResetPasswordRoute
@@ -318,6 +319,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicErrorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(public)/feedback': {
+      id: '/(public)/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof publicFeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(public)/forgot-password': {
       id: '/(public)/forgot-password'
       path: '/forgot-password'
@@ -344,13 +352,6 @@ declare module '@tanstack/react-router' {
       path: '/change-password'
       fullPath: '/change-password'
       preLoaderRoute: typeof AuthenticatedChangePasswordRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/feedback': {
-      id: '/_authenticated/feedback'
-      path: '/feedback'
-      fullPath: '/feedback'
-      preLoaderRoute: typeof AuthenticatedFeedbackRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/profile': {
@@ -428,7 +429,6 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedChangePasswordRoute: typeof AuthenticatedChangePasswordRoute
-  AuthenticatedFeedbackRoute: typeof AuthenticatedFeedbackRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedMenusNewRoute: typeof AuthenticatedMenusNewRoute
   AuthenticatedRecipesNewRoute: typeof AuthenticatedRecipesNewRoute
@@ -440,7 +440,6 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedChangePasswordRoute: AuthenticatedChangePasswordRoute,
-  AuthenticatedFeedbackRoute: AuthenticatedFeedbackRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedMenusNewRoute: AuthenticatedMenusNewRoute,
   AuthenticatedRecipesNewRoute: AuthenticatedRecipesNewRoute,
@@ -459,6 +458,7 @@ const rootRouteChildren: RootRouteChildren = {
   authLoginRoute: authLoginRoute,
   authRegisterRoute: authRegisterRoute,
   publicErrorRoute: publicErrorRoute,
+  publicFeedbackRoute: publicFeedbackRoute,
   publicForgotPasswordRoute: publicForgotPasswordRoute,
   publicNotFoundRoute: publicNotFoundRoute,
   publicResetPasswordRoute: publicResetPasswordRoute,

@@ -129,29 +129,27 @@ export const DesktopSidebar = () => {
                 );
               })}
             </ul>
-            {isAuthenticated ? (
-              <Link
-                to={Routes.FEEDBACK}
-                title={t("feedback.give")}
-                aria-label={t("feedback.give")}
-                aria-current={pathname === Routes.FEEDBACK ? "page" : undefined}
-                className={cn(
-                  "mt-3 inline-flex h-10 w-fit items-center gap-2 rounded-full border px-3",
-                  "font-sans text-[13px] font-medium whitespace-nowrap",
-                  "transition-[background-color,border-color] duration-200 ease-smooth",
-                  pathname === Routes.FEEDBACK
-                    ? "border-success bg-success-bg text-success"
-                    : "border-success-border bg-success-bg text-success hover:border-success"
-                )}
-              >
-                <MessageCircle
-                  className='size-[17px] shrink-0'
-                  strokeWidth={1.5}
-                  aria-hidden
-                />
-                <span>{t("feedback.give")}</span>
-              </Link>
-            ) : null}
+            <Link
+              to={Routes.FEEDBACK}
+              title={t("feedback.give")}
+              aria-label={t("feedback.give")}
+              aria-current={pathname === Routes.FEEDBACK ? "page" : undefined}
+              className={cn(
+                "mt-3 inline-flex h-10 w-fit items-center gap-2 rounded-full border px-3",
+                "font-sans text-[13px] font-medium whitespace-nowrap",
+                "transition-[background-color,border-color] duration-200 ease-smooth",
+                pathname === Routes.FEEDBACK
+                  ? "border-success bg-success-bg text-success"
+                  : "border-success-border bg-success-bg text-success hover:border-success"
+              )}
+            >
+              <MessageCircle
+                className='size-[17px] shrink-0'
+                strokeWidth={1.5}
+                aria-hidden
+              />
+              <span>{t("feedback.give")}</span>
+            </Link>
           </nav>
 
           {isAuthenticated ? (

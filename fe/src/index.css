@@ -13,10 +13,23 @@
     @apply border-border outline-ring/50;
   }
 
-  html,
+  /*
+   * iPhone Safari scales the whole page sideways while scrolling when the
+   * document is even 1px wider than the screen. Clip that overflow on the
+   * root instead of letting it become a horizontal scrollport. `clip` does
+   * not create a scroll container, so the fixed bottom nav and the URL bar
+   * keep working.
+   */
+  html {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   body,
   #root {
-    @apply min-h-svh;
+    max-width: 100%;
+    min-height: 100%;
+    overflow-x: clip;
   }
 
   body {
