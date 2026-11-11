@@ -84,6 +84,7 @@ export const toCreateDishPayload = (
     visibility: values.visibility,
     difficulty: values.difficulty,
     categoryId: values.categoryId,
+    areaId: values.areaId || null,
     ...(ingredientGroups.length > 0 ? { ingredientGroups } : {}),
     ingredients,
     steps: toSteps(values.steps),

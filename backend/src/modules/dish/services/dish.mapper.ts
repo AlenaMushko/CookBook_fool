@@ -134,6 +134,16 @@ export class DishMapper {
             slug: entity.subcategory.slug,
           }
         : undefined,
+      area: entity.area
+        ? {
+            id: entity.area.id,
+            code: entity.area.code,
+            nameEn: entity.area.nameEn,
+            nameUk: entity.area.nameUk,
+            flagSvg: entity.area.flagSvg,
+            flagAlt: entity.area.flagAlt,
+          }
+        : undefined,
     };
   }
 

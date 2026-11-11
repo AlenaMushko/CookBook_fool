@@ -15,6 +15,7 @@ import { useAuthSession } from '@/hooks/useAuthSession'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { AddToMenuButton } from '@/features/menus/components/AddToMenuButton'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
+import { CountryMark } from '@/features/recipes/components/CountryMark'
 import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 import { syncDishSaved } from '@/features/recipes/lib/sync-dish-saved'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
@@ -151,6 +152,13 @@ export const CookbookCard = ({ dish }: { dish: DishListCard }) => {
       >
         <div className="relative h-[128px] shrink-0 bg-background @min-[640px]:h-[148px] @min-[1040px]:h-[168px]">
           <RecipeImage src={cover?.url} className="size-full object-cover" />
+          {dish.area ? (
+            <CountryMark
+              area={dish.area}
+              language={i18n.language}
+              variant="badge"
+            />
+          ) : null}
         </div>
         <div
           className={cn(

@@ -43,6 +43,7 @@ export const createRecipeSchema = (
       categoryId: draft
         ? z.string()
         : z.string().min(1, { message: t(TEXT.ERROR.REQUIRED_FIELD) }),
+      areaId: z.string(),
       difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']),
       visibility: z.enum(['PUBLIC', 'PRIVATE']),
       photos,

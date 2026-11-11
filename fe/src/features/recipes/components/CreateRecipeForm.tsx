@@ -49,6 +49,7 @@ import type {
   DishVisibility,
   RecipeIngredientDraft,
 } from '../types/recipe.types'
+import { CountrySelect } from './CountrySelect'
 import { IngredientCombobox } from './IngredientCombobox'
 import { PrepTimeField } from './PrepTimeField'
 import { QuantityField } from './QuantityField'
@@ -77,6 +78,7 @@ const emptyForm = (): CreateRecipeFormValues => ({
   cookTime: '',
   servings: '6',
   categoryId: '',
+  areaId: '',
   difficulty: 'EASY',
   visibility: 'PUBLIC',
   photos: [],
@@ -98,6 +100,7 @@ const isRecipeStarted = (values: CreateRecipeFormValues) => {
     values.cookTime.trim() ||
     values.servings.trim() !== '6' ||
     values.categoryId ||
+    values.areaId ||
     values.difficulty !== 'EASY' ||
     values.visibility !== 'PUBLIC' ||
     values.photos.length > 0 ||
@@ -187,6 +190,10 @@ export const CreateRecipeForm = ({
   const ingredients = useFieldArray({ control, name: 'ingredients' })
   const steps = useFieldArray({ control, name: 'steps' })
 
+  const countriesQuery = useQuery({
+    queryKey: recipeQueryKeys.countries(),
+    queryFn: () => recipesApi.listCountries(),
+  })
   const categoriesQuery = useQuery({
     queryKey: recipeQueryKeys.categories(),
     queryFn: () => recipesApi.listCategories(),
@@ -197,6 +204,15 @@ export const CreateRecipeForm = ({
   })
 
   const categories = categoriesQuery.data?.data ?? []
+  const countries = useMemo(() => {
+    const list = countriesQuery.data?.data ?? []
+    return [...list].sort((left, right) =>
+      localizedName(i18n.language, left).localeCompare(
+        localizedName(i18n.language, right),
+        i18n.language,
+      ),
+    )
+  }, [countriesQuery.data, i18n.language])
   const units = [...(unitsQuery.data?.data ?? [])].sort(
     (a, b) => a.order - b.order,
   )
@@ -505,6 +521,25 @@ export const CreateRecipeForm = ({
                 {errors.categoryId?.message ? (
                   <FieldError>{errors.categoryId.message}</FieldError>
                 ) : null}
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="recipe-country" className={formLabelClass}>
+                  {t('recipe.create.country')}
+                </FieldLabel>
+                <Controller
+                  name="areaId"
+                  control={control}
+                  render={({ field }) => (
+                    <CountrySelect
+                      id="recipe-country"
+                      countries={countries}
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={isSubmitting}
+                    />
+                  )}
+                />
               </Field>
 
               <Field>

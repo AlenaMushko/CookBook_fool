@@ -20,6 +20,16 @@ const dishListInclude = {
   owner: {
     select: { id: true, firstName: true, lastName: true },
   },
+  area: {
+    select: {
+      id: true,
+      code: true,
+      nameEn: true,
+      nameUk: true,
+      flagSvg: true,
+      flagAlt: true,
+    },
+  },
 } satisfies Prisma.DishInclude;
 
 const dishDetailInclude = {

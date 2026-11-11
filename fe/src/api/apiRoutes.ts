@@ -22,6 +22,7 @@ export const ApiRoutes = {
   dish: {
     all: `/${ApiVersion.V1}/dish`,
     categories: `/${ApiVersion.V1}/dish/categories`,
+    areas: `/${ApiVersion.V1}/dish/areas`,
     byId: (dishId: string) => `/${ApiVersion.V1}/dish/${dishId}`,
   },
   ingredients: {

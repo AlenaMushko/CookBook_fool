@@ -26,6 +26,7 @@ export const dishToFormValues = (dish: DishDetails): CreateRecipeFormValues => {
     cookTime: dish.cookTime ? String(dish.cookTime) : '',
     servings,
     categoryId: dish.categoryId,
+    areaId: dish.areaId ?? dish.area?.id ?? '',
     difficulty: dish.difficulty,
     visibility: dish.visibility,
     photos: toPhotos(dish.photos),

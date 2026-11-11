@@ -32,11 +32,17 @@ const hasDraftShape = (value: unknown): value is CreateRecipeFormValues => {
 
 const parseRecipeDraft = (value: unknown): CreateRecipeFormValues | null => {
   if (value && typeof value === 'object') {
-    const record = value as { servings?: string; prepTime?: string; cookTime?: string }
+    const record = value as {
+      servings?: string
+      prepTime?: string
+      cookTime?: string
+      areaId?: string
+    }
     if (!('servings' in record)) record.servings = '6'
     if (typeof record.prepTime === 'string' && typeof record.cookTime !== 'string') {
       record.cookTime = record.prepTime
     }
+    if (typeof record.areaId !== 'string') record.areaId = ''
   }
   const parsed = draftSchema.safeParse(value)
   if (parsed.success) return parsed.data

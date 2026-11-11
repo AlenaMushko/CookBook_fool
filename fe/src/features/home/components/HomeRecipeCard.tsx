@@ -9,6 +9,7 @@ import { Routes } from '@constants/routes'
 import { useAuthSession } from '@/hooks/useAuthSession'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { recipesApi } from '@/features/recipes/api/recipes.api'
+import { CountryMark } from '@/features/recipes/components/CountryMark'
 import { RecipeImage } from '@/features/recipes/components/RecipeImage'
 import { syncDishSaved } from '@/features/recipes/lib/sync-dish-saved'
 import { recipeCardInteractiveClass } from '@/features/recipes/lib/recipe-card'
@@ -66,6 +67,13 @@ export const HomeRecipeCard = ({ dish }: { dish: DishListCard }) => {
       >
         <div className="relative h-40 bg-background">
           <RecipeImage src={cover?.url} className="size-full object-cover" />
+          {dish.area ? (
+            <CountryMark
+              area={dish.area}
+              language={i18n.language}
+              variant="badge"
+            />
+          ) : null}
         </div>
         <div className="flex flex-1 flex-col px-3.5 pt-3 pb-3.5">
           {categoryLine ? (

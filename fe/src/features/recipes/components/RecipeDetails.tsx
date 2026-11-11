@@ -30,6 +30,7 @@ import { showToast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 
 import { AddToMenuButton } from '@/features/menus/components/AddToMenuButton'
+import { CountryMark } from './CountryMark'
 import { recipesApi } from '../api/recipes.api'
 import { recipeQueryKeys } from '../api/recipes.queries'
 import {
@@ -361,9 +362,26 @@ export const RecipeDetails = ({
       </div>
 
       <div className="pt-5">
-        {categoryLine ? (
-          <p className="text-[11px] font-bold tracking-[0.07em] text-[#8b9683] uppercase">
-            {categoryLine}
+        {categoryLine || dish.area ? (
+          <p className="flex min-w-0 items-center gap-2 text-[13px] leading-5">
+            {categoryLine ? (
+              <span className="truncate text-[11px] font-bold tracking-[0.07em] text-[#8b9683] uppercase">
+                {categoryLine}
+              </span>
+            ) : null}
+            {categoryLine && dish.area ? (
+              <span className="text-[#8b9683]" aria-hidden>
+                •
+              </span>
+            ) : null}
+            {dish.area ? (
+              <CountryMark
+                area={dish.area}
+                language={i18n.language}
+                className="shrink-0 font-medium text-foreground"
+                flagClassName="h-3.5 w-5"
+              />
+            ) : null}
           </p>
         ) : null}
         <h1 className="mt-1 font-serif text-[32px] leading-9 font-medium text-foreground">

@@ -6,6 +6,7 @@ import type {
   CatalogIngredient,
   CreateDishPayload,
   CreatedDish,
+  DishArea,
   DishCategory,
   DishDetails,
   DishListOrder,
@@ -22,6 +23,10 @@ type ListResponse<T> = {
 export const recipesApi = {
   listCategories() {
     return apiJson<ListResponse<DishCategory>>(ApiRoutes.dish.categories)
+  },
+
+  listCountries() {
+    return apiJson<ListResponse<DishArea>>(ApiRoutes.dish.areas)
   },
 
   list(params: {

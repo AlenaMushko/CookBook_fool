@@ -46,6 +46,15 @@ export type DishPhoto = {
   url: string
 }
 
+export type DishArea = {
+  id: string
+  code: string
+  nameEn: string
+  nameUk: string
+  flagSvg: string
+  flagAlt: string
+}
+
 export type CreateRecipeFormValues = {
   title: string
   description: string
@@ -54,6 +63,7 @@ export type CreateRecipeFormValues = {
   difficulty: DishDifficulty
   visibility: DishVisibility
   categoryId: string
+  areaId: string
   ingredients: RecipeIngredientDraft[]
   steps: RecipeStepDraft[]
   photos: DishPhoto[]
@@ -66,6 +76,7 @@ export type CreateDishPayload = {
   visibility: DishVisibility
   difficulty: DishDifficulty
   categoryId: string
+  areaId?: string | null
   baseServings?: number
   ingredientGroups?: {
     tempId: string
@@ -107,6 +118,7 @@ export type DishListCard = {
   isOwner?: boolean
   category?: { nameEn: string; nameUk: string }
   subcategory?: { nameEn: string; nameUk: string }
+  area?: DishArea
   owner?: { id: string; firstName: string; lastName?: string }
 }
 
@@ -134,6 +146,7 @@ export type DishDetails = {
   cookTime?: number
   baseServings?: number
   categoryId: string
+  areaId?: string
   likesCount: number
   isLiked?: boolean
   isOwner?: boolean
@@ -146,6 +159,7 @@ export type DishDetails = {
   }[]
   category: { nameEn: string; nameUk: string }
   subcategory?: { nameEn: string; nameUk: string }
+  area?: DishArea
   owner: { id: string; firstName: string; lastName?: string }
   ingredientGroups: { id: string; name?: string; order: number }[]
   ingredients: {

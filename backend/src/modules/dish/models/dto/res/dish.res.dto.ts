@@ -229,6 +229,9 @@ export class DishListItemResDto extends DishResDto {
 
   @ApiPropertyOptional({ type: DishSubcategoryBriefDto })
   subcategory?: DishSubcategoryBriefDto;
+
+  @ApiPropertyOptional({ type: DishAreaBriefDto })
+  area?: DishAreaBriefDto;
 }
 
 export class DishListResDto {
