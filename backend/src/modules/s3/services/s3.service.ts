@@ -19,8 +19,12 @@ import * as crypto from 'crypto';
 import { AWSConfig } from '../../../config/config.type';
 import { DishService } from '../../dish/services/dish.service';
 import { UserService } from '../../user/services/user.service';
-import { imageExtension, matchedImage } from '../constants/constants';
+import { matchedImage } from '../constants/constants';
 import { S3_FOLDERS, S3Folder } from '../constants/s3-folder.enum';
+import {
+  prepareUploadImage,
+  UPLOAD_IMAGE_CACHE_CONTROL,
+} from '../image/prepare-upload-image';
 
 @Global()
 @Injectable()
@@ -52,18 +56,20 @@ export class S3Service {
       throw new BadRequestException('Invalid file type');
     }
 
+    const prepared = await prepareUploadImage(file.buffer, image.mime);
     const randomName = crypto
       .randomBytes(Math.ceil(12))
       .toString('hex')
       .slice(0, 24);
-    const key = `${folderName}/${randomName}${imageExtension(file.originalname)}`;
+    const key = `${folderName}/${randomName}${prepared.extension}`;
 
     await this.s3Client.send(
       new PutObjectCommand({
         Bucket: this.awsConfig.bucketName,
         Key: key,
-        Body: file.buffer,
-        ContentType: image.mime,
+        Body: prepared.body,
+        ContentType: prepared.contentType,
+        CacheControl: UPLOAD_IMAGE_CACHE_CONTROL,
       }),
     );
 
