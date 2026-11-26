@@ -105,8 +105,8 @@ export class DishController {
   }
 
   @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
-  @Post(':id/like')
-  @ApiOperation({ summary: 'Like a dish' })
+  @Post(':id/favorite')
+  @ApiOperation({ summary: 'Add a dish to favorites' })
   public async likeDish(
     @Param('id', uuidPipe) id: string,
     @CurrentUser() userData: IUserData,
@@ -115,8 +115,8 @@ export class DishController {
   }
 
   @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
-  @Delete(':id/like')
-  @ApiOperation({ summary: 'Remove like from a dish' })
+  @Delete(':id/favorite')
+  @ApiOperation({ summary: 'Remove a dish from favorites' })
   public async dislikeDish(
     @Param('id', uuidPipe) id: string,
     @CurrentUser() userData: IUserData,
