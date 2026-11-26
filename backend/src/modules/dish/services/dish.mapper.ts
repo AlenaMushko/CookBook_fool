@@ -76,8 +76,8 @@ export class DishMapper {
       areaId: entity.areaId ?? undefined,
       originalDishId: entity.originalDishId ?? undefined,
       ownerId: entity.ownerId,
-      likesCount: entity._count?.likes ?? 0,
-      isLiked: options?.isLiked,
+      favoritesCount: entity._count?.likes ?? 0,
+      isFavorite: options?.isLiked,
       isOwner: options?.userId ? entity.ownerId === options.userId : undefined,
       created: entity.created,
     };
