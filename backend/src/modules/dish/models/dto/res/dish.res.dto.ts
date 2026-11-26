@@ -177,10 +177,10 @@ export class DishResDto {
   ownerId: string;
 
   @ApiProperty()
-  likesCount: number;
+  favoritesCount: number;
 
   @ApiPropertyOptional()
-  isLiked?: boolean;
+  isFavorite?: boolean;
 
   @ApiPropertyOptional()
   isOwner?: boolean;
