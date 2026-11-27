@@ -21,7 +21,6 @@ export enum DishListScope {
 export enum DishListSort {
   CREATED = 'created',
   SAVED = 'saved',
-  COOKED = 'cooked',
   DIFFICULTY = 'difficulty',
 }
 
@@ -36,7 +35,7 @@ export class DishesListReqDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  @Max(50)
+  @Max(24)
   limit?: number = 12;
 
   @ApiPropertyOptional({ default: 0 })
