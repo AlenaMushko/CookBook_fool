@@ -179,8 +179,8 @@ export class DishResDto {
   @ApiProperty()
   likesCount: number;
 
-  @ApiPropertyOptional()
-  isLiked?: boolean;
+  @ApiProperty({ nullable: true, type: Boolean })
+  isLiked: boolean | null;
 
   @ApiPropertyOptional()
   isOwner?: boolean;

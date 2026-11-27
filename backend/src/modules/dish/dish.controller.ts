@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -105,7 +106,7 @@ export class DishController {
   }
 
   @ApiCookieAuth(AUTH_COOKIE_NAMES.ACCESS_TOKEN)
-  @Post(':id/like')
+  @Put(':id/like')
   @ApiOperation({ summary: 'Like a dish' })
   public async likeDish(
     @Param('id', uuidPipe) id: string,

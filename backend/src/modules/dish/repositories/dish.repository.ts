@@ -417,8 +417,6 @@ export class DishRepository {
     switch (sort) {
       case DishListSort.CREATED:
         return [{ created: direction }, { id: direction }];
-      case DishListSort.COOKED:
-        return [{ cookTime: { sort: direction, nulls: 'last' } }, ...tie];
       case DishListSort.DIFFICULTY:
         return [{ difficulty: direction }, ...tie];
       case DishListSort.SAVED:

@@ -77,7 +77,7 @@ export class DishMapper {
       originalDishId: entity.originalDishId ?? undefined,
       ownerId: entity.ownerId,
       likesCount: entity._count?.likes ?? 0,
-      isLiked: options?.isLiked,
+      isLiked: options?.isLiked ?? null,
       isOwner: options?.userId ? entity.ownerId === options.userId : undefined,
       created: entity.created,
     };
